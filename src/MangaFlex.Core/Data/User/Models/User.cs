@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-namespace MangaFlex.Core.Data.User;
-
+namespace MangaFlex.Core.Data.User.Models;
 public class User : IdentityUser
 {
 

@@ -1,12 +1,13 @@
-﻿using MangaFlex.Core.Data.User;
-using Microsoft.AspNetCore.Identity;
+﻿namespace MangaFlex.Infrastructure.Data.User.Services;
 
-namespace MangaFlex.Infrastructure.Data.UserService;
+using MangaFlex.Core.Data.User.Services;
+using Microsoft.AspNetCore.Identity;
+using MangaFlex.Core.Data.User.Models;
 
 public class UserService : IUserService
 {
     private readonly UserManager<User> userManager;
-    private readonly SignInManager<User> signInManager; 
+    private readonly SignInManager<User> signInManager;
     private readonly RoleManager<IdentityRole> roleManager;
     public UserService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager)
     {
@@ -16,14 +17,14 @@ public class UserService : IUserService
     }
     public async Task LoginAsync(string userName, string password)
     {
-        var user = await this.userManager.FindByNameAsync(userName);
+        var user = await userManager.FindByNameAsync(userName);
 
         if (user is null)
         {
             throw new NullReferenceException("Incorrect Login");
         }
 
-        var result = await this.signInManager.PasswordSignInAsync(user, password, true, true);
+        var result = await signInManager.PasswordSignInAsync(user, password, true, true);
 
         if (!result.Succeeded)
         {
@@ -33,12 +34,12 @@ public class UserService : IUserService
 
     public async Task SignOutAsync()
     {
-        await this.signInManager.SignOutAsync();
+        await signInManager.SignOutAsync();
     }
 
     public async Task SignupAsync(User user, string password)
     {
-        var result = await this.userManager.CreateAsync(user, password);
+        var result = await userManager.CreateAsync(user, password);
 
         if (!result.Succeeded)
         {
@@ -51,5 +52,9 @@ public class UserService : IUserService
 
             throw new AggregateException(exceptions);
         }
+
+        var role = new IdentityRole { Name = "User" };
+        await roleManager.CreateAsync(role);
+        await userManager.AddToRoleAsync(user, role.Name);
     }
 }

@@ -1,6 +1,7 @@
-using MangaFlex.Core.Data.User;
-using MangaFlex.Infrastructure.Data;
-using MangaFlex.Infrastructure.Data.UserService;
+using MangaFlex.Core.Data.User.Models;
+using MangaFlex.Core.Data.User.Services;
+using MangaFlex.Infrastructure.Data.DBContext;
+using MangaFlex.Infrastructure.Data.User.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -16,6 +17,10 @@ builder.Services.AddDbContext<MangaFlexDbContext>(options =>
     {
         useSqlOptions.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
     });
+});
+
+builder.Services.AddMediatR(configurations => {
+    configurations.RegisterServicesFromAssembly(Assembly.Load("MangaFlex.Core"));
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(options => {

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace MangaFlex.Core.Data.User.Services;
 
-namespace MangaFlex.Core.Data.User;
+using MangaFlex.Core.Data.User.Models;
 
 public interface IUserService
 {

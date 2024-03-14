@@ -1,18 +1,24 @@
-﻿using MangaFlex.Core.Data.User;
+﻿namespace MangaFlex.Presentation.Controllers;
+
+using MangaFlex.Core.Data.User.Models;
+using MangaFlex.Core.Data.User.Services;
 using MangaFlex.Presentation.Dto;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
-using System;
-
-namespace MangaFlex.Presentation.Controllers;
+using MediatR;
+using MangaFlex.Core.Data.User.Command;
 
 [Authorize]
 public class UserController : Controller
 {
     private readonly IUserService _userService;
-    public UserController(IUserService userService)
+    private readonly ISender sender;
+
+    public UserController(IUserService userService, ISender sender)
     {
         _userService = userService;
+        this.sender = sender;
     }
 
     [HttpGet]
@@ -25,7 +31,8 @@ public class UserController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromForm]LoginDto dto)
     {
-        await _userService.LoginAsync(dto.Login, dto.Password);
+        var command = new LoginInCommand(dto.Login,dto.Password);
+        await sender.Send(command);
         return RedirectToAction("Index", "Home");
     }
 
@@ -43,11 +50,12 @@ public class UserController : Controller
     {
         try
         {
-            await _userService.SignupAsync(new User()
+            var command = new SignInCommand(new User()
             {
                 UserName = dto.Login,
                 Email = dto.Email,
             }, dto.Password);
+            await sender.Send(command);
         }
         catch(AggregateException ex)
         {
@@ -59,5 +67,13 @@ public class UserController : Controller
         }
        
         return RedirectToAction("Login");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> LogOut()
+    {
+        var command = new SignOutCommand();
+        await sender.Send(command);
+        return RedirectToAction("Index", "Home");
     }
 }
