@@ -1,8 +1,8 @@
 using MangaFlex.Core.Data.User;
 using MangaFlex.Infrastructure.Data;
+using MangaFlex.Infrastructure.Data.UserService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +21,8 @@ builder.Services.AddDbContext<MangaFlexDbContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole>(options => {
     options.Password.RequiredLength = 8;
 }).AddEntityFrameworkStores<MangaFlexDbContext>();
+
+builder.Services.AddScoped<IUserService,UserService>();
 
 var app = builder.Build();
 
