@@ -3,13 +3,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MangaFlex.Core.Data.User.Models;
+using MangaFlex.Core.Data.Users.Models;
 
 
-public class MangaFlexDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
+public class MangaFlexDbContext : IdentityDbContext<User, IdentityRole, string>
 {
-    public DbSet<User> users { get; set; }
-
     public MangaFlexDbContext(DbContextOptions<MangaFlexDbContext> options) : base(options) { }
-
 }

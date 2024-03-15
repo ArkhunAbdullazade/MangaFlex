@@ -1,9 +1,9 @@
-using MangaFlex.Core.Data.User.Models;
-using MangaFlex.Core.Data.User.Services;
-using MangaFlex.Infrastructure.Data.DBContext;
 using MangaFlex.Infrastructure.Data.User.Services;
-using Microsoft.AspNetCore.Identity;
+using MangaFlex.Infrastructure.Data.DBContext;
+using MangaFlex.Core.Data.Users.Models;
+using MangaFlex.Core.Data.Users.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,22 +1,22 @@
-﻿namespace MangaFlex.Core.Data.User.Handler;
+﻿namespace MangaFlex.Core.Data.Users.Handler;
 
-using MangaFlex.Core.Data.User.Command;
-using MangaFlex.Core.Data.User.Services;
+using MangaFlex.Core.Data.Users.Command;
+using MangaFlex.Core.Data.Users.Services;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 public class SignInHandler : IRequestHandler<SignInCommand>
 {
-    private readonly IUserService _userService;
+    private readonly IUserService userService;
 
     public SignInHandler(IUserService userService)
     {
-        _userService = userService;
+        this.userService = userService;
     }
 
     public async Task Handle(SignInCommand request, CancellationToken cancellationToken)
     {
-        await _userService.SignupAsync(request.User, request.Password);
+        await this.userService.SignupAsync(request.User!, request.Password!);
     }
 }

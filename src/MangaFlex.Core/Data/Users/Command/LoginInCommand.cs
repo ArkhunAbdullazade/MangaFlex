@@ -1,11 +1,11 @@
-﻿namespace MangaFlex.Core.Data.User.Command;
+﻿namespace MangaFlex.Core.Data.Users.Command;
 
 using MediatR;
 
 public class LoginInCommand : IRequest
 {
-    public string Login { get; set; }
-    public string Password { get; set; }
+    public string? Login { get; set; }
+    public string? Password { get; set; }
 
     public LoginInCommand(string login, string password)
     {

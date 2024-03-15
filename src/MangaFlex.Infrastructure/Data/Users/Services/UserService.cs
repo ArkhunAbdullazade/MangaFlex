@@ -1,8 +1,8 @@
 ﻿namespace MangaFlex.Infrastructure.Data.User.Services;
 
-using MangaFlex.Core.Data.User.Services;
+using MangaFlex.Core.Data.Users.Services;
 using Microsoft.AspNetCore.Identity;
-using MangaFlex.Core.Data.User.Models;
+using MangaFlex.Core.Data.Users.Models;
 
 public class UserService : IUserService
 {

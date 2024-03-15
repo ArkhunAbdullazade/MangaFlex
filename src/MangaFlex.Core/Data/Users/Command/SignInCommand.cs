@@ -1,12 +1,12 @@
-﻿namespace MangaFlex.Core.Data.User.Command;
+﻿using MediatR;
+using MangaFlex.Core.Data.Users.Models;
 
-using MediatR;
-using MangaFlex.Core.Data.User.Models;
+namespace MangaFlex.Core.Data.Users.Command;
 
 public class SignInCommand : IRequest
 {
-    public User User { get; set; }
-    public string Password { get; set; }
+    public User? User { get; set; }
+    public string? Password { get; set; }
 
     public SignInCommand(User user, string password)
     {

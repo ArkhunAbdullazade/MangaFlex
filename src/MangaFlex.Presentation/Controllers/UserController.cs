@@ -1,23 +1,19 @@
 ﻿namespace MangaFlex.Presentation.Controllers;
 
-using MangaFlex.Core.Data.User.Models;
-using MangaFlex.Core.Data.User.Services;
+using MangaFlex.Core.Data.Users.Models;
 using MangaFlex.Presentation.Dto;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using MangaFlex.Core.Data.User.Command;
+using MangaFlex.Core.Data.Users.Command;
 
 [Authorize]
 public class UserController : Controller
 {
-    private readonly IUserService _userService;
     private readonly ISender sender;
 
-    public UserController(IUserService userService, ISender sender)
+    public UserController(ISender sender)
     {
-        _userService = userService;
         this.sender = sender;
     }
 

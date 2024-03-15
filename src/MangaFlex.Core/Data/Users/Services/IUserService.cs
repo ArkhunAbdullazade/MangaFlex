@@ -1,6 +1,6 @@
-﻿namespace MangaFlex.Core.Data.User.Services;
+﻿namespace MangaFlex.Core.Data.Users.Services;
 
-using MangaFlex.Core.Data.User.Models;
+using MangaFlex.Core.Data.Users.Models;
 
 public interface IUserService
 {
