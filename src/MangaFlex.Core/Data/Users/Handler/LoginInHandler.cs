@@ -16,6 +16,6 @@ public class LoginInHandler : IRequestHandler<LoginInCommand>
     }
     public async Task Handle(LoginInCommand request, CancellationToken cancellationToken)
     {
-        await this.userService.LoginAsync(request.Login, request.Password);
+        await this.userService.LoginAsync(request.Login!, request.Password!);
     }
 }
