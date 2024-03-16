@@ -27,9 +27,23 @@ public class UserController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromForm]LoginDto dto)
     {
-        var command = new LoginInCommand(dto.Login,dto.Password);
-        await sender.Send(command);
-        return RedirectToAction("Index", "Home");
+        try
+        {
+            var command = new LoginInCommand(dto.Login,dto.Password);
+            await sender.Send(command);
+            return RedirectToAction("Index", "Home");
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(ex.Source, ex.Message);
+            return View("Login");
+        }
+        catch(NullReferenceException ex)
+        {
+            ModelState.AddModelError(ex.Source!, ex.Message);
+            return View("Login");
+        }
+        
     }
 
     [HttpGet]
