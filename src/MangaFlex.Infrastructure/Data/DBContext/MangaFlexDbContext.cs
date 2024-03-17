@@ -8,5 +8,6 @@ using MangaFlex.Core.Data.Users.Models;
 
 public class MangaFlexDbContext : IdentityDbContext<User, IdentityRole, string>
 {
-    public MangaFlexDbContext(DbContextOptions<MangaFlexDbContext> options) : base(options) { }
+    public DbSet<UserLastWatch> LastWatch { get; set; }
+    public MangaFlexDbContext(DbContextOptions<MangaFlexDbContext> options) : base(options) {}   
 }
