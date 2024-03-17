@@ -1,4 +1,5 @@
 using MangaFlex.Core.Data.Mangas.Models;
+using MangaFlex.Core.Data.Mangas.Services;
 using MangaFlex.Core.Data.Users.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -6,22 +7,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MangaFlex.Presentation.Controllers
 {
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class MangaController : Controller
     {
         private readonly ISender sender;
+        private readonly IMangaService mangaService;
 
-        public MangaController(ISender sender)
+        public MangaController(ISender sender, IMangaService mangaService)
         {
             this.sender = sender;
+            this.mangaService = mangaService;
         }
 
         [HttpGet]
         [AllowAnonymous]
-        [ActionName("Mangas")]
-        [Route("/Mangas")]
-        public async Task<IActionResult> FindMangas()
+        [Route("/mangas")]
+        public async Task<IActionResult> Mangas()
         {
+            //await mangaService.ReadAsync("fc0a7b86-992e-4126-b30f-ca04811979bf");
             IEnumerable<Manga> mangas = Enumerable.Empty<Manga>();
 
             try
@@ -29,7 +32,7 @@ namespace MangaFlex.Presentation.Controllers
                 var command = new FindMangasCommand(null!);
                 mangas = await sender.Send(command);
             }
-            catch(AggregateException ex)
+            catch (AggregateException ex)
             {
                 foreach (ArgumentException error in ex.Flatten().InnerExceptions)
                 {
@@ -37,8 +40,32 @@ namespace MangaFlex.Presentation.Controllers
                 }
                 return BadRequest("While searching for this request an error happened");
             }
-        
+
             return View(model: mangas);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> About(string id)
+        {
+            try
+            {
+                var manga = await mangaService.GetByIdAsync(id);
+                return View(manga);
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex);
+                return BadRequest("An unexpected error occurred.");
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Read(string id)
+        {
+            var mangaPages = await mangaService.ReadAsync(id);
+            return View(mangaPages);
         }
     }
 }

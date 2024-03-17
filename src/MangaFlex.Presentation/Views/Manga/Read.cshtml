@@ -1,0 +1,7 @@
+@using MangaFlex.Core.Data.Mangas.Services;
+@model List<MangaPageViewModel>
+
+@foreach (var slide in Model)
+{
+    <img src="@slide.ImageUrl" alt="Manga Page">
+}
