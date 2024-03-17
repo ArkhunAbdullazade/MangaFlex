@@ -1,0 +1,115 @@
+﻿@using MangaFlex.Core.Data.Mangas.Models;
+@model IEnumerable<Manga>;
+
+@{
+    ViewData["Title"] = "Mangas";
+
+    IEnumerable<Manga> mangas = Model ?? Enumerable.Empty<Manga>();
+}
+
+<div class="text-center">
+    <h1 class="display-4">MangaFlex</h1>
+</div>
+
+<style>
+    h1,
+    h2,
+    h3 {
+        text-align: center;
+    }
+
+    img {
+        border-radius: 10px;
+        width: 14.2em;
+        height: 21em;
+    }
+
+    span,
+    h1,
+    h2,
+    h3 {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    .title {
+        font-size: 1em;
+    }
+
+    .list,
+    .list > div {
+        flex-direction: column;
+        border: 2px solid dimgray;
+        border-radius: 15px;
+}
+
+    .list {
+        display: block;
+        padding: 10px;
+        padding-bottom: 25px;
+    }
+    .list > div {
+        flex-direction: column;
+        display: inline-flex;
+        width: 240px;
+        height: 350px;
+        margin: 5px;
+        margin-bottom: 55px;
+
+    }
+    .list > div > div{
+        margin: 5px;
+        text-align: center;
+    }
+
+    .pagination .page-link,
+    .pagination.disabled .page-link {
+        background: #212529 !important;
+        border-color: dimgray !important;
+        color: white;
+    }
+
+    .active .page-link {
+        background: #ffc107 !important;
+    }
+
+</style>
+
+<h1>@ViewData["Title"]</h1>
+
+@if (mangas.Any<Manga>()) {
+    <div class="page">
+        <div class="list">
+            @foreach (var manga in mangas)
+            {
+                <div>
+                    <div class="img-div">
+                        <a asp-action="About" asp-controller="Manga" asp-route-id="@manga.Id"><img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")" alt="manga poster" /></a>
+                    </div>
+                    <div>
+                        <span class="title"><b>@(manga.Title ?? "Unknown")</b></span>
+                    </div>
+                </div>
+            }
+        </div>
+        @* <nav>
+            <ul class="pagination justify-content-center mt-2">
+                <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.Page-1)&search=@Model.Search" tabindex="-1">&laquo;</a>
+                </li>
+                @for (int i = (Model.Page < 3  ? 1 : (Model.Page <= Model.TotalPages - 3 ? Model.Page - 2 : Model.TotalPages - 4)); 
+                        i <= (Model.Page < 4 ? (Model.TotalPages <= 5 ? Model.TotalPages : 5) : (Model.Page <= Model.TotalPages - 3  ? Model.Page + 2 : Model.TotalPages)); i++)  
+                {
+                    <li class="page-item @(i == Model.Page ? " active" : "")">  
+                        <a class="page-link" href="?page=@i&search=@Model.Search">@i</a>
+                    </li>   
+                }  
+                <li class="page-item @(Model.Page == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?page=@(Model.Page+1)&search=@Model.Search">&raquo;</a>
+                </li>
+            </ul>
+        </nav> *@
+    </div>
+}
+else {
+    <h3>There is no manga in this category.</h3>
+}

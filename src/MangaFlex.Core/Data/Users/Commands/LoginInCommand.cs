@@ -1,6 +1,6 @@
-﻿namespace MangaFlex.Core.Data.Users.Command;
+﻿using MediatR;
 
-using MediatR;
+namespace MangaFlex.Core.Data.Users.Commands;
 
 public class LoginInCommand : IRequest
 {

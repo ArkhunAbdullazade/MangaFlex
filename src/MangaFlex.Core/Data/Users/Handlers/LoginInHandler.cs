@@ -1,6 +1,6 @@
-﻿namespace MangaFlex.Core.Data.Users.Handler;
+﻿namespace MangaFlex.Core.Data.Users.Handlers;
 
-using MangaFlex.Core.Data.Users.Command;
+using MangaFlex.Core.Data.Users.Commands;
 using MangaFlex.Core.Data.Users.Services;
 using MediatR;
 using System.Threading;

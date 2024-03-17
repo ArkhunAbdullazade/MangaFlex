@@ -14,18 +14,19 @@ public class MangaService : IMangaService
         apiClient = MangaDex.Create();
     }
 
-    public async Task<IEnumerable<Manga>> SearchAsync(string? query = null)
+    public async Task<IEnumerable<Manga>> FindMangasAsync(string? query = null)
     {
-        var mangaFilter = new MangaFilter
-        {
-            ExcludedTags = new[] {"Harem", "Ecchi", "Gyaru", "Genderswap", "Incest", "Reverse Harem", "Erotica", "Sexual Violence", "Loli", "Suggestive" , "Pornographic"},
-            
+        var mangaFilter = new MangaFilter {
+            Title = query ?? string.Empty,
+            Limit = 20,
+            Offset = 0,
+            // ExcludedTagsMode = Mode.or,
         };
-        if(!string.IsNullOrEmpty(query)) mangaFilter.Title = query;
-        mangaFilter.Order[MangaFilter.OrderKey.followedCount] = OrderValue.asc;
-
+        string[] tags = new[] {"Harem", "Ecchi", "Gyaru", "Genderswap", "Incest", "Reverse Harem", "Erotica", "Sexual Violence", "Loli", "Suggestive" , "Pornographic"};
+        foreach (var tag in tags) { mangaFilter.ExcludedTags.Append(tag); }
+        
+        mangaFilter.Order[MangaFilter.OrderKey.rating] = OrderValue.desc;
         MangaList mangaList = await this.apiClient.Manga.List(mangaFilter);
-    
         if(mangaList.ErrorOccurred) {
             var exceptions = new List<Exception>();
 
@@ -38,12 +39,11 @@ public class MangaService : IMangaService
         }
 
         var allMangas = Enumerable.Empty<Manga>();
-
         foreach (var manga in mangaList.Data)
         {
-            allMangas.Append(this.Convert(manga, (await apiClient.Cover.Get(manga.Id)).Data.Attributes?.FileName));
+            allMangas = allMangas.Append(this.Convert(manga, manga.CoverArt().FirstOrDefault()?.Attributes?.FileName));
         }
-
+        
         return allMangas;
     }
 
@@ -68,15 +68,15 @@ public class MangaService : IMangaService
 
     private Manga Convert(MangaDexSharp.Manga mangaToConvert, string? coverFileName) => new Manga {
             Id = mangaToConvert.Id,
-            Title = mangaToConvert.Attributes?.Title["English"],
-            Description = mangaToConvert.Attributes?.Description["English"],
+            Title = mangaToConvert.Attributes?.Title.FirstOrDefault().Value,
+            Description = mangaToConvert.Attributes?.Description.FirstOrDefault().Value,
             IsLocked = mangaToConvert.Attributes?.IsLocked ?? false,
-            Links = mangaToConvert.Attributes?.Links["English"],
+            Links = mangaToConvert.Attributes?.Links.FirstOrDefault().Value,
             OriginalLanguage = mangaToConvert.Attributes?.OriginalLanguage,
             LastVolume = mangaToConvert.Attributes?.LastVolume,
             LastChapter = mangaToConvert.Attributes?.LastChapter,
             Year = mangaToConvert.Attributes?.Year,
-            Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name["English"]),
+            Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value),
             State = mangaToConvert.Attributes?.State,
             CreatedAt = mangaToConvert.Attributes?.CreatedAt,
             UpdatedAt = mangaToConvert.Attributes?.UpdatedAt,

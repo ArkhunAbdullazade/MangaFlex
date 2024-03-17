@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using MangaFlex.Core.Data.Users.Models;
 
-namespace MangaFlex.Core.Data.Users.Command;
+namespace MangaFlex.Core.Data.Users.Commands;
 
 public class SignInCommand : IRequest
 {

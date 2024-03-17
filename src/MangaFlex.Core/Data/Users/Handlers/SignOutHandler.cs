@@ -1,10 +1,10 @@
-﻿namespace MangaFlex.Core.Data.Users.Handler;
+﻿namespace MangaFlex.Core.Data.Users.Handlers;
 
-using MediatR;
-using MangaFlex.Core.Data.Users.Command;
-using System.Threading.Tasks;
-using System.Threading;
+using MangaFlex.Core.Data.Users.Commands;
 using MangaFlex.Core.Data.Users.Services;
+using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 
 internal class SignOutHandler : IRequestHandler<SignOutCommand>
 {

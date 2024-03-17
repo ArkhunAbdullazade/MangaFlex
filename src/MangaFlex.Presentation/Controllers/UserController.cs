@@ -5,7 +5,7 @@ using MangaFlex.Presentation.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using MangaFlex.Core.Data.Users.Command;
+using MangaFlex.Core.Data.Users.Commands;
 
 [Authorize]
 public class UserController : Controller
@@ -19,10 +19,8 @@ public class UserController : Controller
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Login()
-    {
-        return View();
-    }
+    public IActionResult Login() => View();
+    
     [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromForm]LoginDto dto)
@@ -34,11 +32,7 @@ public class UserController : Controller
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Registration()
-    {
-        return View();
-    }
-
+    public IActionResult Registration() => View();
 
     [HttpPost]
     [AllowAnonymous]
