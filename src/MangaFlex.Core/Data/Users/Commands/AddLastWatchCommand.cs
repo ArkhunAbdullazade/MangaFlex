@@ -9,10 +9,10 @@ namespace MangaFlex.Core.Data.Users.Commands;
 
 public class AddLastWatchCommand : IRequest
 {
-    public string UserId { get; set; }
-    public string MangaId { get; set; }
+    public string? UserId { get; set; }
+    public string? MangaId { get; set; }
 
-    public AddLastWatchCommand(string userId, string mangaId)
+    public AddLastWatchCommand(string? userId, string? mangaId)
     {
         UserId = userId;
         MangaId = mangaId;

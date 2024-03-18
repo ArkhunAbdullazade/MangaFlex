@@ -5,6 +5,6 @@ using MangaFlex.Core.Data.Users.Models;
 
 public class GetUserProfileViewModel
 {
-    public User User { get; set; }
-    public IEnumerable<Manga> Mangas {  get; set; }    
+    public User? User { get; set; }
+    public IEnumerable<Manga>? LastWatched {  get; set; }    
 }

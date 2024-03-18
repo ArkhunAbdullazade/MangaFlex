@@ -21,7 +21,7 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
-        var command = new GetUserProfileCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var command = new GetUserProfileCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
         var result = await sender.Send(command);
         return View(result);
     }
@@ -42,12 +42,7 @@ public class UserController : Controller
             await sender.Send(command);
             return RedirectToAction("Index", "Home");
         }
-        catch (ArgumentException ex)
-        {
-            ModelState.AddModelError(ex.Source, ex.Message);
-            return View("Login");
-        }
-        catch (NullReferenceException ex)
+        catch (Exception ex)
         {
             ModelState.AddModelError(ex.Source!, ex.Message);
             return View("Login");

@@ -10,9 +10,9 @@ namespace MangaFlex.Core.Data.Users.Commands;
 
 public class GetUserProfileCommand : IRequest<GetUserProfileViewModel>
 {
-    public string UserId { get; set; }
+    public string? UserId { get; set; }
 
-    public GetUserProfileCommand(string userId)
+    public GetUserProfileCommand(string? userId)
     {
         UserId = userId;
     }

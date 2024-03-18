@@ -14,19 +14,20 @@ public class MangaService : IMangaService
         apiClient = MangaDex.Create();
     }
 
-    public async Task<IEnumerable<Manga>> FindMangasAsync(string? query = null)
+    public async Task<IList<Manga>> FindMangasAsync(string? query = null)
     {
         var mangaFilter = new MangaFilter
         {
             Title = query ?? string.Empty,
             Limit = 20,
             Offset = 0,
+            ContentRating = new[] { ContentRating.safe },
+            // ExcludedTags = new[] { "harem", "Ecchi", "Gyaru", "Genderswap", "Incest", "Reverse Harem", "Erotica", "Sexual Violence", "Loli", "Suggestive", "Pornographic" },
             // ExcludedTagsMode = Mode.or,
         };
-        string[] tags = new[] { "Harem", "Ecchi", "Gyaru", "Genderswap", "Incest", "Reverse Harem", "Erotica", "Sexual Violence", "Loli", "Suggestive", "Pornographic" };
-        foreach (var tag in tags) { mangaFilter.ExcludedTags.Append(tag); }
 
         mangaFilter.Order[MangaFilter.OrderKey.rating] = OrderValue.desc;
+
         MangaList mangaList = await this.apiClient.Manga.List(mangaFilter);
         if (mangaList.ErrorOccurred)
         {
@@ -40,10 +41,10 @@ public class MangaService : IMangaService
             throw new AggregateException(exceptions);
         }
 
-        var allMangas = Enumerable.Empty<Manga>();
+        var allMangas = new List<Manga>();
         foreach (var manga in mangaList.Data)
         {
-            allMangas = allMangas.Append(this.Convert(manga, manga.CoverArt().FirstOrDefault()?.Attributes?.FileName));
+            allMangas.Add(this.Convert(manga, manga.CoverArt().FirstOrDefault()?.Attributes?.FileName));
         }
 
         return allMangas;
@@ -67,12 +68,20 @@ public class MangaService : IMangaService
         var coverFileName = result.Data.CoverArt().FirstOrDefault()?.Attributes?.FileName;
         return this.Convert(result.Data, coverFileName);
     }
-    public async Task<List<MangaPageViewModel>> ReadAsync(string mangaId, string chapterNumber = "1")
+    public async Task<IList<MangaPageViewModel>> ReadAsync(string mangaId, string chapterNumber = "1")
     {
         var mangaPages = new List<MangaPageViewModel>();
 
+        var mangaFeedFilter = new MangaFeedFilter {
+            Order = new()
+			{
+				[MangaFeedFilter.OrderKey.volume] = OrderValue.asc,
+				[MangaFeedFilter.OrderKey.chapter] = OrderValue.asc,
+			},
+        };
+        mangaFeedFilter.TranslatedLanguage = new[] { "en" };
         // Fetch manga chapters
-        var chapters = await apiClient.Manga.Feed(mangaId);
+        var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
 
         // Fetch pages for the specified chapter
         var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?.FirstOrDefault()?.Id!);

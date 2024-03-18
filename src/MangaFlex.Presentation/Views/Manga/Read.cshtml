@@ -1,7 +1,19 @@
 @using MangaFlex.Core.Data.Mangas.Services;
 @model List<MangaPageViewModel>
 
-@foreach (var slide in Model)
-{
-    <img src="@slide.ImageUrl" alt="Manga Page">
-}
+<style>
+    img {
+        width: 750px;
+    }
+</style>
+
+<div class="container justify-content-center">
+    <div class="col-md-8">   
+        <div class="col-md-4 align-items-center justify-content-center">
+            @foreach (var slide in Model)
+            {
+                <img src="@slide.ImageUrl" alt="Manga Page">
+            }
+        </div>
+    </div>
+</div>

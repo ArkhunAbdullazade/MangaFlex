@@ -83,7 +83,7 @@
             {
                 <div>
                     <div class="img-div">
-                        <a asp-action="About" asp-controller="Manga" asp-route-id="@manga.Id"><img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")" alt="manga poster" /></a>
+                        <a asp-action="About" asp-controller="Manga" asp-route-id="@manga.Id"><img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")" alt="manga cover" /></a>
                     </div>
                     <div>
                         <span class="title"><b>@(manga.Title ?? "Unknown")</b></span>

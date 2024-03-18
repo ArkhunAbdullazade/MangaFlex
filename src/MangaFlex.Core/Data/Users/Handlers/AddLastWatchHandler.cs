@@ -19,6 +19,6 @@ public class AddLastWatchHandler : IRequestHandler<AddLastWatchCommand>
 
     public async Task Handle(AddLastWatchCommand request, CancellationToken cancellationToken)
     {
-        await userService.AddLastWatchAsync(request.MangaId, request.UserId);
+        await userService.AddLastWatchAsync(request.MangaId!, request.UserId!);
     }
 }

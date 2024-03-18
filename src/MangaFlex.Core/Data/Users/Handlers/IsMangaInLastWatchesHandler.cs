@@ -19,7 +19,7 @@ public class IsMangaInLastWatchesHandler : IRequestHandler<IsMangaInLastWatchesC
 
     public async Task<bool> Handle(IsMangaInLastWatchesCommand request, CancellationToken cancellationToken)
     {
-        var result = await userService.IsMangaInLastWatchAsync(request.UserId, request.MangaId);
+        var result = await userService.IsMangaInLastWatchAsync(request.UserId!, request.MangaId!);
         return result;
     }
 }

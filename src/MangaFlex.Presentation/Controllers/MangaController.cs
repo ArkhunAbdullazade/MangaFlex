@@ -23,10 +23,9 @@ namespace MangaFlex.Presentation.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        [Route("/mangas")]
+        [Route("/Mangas")]
         public async Task<IActionResult> Mangas()
         {
-            //await mangaService.ReadAsync("fc0a7b86-992e-4126-b30f-ca04811979bf");
             IEnumerable<Manga> mangas = Enumerable.Empty<Manga>();
 
             try
@@ -38,6 +37,7 @@ namespace MangaFlex.Presentation.Controllers
             {
                 foreach (ArgumentException error in ex.Flatten().InnerExceptions)
                 {
+                    System.Console.WriteLine(error.Message);
                     base.ModelState.AddModelError(error.ParamName!, error.Message);
                 }
                 return BadRequest("While searching for this request an error happened");
@@ -47,12 +47,12 @@ namespace MangaFlex.Presentation.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize]
         public async Task<IActionResult> About(string id)
         {
             try
             {
-                var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
                 var manga = await mangaService.GetByIdAsync(id);
                 var IsInLastWatch = new IsMangaInLastWatchesCommand(userid, id);
                 var result = await sender.Send(IsInLastWatch);

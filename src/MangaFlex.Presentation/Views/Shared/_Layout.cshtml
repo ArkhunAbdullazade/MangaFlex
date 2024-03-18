@@ -19,7 +19,7 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    @if (User.Identity.IsAuthenticated == false)
+                    @if (User?.Identity?.IsAuthenticated == false)
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Registration">Registration</a>
@@ -31,11 +31,11 @@
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Mangas" >Mangas</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Manga" asp-action="Mangas">Mangas</a>
                         </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-black" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    @User.Identity.Name
+                                    @User?.Identity?.Name
                                 </a>
                                 <ul class="dropdown-menu bg-dark">
                                     <li class="dropdown-item">

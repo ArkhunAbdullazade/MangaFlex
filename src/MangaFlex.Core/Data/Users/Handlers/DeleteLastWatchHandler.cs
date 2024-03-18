@@ -20,6 +20,6 @@ public class DeleteLastWatchHandler : IRequestHandler<DeleteLastWatchCommand>
 
     public async Task Handle(DeleteLastWatchCommand request, CancellationToken cancellationToken)
     {
-        await userService.DeleteLastWatchAsync(request.UserId, request.MangaId);
+        await userService.DeleteLastWatchAsync(request.UserId!, request.MangaId!);
     }
 }

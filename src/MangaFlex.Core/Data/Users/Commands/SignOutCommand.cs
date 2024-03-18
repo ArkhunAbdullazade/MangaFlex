@@ -2,7 +2,4 @@
 
 namespace MangaFlex.Core.Data.Users.Commands;
 
-public class SignOutCommand : IRequest
-{
-
-}
+public class SignOutCommand : IRequest {}

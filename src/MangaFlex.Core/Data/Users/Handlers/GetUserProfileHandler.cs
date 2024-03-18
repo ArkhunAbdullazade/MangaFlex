@@ -24,19 +24,19 @@ internal class GetUserProfileHandler : IRequestHandler<GetUserProfileCommand, Ge
     }
     public async Task<GetUserProfileViewModel> Handle(GetUserProfileCommand request, CancellationToken cancellationToken)
     {
-        var user = await userService.GetByIdAsync(request.UserId);
-        var lastwatcher = await userService.GetLastWatchAsync(request.UserId);
-        var mangas = new List<Manga>();
+        var user = await userService.GetByIdAsync(request.UserId!);
+        var lastwatched = await userService.GetLastWatchAsync(request.UserId!);
+        var lastWatched = new List<Manga>();
 
-        foreach(var item in lastwatcher)
+        foreach(var manga in lastwatched)
         {
-            mangas.Add(await mangaService.GetByIdAsync(item.MangaId));
+            lastWatched.Add(await mangaService.GetByIdAsync(manga.MangaId!));
         }
 
         return new GetUserProfileViewModel()
         {
             User = user,
-            Mangas = mangas,
+            LastWatched = lastWatched,
         };
     }
 }
