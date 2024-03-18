@@ -22,8 +22,9 @@ public class MangaService : IMangaService
             Limit = 20,
             Offset = 0,
             ContentRating = new[] { ContentRating.safe },
+            // AvailableTranslatedLanguage = new[] { "en" },
+            // HasAvailableChapters = true
             // ExcludedTags = new[] { "harem", "Ecchi", "Gyaru", "Genderswap", "Incest", "Reverse Harem", "Erotica", "Sexual Violence", "Loli", "Suggestive", "Pornographic" },
-            // ExcludedTagsMode = Mode.or,
         };
 
         mangaFilter.Order[MangaFilter.OrderKey.rating] = OrderValue.desc;
@@ -72,30 +73,84 @@ public class MangaService : IMangaService
     {
         var mangaPages = new List<MangaPageViewModel>();
 
-        var mangaFeedFilter = new MangaFeedFilter {
+        var mangaFeedFilter = new MangaFeedFilter
+        {
             Order = new()
-			{
-				[MangaFeedFilter.OrderKey.volume] = OrderValue.asc,
-				[MangaFeedFilter.OrderKey.chapter] = OrderValue.asc,
-			},
+            {
+                [MangaFeedFilter.OrderKey.volume] = OrderValue.asc,
+                [MangaFeedFilter.OrderKey.chapter] = OrderValue.asc,
+            },
         };
         mangaFeedFilter.TranslatedLanguage = new[] { "en" };
         // Fetch manga chapters
         var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
+        if (chapters.Data.Count <= 0)
+        {
+            Console.WriteLine("Chapters in English not found");
+            Console.WriteLine(mangaPages.Count);
+        }
 
         // Fetch pages for the specified chapter
         var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?.FirstOrDefault()?.Id!);
+        if (pages == null || pages.Chapter == null || pages.Chapter.Data == null || pages.Chapter.Data.Length == 0)
+        {
+            Console.WriteLine($"No images found for chapter");
+        }
 
-        // Construct view models for manga pages
+        var imageUrlBase = $"{pages.BaseUrl}/data/{pages.Chapter.Hash}/";
         foreach (var chapterFileName in pages.Chapter.Data)
         {
-            var imageUrl = $"{pages.BaseUrl}/data/{pages.Chapter.Hash}/{chapterFileName}";
+            var imageUrl = $"{imageUrlBase}{chapterFileName}";
             mangaPages.Add(new MangaPageViewModel { ImageUrl = imageUrl });
         }
 
         return mangaPages;
     }
 
+//   public async Task<IList<MangaPageViewModel>> ReadAsync(string mangaId, string chapterNumber = "1")
+//     {
+//         var mangaPages = new List<MangaPageViewModel>();
+
+//         var mangaFeedFilter = new MangaFeedFilter
+//         {
+//             Order = new()
+//             {
+//                 [MangaFeedFilter.OrderKey.volume] = OrderValue.asc,
+//                 [MangaFeedFilter.OrderKey.chapter] = OrderValue.asc,
+//             },
+//         };
+//         mangaFeedFilter.TranslatedLanguage = new[] { "en" };
+
+//         // Fetch manga chapters
+//         var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
+//         if (chapters.Data.Count <= 0)
+//         {
+//             Console.WriteLine("Chapters in English not found");
+//             Console.WriteLine(mangaPages.Count);
+//             return mangaPages; // Возможно, вам нужно вернуть пустой список, если нет глав для указанного манги
+//         }
+
+//         // Fetch pages for the specified chapter
+//         var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?.FirstOrDefault()?.Id!);
+//         if (pages == null || pages.Chapter == null || pages.Chapter.Data == null || pages.Chapter.Data.Length == 0)
+//         {
+//             Console.WriteLine($"No images found for chapter");
+//             return mangaPages; // Вернуть пустой список, если нет изображений для главы
+//         }
+
+//         var imageUrlBase = $"{pages.BaseUrl}/data/{pages.Chapter.Hash}/";
+//         for (int i = 0; i < pages.Chapter.Data.Length; i++)
+//         {
+//             var chapterFileName = pages.Chapter.Data[i];
+//             var imageUrl = $"{imageUrlBase}{chapterFileName}";
+//             var pageNumber = i + 1; // Номер страницы начинается с 1
+//             var chapterTitle = chapters.Data.FirstOrDefault()?.Attributes?.Title ?? "Chapter 1"; // Название главы
+//             mangaPages.Add(new MangaPageViewModel(imageUrl, pageNumber, chapterTitle, mangaId));
+//         }
+
+
+//         return mangaPages;
+//     }
     private Manga Convert(MangaDexSharp.Manga mangaToConvert, string? coverFileName) => new Manga
     {
         Id = mangaToConvert.Id,

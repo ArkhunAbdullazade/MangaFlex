@@ -7,8 +7,3 @@ public interface IMangaService
     public Task<Manga> GetByIdAsync(string id);
     public Task<IList<MangaPageViewModel>> ReadAsync(string mangaId, string chapterNumber = "1");
 }
-
-public class MangaPageViewModel
-{
-    public string? ImageUrl { get; set; }
-}
