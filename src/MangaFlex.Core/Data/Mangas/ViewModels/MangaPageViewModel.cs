@@ -1,4 +1,4 @@
-namespace MangaFlex.Core.Data.Mangas.Models
+namespace MangaFlex.Core.Data.Mangas.ViewModels
 {
     public class MangaPageViewModel
     {

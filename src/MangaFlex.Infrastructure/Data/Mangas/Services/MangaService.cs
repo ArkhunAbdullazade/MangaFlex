@@ -4,6 +4,7 @@ using MangaFlex.Core.Data.Mangas.Services;
 namespace MangaFlex.Infrastructure.Data.Mangas.Services;
 
 using MangaFlex.Core.Data.Mangas.Models;
+using MangaFlex.Core.Data.Mangas.ViewModels;
 
 public class MangaService : IMangaService
 {
@@ -14,7 +15,7 @@ public class MangaService : IMangaService
         apiClient = MangaDex.Create();
     }
 
-    public async Task<IList<Manga>> FindMangasAsync(string? query = null, int page = 1)
+    public async Task<MangasViewModel> FindMangasAsync(string? query = null, int page = 1)
     {
         var mangaFilter = new MangaFilter
         {
@@ -29,6 +30,7 @@ public class MangaService : IMangaService
         mangaFilter.Order[MangaFilter.OrderKey.rating] = OrderValue.desc;
 
         MangaList mangaList = await this.apiClient.Manga.List(mangaFilter);
+        
         if (mangaList.ErrorOccurred)
         {
             var exceptions = new List<Exception>();
@@ -47,7 +49,14 @@ public class MangaService : IMangaService
             allMangas.Add(this.Convert(manga, manga.CoverArt().FirstOrDefault()?.Attributes?.FileName));
         }
 
-        return allMangas;
+        var mangasViewModel = new MangasViewModel {
+            Mangas = allMangas,
+            Page = page,
+            TotalPages = mangaList.Total / 20,
+            Search = query,
+        };
+
+        return mangasViewModel;
     }
 
     public async Task<Manga> GetByIdAsync(string id)
@@ -103,7 +112,6 @@ public class MangaService : IMangaService
         Title = mangaToConvert.Attributes?.Title.FirstOrDefault().Value,
         Description = mangaToConvert.Attributes?.Description.FirstOrDefault().Value,
         IsLocked = mangaToConvert.Attributes?.IsLocked ?? false,
-        Links = mangaToConvert.Attributes?.Links.FirstOrDefault().Value,
         OriginalLanguage = mangaToConvert.Attributes?.OriginalLanguage,
         LastVolume = mangaToConvert.Attributes?.LastVolume,
         LastChapter = mangaToConvert.Attributes?.LastChapter,

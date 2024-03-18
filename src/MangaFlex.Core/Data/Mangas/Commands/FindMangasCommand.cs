@@ -1,9 +1,9 @@
 ﻿namespace MangaFlex.Core.Data.Users.Commands;
 
-using MangaFlex.Core.Data.Mangas.Models;
+using MangaFlex.Core.Data.Mangas.ViewModels;
 using MediatR;
 
-public class FindMangasCommand : IRequest<IEnumerable<Manga>>
+public class FindMangasCommand : IRequest<MangasViewModel>
 {
     public string? Query { get; set; }
     public int Page { get; set; }

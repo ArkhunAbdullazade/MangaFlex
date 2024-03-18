@@ -1,5 +1,6 @@
 using MangaFlex.Core.Data.Mangas.Models;
 using MangaFlex.Core.Data.Mangas.Services;
+using MangaFlex.Core.Data.Mangas.ViewModels;
 using MangaFlex.Core.Data.Users.Commands;
 using MangaFlex.Core.Data.Users.Services;
 using MediatR;
@@ -26,12 +27,12 @@ namespace MangaFlex.Presentation.Controllers
         [Route("/Mangas")]
         public async Task<IActionResult> Mangas(int page = 1, string? search = null)
         {
-            IEnumerable<Manga> mangas = Enumerable.Empty<Manga>();
+            MangasViewModel mangasViewModel = new();
 
             try
             {
                 var command = new FindMangasCommand(search!, page);
-                mangas = await sender.Send(command);
+                mangasViewModel = await sender.Send(command);
             }
             catch (AggregateException ex)
             {
@@ -43,7 +44,7 @@ namespace MangaFlex.Presentation.Controllers
                 return BadRequest("While searching for this request an error happened");
             }
 
-            return View(model: mangas);
+            return View(model: mangasViewModel);
         }
 
         [HttpGet]

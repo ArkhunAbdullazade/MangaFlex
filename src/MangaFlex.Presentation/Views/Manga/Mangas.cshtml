@@ -1,10 +1,9 @@
 ﻿@using MangaFlex.Core.Data.Mangas.Models;
-@model IEnumerable<Manga>;
+@using MangaFlex.Core.Data.Mangas.ViewModels;
+@model MangasViewModel;
 
 @{
     ViewData["Title"] = "Mangas";
-
-    IEnumerable<Manga> mangas = Model ?? Enumerable.Empty<Manga>();
 }
 
 <div class="text-center">
@@ -61,25 +60,14 @@
         text-align: center;
     }
 
-    .pagination .page-link,
-    .pagination.disabled .page-link {
-        background: #212529 !important;
-        border-color: dimgray !important;
-        color: white;
-    }
-
-    .active .page-link {
-        background: #ffc107 !important;
-    }
-
 </style>
 
 <h1>@ViewData["Title"]</h1>
 
-@if (mangas.Any<Manga>()) {
+@if (Model.Mangas is not null && Model.Mangas.Any<Manga>()) {
     <div class="page">
         <div class="list">
-            @foreach (var manga in mangas)
+            @foreach (var manga in Model.Mangas)
             {
                 <div>
                     <div class="img-div">
@@ -91,7 +79,7 @@
                 </div>
             }
         </div>
-        @* <nav>
+        <nav>
             <ul class="pagination justify-content-center mt-2">
                 <li class="page-item @(Model.Page == 1 ? "disabled" : "")">
                 <a class="page-link" href="?page=@(Model.Page-1)&search=@Model.Search" tabindex="-1">&laquo;</a>
@@ -99,6 +87,7 @@
                 @for (int i = (Model.Page < 3  ? 1 : (Model.Page <= Model.TotalPages - 3 ? Model.Page - 2 : Model.TotalPages - 4)); 
                         i <= (Model.Page < 4 ? (Model.TotalPages <= 5 ? Model.TotalPages : 5) : (Model.Page <= Model.TotalPages - 3  ? Model.Page + 2 : Model.TotalPages)); i++)  
                 {
+                    
                     <li class="page-item @(i == Model.Page ? " active" : "")">  
                         <a class="page-link" href="?page=@i&search=@Model.Search">@i</a>
                     </li>   
@@ -107,7 +96,7 @@
                 <a class="page-link" href="?page=@(Model.Page+1)&search=@Model.Search">&raquo;</a>
                 </li>
             </ul>
-        </nav> *@
+        </nav>
     </div>
 }
 else {

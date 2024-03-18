@@ -37,24 +37,24 @@
                                 <a class="nav-link dropdown-toggle text-black" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     @User?.Identity?.Name
                                 </a>
-                                <ul class="dropdown-menu bg-dark">
-                                    <li class="dropdown-item">
-                                        <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Profile">Profile</a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="Profile">Profile</a>
                                     </li>
-                                    <li class="dropdown-item">
-                                        <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="Settings">Settings</a>
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="Settings">Settings</a>
                                     </li>
-                                    <li class="dropdown-item">
-                                        <a class="nav-link text-white" asp-area="" asp-controller="User" asp-action="LogOut">Log out</a>
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="LogOut">Log out</a>
                                     </li>
                                 </ul>
                             </li>
                     }
                     </ul>
-                    <form class="form-inline my-2 my-lg-0" method="get" asp-controller="Movie" asp-action="Movies">
+                    <form class="form-inline my-2 my-lg-0" method="get" asp-controller="Manga" asp-action="Mangas">
                         <div class="input-group"> 
                             <input class="form-control mr-sm-2" name="search" type="text" aria-label="Search">
-                            <button class="btn btn-outline-submit my-2 my-sm-0" type="submit">Search</button>
+                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
                         </div>
                     </form>
                 </div>

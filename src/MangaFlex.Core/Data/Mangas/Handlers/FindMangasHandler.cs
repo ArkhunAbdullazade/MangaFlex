@@ -1,11 +1,10 @@
 ﻿using MediatR;
-using MangaFlex.Core.Data.Users.Models;
 using MangaFlex.Core.Data.Mangas.Services;
-using MangaFlex.Core.Data.Mangas.Models;
+using MangaFlex.Core.Data.Mangas.ViewModels;
 
 namespace MangaFlex.Core.Data.Users.Commands;
 
-public class FindMangasHandler : IRequestHandler<FindMangasCommand, IEnumerable<Manga>>
+public class FindMangasHandler : IRequestHandler<FindMangasCommand, MangasViewModel>
 {
     private readonly IMangaService mangaService;
 
@@ -13,7 +12,7 @@ public class FindMangasHandler : IRequestHandler<FindMangasCommand, IEnumerable<
     {
         this.mangaService = mangaService;
     }
-    public async Task<IEnumerable<Manga>> Handle(FindMangasCommand request, CancellationToken cancellationToken)
+    public async Task<MangasViewModel> Handle(FindMangasCommand request, CancellationToken cancellationToken)
     {
         return await this.mangaService.FindMangasAsync(request.Query, request.Page);
     }
