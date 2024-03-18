@@ -51,6 +51,12 @@
                             </li>
                     }
                     </ul>
+                    <form class="form-inline my-2 my-lg-0" method="get" asp-controller="Movie" asp-action="Movies">
+                        <div class="input-group"> 
+                            <input class="form-control mr-sm-2" name="search" type="text" aria-label="Search">
+                            <button class="btn btn-outline-submit my-2 my-sm-0" type="submit">Search</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </nav>
@@ -63,7 +69,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2024 - MangaFlex.Presentation - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2024 - MangaFlex
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

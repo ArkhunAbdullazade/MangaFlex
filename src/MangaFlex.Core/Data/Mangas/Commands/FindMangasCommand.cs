@@ -6,10 +6,12 @@ using MediatR;
 public class FindMangasCommand : IRequest<IEnumerable<Manga>>
 {
     public string? Query { get; set; }
+    public int Page { get; set; }
 
-    public FindMangasCommand(string query)
+    public FindMangasCommand(string query, int page)
     {
         Query = query;
+        Page = page;
     }
 
     public FindMangasCommand() { }

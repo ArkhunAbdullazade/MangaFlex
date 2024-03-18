@@ -15,6 +15,6 @@ public class FindMangasHandler : IRequestHandler<FindMangasCommand, IEnumerable<
     }
     public async Task<IEnumerable<Manga>> Handle(FindMangasCommand request, CancellationToken cancellationToken)
     {
-        return await this.mangaService.FindMangasAsync(request.Query);
+        return await this.mangaService.FindMangasAsync(request.Query, request.Page);
     }
 }

@@ -24,13 +24,13 @@ namespace MangaFlex.Presentation.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("/Mangas")]
-        public async Task<IActionResult> Mangas()
+        public async Task<IActionResult> Mangas(int page = 1, string? search = null)
         {
             IEnumerable<Manga> mangas = Enumerable.Empty<Manga>();
 
             try
             {
-                var command = new FindMangasCommand(null!);
+                var command = new FindMangasCommand(search!, page);
                 mangas = await sender.Send(command);
             }
             catch (AggregateException ex)
