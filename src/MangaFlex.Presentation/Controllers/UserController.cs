@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using MangaFlex.Core.Data.Users.Commands;
+using System.Security.Claims;
 
 [Authorize]
 public class UserController : Controller
@@ -16,6 +17,16 @@ public class UserController : Controller
     {
         this.sender = sender;
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Profile()
+    {
+        var command = new GetUserProfileCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        var result = await sender.Send(command);
+        return View(result);
+    }
+
+
 
     [HttpGet]
     [AllowAnonymous]

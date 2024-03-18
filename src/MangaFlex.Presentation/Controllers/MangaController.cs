@@ -1,9 +1,11 @@
 using MangaFlex.Core.Data.Mangas.Models;
 using MangaFlex.Core.Data.Mangas.Services;
 using MangaFlex.Core.Data.Users.Commands;
+using MangaFlex.Core.Data.Users.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MangaFlex.Presentation.Controllers
 {
@@ -50,7 +52,22 @@ namespace MangaFlex.Presentation.Controllers
         {
             try
             {
+                var userid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var manga = await mangaService.GetByIdAsync(id);
+                var IsInLastWatch = new IsMangaInLastWatchesCommand(userid, id);
+                var result = await sender.Send(IsInLastWatch);
+                if (result == false)
+                {
+                    var command = new AddLastWatchCommand(userid, id);
+                    await sender.Send(command);
+                }
+                else
+                {
+                    var DeleteCommand = new DeleteLastWatchCommand(userid, id);
+                    await sender.Send(DeleteCommand);
+                    var command = new AddLastWatchCommand(userid, id);
+                    await sender.Send(command);
+                }
                 return View(manga);
             }
             catch (Exception ex)

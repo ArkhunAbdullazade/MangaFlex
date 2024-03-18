@@ -3,18 +3,59 @@
 using MangaFlex.Core.Data.Users.Services;
 using Microsoft.AspNetCore.Identity;
 using MangaFlex.Core.Data.Users.Models;
+using MangaFlex.Infrastructure.Data.DBContext;
+using Microsoft.EntityFrameworkCore;
 
 public class UserService : IUserService
 {
     private readonly UserManager<User> userManager;
     private readonly SignInManager<User> signInManager;
     private readonly RoleManager<IdentityRole> roleManager;
-    public UserService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager)
+    private readonly MangaFlexDbContext dbContext;
+    public UserService(UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<IdentityRole> roleManager,MangaFlexDbContext dbcotext)
     {
         this.userManager = userManager;
         this.signInManager = signInManager;
         this.roleManager = roleManager;
+        this.dbContext = dbcotext;
     }
+
+
+    public async Task AddLastWatchAsync(string mangaid,string userid)
+    {
+        await dbContext.UserLastWatch.AddAsync(new LastWatch()
+        {
+            UserId = userid,
+            MangaId = mangaid,
+        });
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteLastWatchAsync(string userid, string mangaid)
+    {
+        var todelete = await dbContext.UserLastWatch.FirstOrDefaultAsync(x => x.UserId == userid && x.MangaId == mangaid);
+        dbContext.Remove(todelete);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<User> GetByIdAsync(string id)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+        return user;
+    }
+
+    public async Task<IEnumerable<LastWatch>> GetLastWatchAsync(string userId)
+    {
+        var result = await dbContext.UserLastWatch.Where(x => x.UserId == userId).ToArrayAsync();
+        return result;
+    }
+
+    public async Task<bool> IsMangaInLastWatchAsync(string userid, string mangaid)
+    {
+        var result = await dbContext.UserLastWatch.AnyAsync(x => x.UserId == userid && mangaid == x.MangaId);
+        return result;
+    }
+
     public async Task LoginAsync(string userName, string password)
     {
         var user = await userManager.FindByNameAsync(userName);

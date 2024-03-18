@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Models;
 
-public class UserLastWatch
+public class LastWatch
 {
     public int Id { get; set; } 
     public string UserId {  get; set; }
