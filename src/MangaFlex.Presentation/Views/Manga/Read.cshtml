@@ -1,0 +1,31 @@
+@using MangaFlex.Core.Data.Mangas.ViewModels;
+@model List<MangaPageViewModel>
+
+<style>
+    img {
+        width: 750px;
+        display: block;
+       margin-left: 10%;
+    }
+    .noData{
+        color: red;
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+    }
+</style>
+@if(@Model.Count <= 0){
+    <p class="noData">No chapters in english yet!</p>
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">   
+                <div class="col-md-4 align-items-center justify-content-center">
+                    @foreach (var slide in Model)
+                    {
+                        <img src="@slide.ImageUrl" alt="Manga Page">
+                    }
+                </div>
+            </div>
+    </div>
+</div>

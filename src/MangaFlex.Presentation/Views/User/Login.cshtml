@@ -1,0 +1,33 @@
+﻿@model LoginDto
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 bg-opacity-75">
+        <h5 class="text-center">@ViewData["Title"]</h5>
+
+        <form asp-action="Login" method="post" class="p-3 border rounded">
+            <div asp-validation-summary="All"></div>
+
+            <div class="mb-3">
+                <label asp-for="Login" class="form-label">Username</label>
+                <input class="form-control" asp-for="Login" type="text">
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Password</label>
+                <input class="form-control" asp-for="Password" type="password">
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button class="btn btn-success" type="submit">Login</button>
+        </form>
+    </div>
+</div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial">
+}
