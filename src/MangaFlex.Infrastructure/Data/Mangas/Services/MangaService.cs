@@ -77,9 +77,9 @@ public class MangaService : IMangaService
         var coverFileName = result.Data.CoverArt().FirstOrDefault()?.Attributes?.FileName;
         return this.Convert(result.Data, coverFileName);
     }
-    public async Task<IList<MangaPageViewModel>> ReadAsync(string mangaId, int chapter = 1)
+    public async Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1)
     {
-        var mangaPages = new List<MangaPageViewModel>();
+        var mangaPages = new List<string>();
 
         var mangaFeedFilter = new MangaFeedFilter
         {
@@ -100,10 +100,17 @@ public class MangaService : IMangaService
         foreach (var chapterFileName in pages.Chapter.Data)
         {
             var imageUrl = $"{imageUrlBase}{chapterFileName}";
-            mangaPages.Add(new MangaPageViewModel { ImageUrl = imageUrl });
+            mangaPages.Add(imageUrl);
         }
+        
+        var mangaChapterViewModel = new MangaChapterViewModel {
+            MangaId = mangaId,
+            Pages = mangaPages,
+            Chapter = chapter,
+            TotalChapters = chapters.Total,
+        };
 
-        return mangaPages;
+        return mangaChapterViewModel;
     }
 
     private Manga Convert(MangaDexSharp.Manga mangaToConvert, string? coverFileName) => new Manga

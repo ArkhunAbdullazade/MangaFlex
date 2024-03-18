@@ -80,10 +80,10 @@ namespace MangaFlex.Presentation.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> Read(string id)
+        public async Task<IActionResult> Read(string id, int chapter = 1)
         {
-            var mangaPages = await mangaService.ReadAsync(id);
-            return View(mangaPages);
+            var mangaChapterViewModel = await mangaService.ReadAsync(id, chapter);
+            return View(mangaChapterViewModel);
         }
     }
 }

@@ -6,5 +6,5 @@ public interface IMangaService
 {
     public Task<MangasViewModel> FindMangasAsync(string? query = null, int page = 1);
     public Task<Manga> GetByIdAsync(string id);
-    public Task<IList<MangaPageViewModel>> ReadAsync(string mangaId, int chapter = 1);
+    public Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1);
 }
