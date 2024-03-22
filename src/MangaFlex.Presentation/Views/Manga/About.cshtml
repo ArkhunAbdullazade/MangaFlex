@@ -3,26 +3,43 @@
 @{
     ViewData["Title"] = "About";
 }
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
 
 <style>
     body {
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     }
 
-    h1, h2, h3 {
-        text-align: center;
+    .container {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        flex: 0 0 auto;
+        margin-right: 15px;
     }
 
     img {
+        border: 2px solid #000;
+        box-shadow: #ecc500 4px 4px 0 0, #000 4px 4px 0 1.5px;
+        transform: translate(2px, 2px);
         border-radius: 10px;
         width: 200px;
         height: 300px;
         display: block;
-        margin: auto;
-        margin-bottom: 15px;
     }
 
-    p, strong {
+    h1,
+    h2,
+    h3 {
+        text-align: center;
+    }
+    
+    p,
+    strong {
         text-align: center;
     }
 
@@ -35,7 +52,7 @@
         color: black;
         max-width: 500px;
         margin: 1rem auto;
-        padding:0.2rem 1.25rem; 
+        padding: 0.2rem 1.25rem;
         text-align: center;
         font-family: "Dekko", cursive;
         text-transform: uppercase;
@@ -55,60 +72,192 @@
         content: "!";
     }
 
-   .bubble:before {
+    .bubble:before {
         content: "";
         position: absolute;
-        left: -1rem; 
+        left: -1rem;
         top: 0.15rem;
-        width: calc(100% + 0.2rem); 
-        height: calc(120% + 0.2rem); 
+        width: calc(100% + 0.2rem);
+        height: calc(120% + 0.2rem);
         background: url('data:image/svg+xml;utf8,<svg width="100" height="100" transform="rotate(35)" opacity="1" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="%23250E17"><circle cx="25" cy="25" r="12.5"/><circle cx="75" cy="75" r="12.5"/><circle cx="75" cy="25" r="12.5"/><circle cx="25" cy="75" r="12.5"/></g></svg>'), #000;
         background-size: 12px, 100%;
         border: 0.4rem solid #000;
         z-index: -5;
     }
+
+    .custom-button {
+        background-color: #FFFFFF;
+        border: 1px solid #222222;
+        border-radius: 8px;
+        box-sizing: border-box;
+        color: #222222;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 16px;
+        font-family: 'Lato', sans-serif;
+        font-weight: 600;
+        line-height: 20px;
+        margin: 0;
+        outline: none;
+        padding: 13px 23px;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        touch-action: manipulation;
+        transition: box-shadow .2s, -ms-transform .1s, -webkit-transform .1s, transform .1s;
+        user-select: none;
+        -webkit-user-select: none;
+        width: auto;
+    }
+
+    .custom-button:focus-visible {
+        box-shadow: #222222 0 0 0 2px, rgba(255, 255, 255, 0.8) 0 0 0 4px;
+        transition: box-shadow .2s;
+    }
+
+    .custom-button:active {
+        background-color: #F7F7F7;
+        border-color: #000000;
+        transform: scale(.96);
+    }
+
+    .custom-button:disabled {
+        border-color: #DDDDDD;
+        color: #DDDDDD;
+        cursor: not-allowed;
+        opacity: 1;
+    }
+
+    .readNow {
+        appearance: button;
+        background-color: #000;
+        background-image: none;
+        border: 1px solid #000;
+        border-radius: 4px;
+        box-shadow: #000000 4px 4px 0 0, #ffffff 4px 4px 0 1px;
+        box-sizing: border-box;
+        color: #000000;
+        cursor: pointer;
+        display: inline-block;
+        font-family: ITCAvantGardeStd-Bk, Arial, sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        margin: 0 5px 10px 0;
+        overflow: visible;
+        padding: 12px 40px;
+        text-align: center;
+        text-transform: none;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        vertical-align: middle;
+        white-space: nowrap;
+        text-decoration: none;
+        background-color: #ffcd28;
+        padding: 16px 30px;
+        font-weight: 700;
+    }
+
+    .readNow:focus {
+        text-decoration: none;
+    }
+
+    .readNow:hover {
+        text-decoration: none;
+        color: #000000;
+    }
+
+    .readNow:active {
+        box-shadow: rgba(0, 0, 0, .125) 0 3px 5px inset;
+        outline: 0;
+    }
+
+    .readNow:not([disabled]):active {
+        box-shadow: #000000 2px 2px 0 0, #000 2px 2px 0 1px;
+        transform: translate(2px, 2px);
+    }
+
+    @@media (min-width: 768px) {
+        .readNow {
+            padding: 12px 50px;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .image-container {
+            flex: 0 0 auto;
+            margin-right: 15px;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            flex: 1 1 auto;
+            max-width: 500px;
+        }
+    }
 </style>
 
 
-<h1>@ViewData["Title"]</h1>
-
 <div class="info">
-    @if (!string.IsNullOrEmpty(Model.Cover))
-    {
-        <img src="@Model.Cover" alt="Cover Image"/>
-    }
-    <h2>@Model.Title</h2>
-    @if (!string.IsNullOrEmpty(Model.Description))
-    {
-        <p>@Model.Description</p>
-    }
-    @if (!string.IsNullOrEmpty(Model.OriginalLanguage))
-    {
-        <p><strong>Original Language:</strong> @Model.OriginalLanguage</p>
-    }
-    @if (!string.IsNullOrEmpty(Model.LastVolume))
-    {
-        <p><strong>Last Volume:</strong> @Model.LastVolume</p>
-    }
-    @if (!string.IsNullOrEmpty(Model.LastChapter))
-    {
-        <p><strong>Last Chapter:</strong> @Model.LastChapter</p>
-    }
-    @if (Model.Year.HasValue)
-    {
-        <p><strong>Year:</strong> @Model.Year</p>
-    }
-    @if (!string.IsNullOrEmpty(Model.State))
-    {
-        <p><strong>State:</strong> @Model.State</p>
-    }
-    @if (Model.CreatedAt.HasValue)
-    {
-        <p><strong>Created At:</strong> @Model.CreatedAt</p>
-    }
-    @if (Model.UpdatedAt.HasValue)
-    {
-        <p><strong>Updated At:</strong> @Model.UpdatedAt</p>
-    }
-<a asp-action="Read" asp-controller="Manga" asp-route-id="@Model.Id"  class="bubble bubble--highlight"> Read Now</a>
+    <div class="container">
+        <div class="image-container">
+            @if (!string.IsNullOrEmpty(Model.Cover))
+            {
+                <img src="@Model.Cover" alt="Cover Image" />
+            }
+        </div>
+        <div class="description">
+            <h2>@Model.Title</h2>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p>@Model.Description</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.OriginalLanguage))
+            {
+                <p class="custom-button"><strong>Original Language:</strong> @Model.OriginalLanguage</p>
+            }
+            @if (Model.Year.HasValue)
+            {
+                <p class="custom-button"><strong>Year:</strong> @Model.Year</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.LastVolume))
+            {
+                <p class="custom-button"><strong>Last Volume:</strong> @Model.LastVolume</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.LastChapter))
+            {
+                <p class="custom-button"><strong>Last Chapter:</strong> @Model.LastChapter</p>
+            }
+            @if (!string.IsNullOrEmpty(Model.State))
+            {
+                <p class="custom-button">@Model.State</p>
+            }
+            @if (Model.CreatedAt.HasValue)
+            {
+                <p class="custom-button"><strong>Created At:</strong> @Model.CreatedAt</p>
+            }
+            @if (Model.UpdatedAt.HasValue)
+            {
+                <p class="custom-button"><strong>Updated At:</strong> @Model.UpdatedAt</p>
+            }
+
+            @if (Model.Tags != null && Model.Tags.Any())
+            {
+                <h3>Genres:</h3>
+                <ul>
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <p class="custom-button">@tag</p>
+                    }
+                </ul>
+            }
+            <a class="readNow" role="button" a asp-action="Read" asp-controller="Manga" asp-route-id="@Model.Id">Read
+                now</a>
+        </div>
+    </div>
 </div>
