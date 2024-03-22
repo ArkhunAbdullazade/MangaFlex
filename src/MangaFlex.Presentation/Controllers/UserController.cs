@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using MangaFlex.Core.Data.Users.Commands;
 using System.Security.Claims;
+using System.Drawing;
 
 [Authorize]
 public class UserController : Controller
@@ -26,6 +27,54 @@ public class UserController : Controller
         return View(result);
     }
 
+    [HttpGet]
+    public IActionResult Settings()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ChangeAvatar()
+    {
+        return View();
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> ChangeAvatar(IFormFile avatar)
+    {
+        using (var image = Image.FromStream(avatar.OpenReadStream()))
+        {
+            if (image.Width > 600 || image.Height > 600)
+            {
+                ModelState.AddModelError(string.Empty, "Photo cannot be more than 600 x 600 pixels.");
+                return View("ChangeAvatar");
+            }
+        }
+
+        var userName = User.Identity.Name;
+        var fileName = $"{userName}{Path.GetExtension(avatar.FileName)}";
+
+        var destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+        var destinationPath = Path.Combine(destinationFolder, fileName);
+
+        if (System.IO.File.Exists(destinationPath))
+        {
+            System.IO.File.Delete(destinationPath);
+        }
+
+        Directory.CreateDirectory(destinationFolder);
+
+        using (var stream = new FileStream(destinationPath, FileMode.Create))
+        {
+            await avatar.CopyToAsync(stream);
+        }
+        var relativePath = "/uploads/" + fileName;
+
+        var command = new ChangeAvatarCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, relativePath);
+        await sender.Send(command);
+
+        return RedirectToAction("Profile");
+    }
 
 
     [HttpGet]

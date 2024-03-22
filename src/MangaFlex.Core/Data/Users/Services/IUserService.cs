@@ -12,4 +12,5 @@ public interface IUserService
     public Task LoginAsync(string userName, string password);
     public Task SignupAsync(User user, string password);
     public Task SignOutAsync();
+    public Task UpdateAvatar(string url, string id);
 }

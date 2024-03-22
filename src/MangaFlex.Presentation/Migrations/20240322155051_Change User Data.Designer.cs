@@ -3,6 +3,7 @@ using System;
 using MangaFlex.Infrastructure.Data.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MangaFlex.Presentation.Migrations
 {
     [DbContext(typeof(MangaFlexDbContext))]
-    partial class MangaFlexDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240322155051_Change User Data")]
+    partial class ChangeUserData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,6 +55,9 @@ namespace MangaFlex.Presentation.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("AvatarPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AvatarUrl")
                         .HasColumnType("text");
 
                     b.Property<string>("ConcurrencyStamp")
