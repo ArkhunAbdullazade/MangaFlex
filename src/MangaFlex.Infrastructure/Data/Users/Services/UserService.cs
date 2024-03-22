@@ -20,6 +20,12 @@ public class UserService : IUserService
         this.dbContext = dbcotext;
     }
 
+    public async Task UpdateAvatar(string url, string id)
+    {
+        var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+        user.AvatarPath = url;
+        await dbContext.SaveChangesAsync();
+    }
 
     public async Task AddLastWatchAsync(string mangaid,string userid)
     {

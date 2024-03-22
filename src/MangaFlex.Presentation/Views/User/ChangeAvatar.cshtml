@@ -1,0 +1,169 @@
+﻿@{
+    ViewData["Title"] = "Change Avatar";
+    string Image = string.Empty;
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form class="p-3" id="updateUser" enctype="multipart/form-data">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label for="avatar">Choose avatar image (JPG or PNG):</label>
+                    <input type="file" class="form-control-file" id="avatar" name="avatar" accept=".jpg,.jpeg,.png" required>
+                </div>
+                <span asp-validation-for="@Image" class="text-danger"></span>
+                <canvas id="canvas" style="display: none;"></canvas>
+                <button id="editButton" class="btn btn-secondary" type="button">Edit</button>
+                <button id="submitButton" class="btn btn-primary" style="display: none;" type="button">Submit</button>
+                <button id="cancelButton" class="btn btn-danger" style="display: none;" type="button">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial">
+}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+            var img;
+            var squareX = 0; 
+            var squareY = 0;
+            var squareSize = 600; 
+            var isDragging = false;
+            var offsetX, offsetY;
+
+            $('#editButton').click(function () {
+                var image = document.getElementById('avatar');
+
+                if (image.files && image.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        img = new Image();
+                        img.onload = function () {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+
+                            ctx.drawImage(img, 0, 0);
+                            $('#canvas').show();
+                            $('#avatar').hide();
+                            $('#submitButton').show();
+                            $('#cancelButton').show();
+                            drawSquare(); 
+                            
+                            if (img.width < 600 && img.height < 600) {
+                                submitForm();
+                            }
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(image.files[0]);
+                }
+                return false;
+            });
+
+            $('#submitButton').click(function () {
+                submitForm();
+            });
+
+            $('#cancelButton').click(function () {
+                $('#canvas').hide();
+                $('#avatar').val('');
+                $('#avatar').show();
+                $('#submitButton').hide();
+                $('#cancelButton').hide();
+            });
+
+            canvas.addEventListener('mousedown', function (event) {
+                var mouseX = event.clientX - canvas.getBoundingClientRect().left;
+                var mouseY = event.clientY - canvas.getBoundingClientRect().top;
+
+                if (mouseX >= squareX && mouseX <= squareX + squareSize &&
+                    mouseY >= squareY && mouseY <= squareY + squareSize) {
+                    isDragging = true;
+                    offsetX = mouseX - squareX;
+                    offsetY = mouseY - squareY;
+                }
+            });
+
+            canvas.addEventListener('mousemove', function (event) {
+                if (isDragging) {
+                    var mouseX = event.clientX - canvas.getBoundingClientRect().left;
+                    var mouseY = event.clientY - canvas.getBoundingClientRect().top;
+
+                    squareX = mouseX - offsetX;
+                    squareY = mouseY - offsetY;
+
+                    if (squareX < 0) squareX = 0;
+                    if (squareX + squareSize > canvas.width) squareX = canvas.width - squareSize;
+                    if (squareY < 0) squareY = 0;
+                    if (squareY + squareSize > canvas.height) squareY = canvas.height - squareSize;
+
+                    redrawCanvas();
+                }
+            });
+
+            canvas.addEventListener('mouseup', function (event) {
+                isDragging = false;
+            });
+
+            function drawSquare() {
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(squareX, squareY, squareSize, squareSize);
+            }
+
+            function redrawCanvas() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+                drawSquare();
+            }
+
+            function submitForm() {
+                var scaleX = img.width / canvas.width;
+                var scaleY = img.height / canvas.height;
+                var cropX = squareX * scaleX;
+                var cropY = squareY * scaleY;
+                var cropSize = squareSize * scaleX;
+
+                var tempCanvas = document.createElement('canvas');
+                var tempCtx = tempCanvas.getContext('2d');
+                tempCanvas.width = cropSize;
+                tempCanvas.height = cropSize;
+                tempCtx.drawImage(img, cropX, cropY, cropSize, cropSize, 0, 0, cropSize, cropSize);
+
+                var croppedDataUrl = tempCanvas.toDataURL();
+
+                var croppedBlob = dataURLtoBlob(croppedDataUrl);
+
+                var formData = new FormData();
+                formData.append('avatar', croppedBlob, 'avatar.png');
+
+                $.ajax({
+                    url: '/User/ChangeAvatar',
+                    type: 'PUT',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                });
+            }
+
+            function dataURLtoBlob(dataUrl) {
+                var arr = dataUrl.split(',');
+                var mime = arr[0].match(/:(.*?);/)[1];
+                var bstr = atob(arr[1]);
+                var n = bstr.length;
+                var u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new Blob([u8arr], { type: mime });
+            }
+        });
+    </script>
