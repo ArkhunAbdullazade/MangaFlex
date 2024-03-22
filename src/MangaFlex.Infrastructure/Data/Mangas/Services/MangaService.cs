@@ -30,7 +30,7 @@ public class MangaService : IMangaService
         mangaFilter.Order[MangaFilter.OrderKey.rating] = OrderValue.desc;
 
         MangaList mangaList = await this.apiClient.Manga.List(mangaFilter);
-        
+
         if (mangaList.ErrorOccurred)
         {
             var exceptions = new List<Exception>();
@@ -49,7 +49,8 @@ public class MangaService : IMangaService
             allMangas.Add(this.Convert(manga, manga.CoverArt().FirstOrDefault()?.Attributes?.FileName));
         }
 
-        var mangasViewModel = new MangasViewModel {
+        var mangasViewModel = new MangasViewModel
+        {
             Mangas = allMangas,
             Page = page,
             TotalPages = mangaList.Total / 20,
@@ -92,9 +93,12 @@ public class MangaService : IMangaService
         mangaFeedFilter.TranslatedLanguage = new[] { "en" };
         // Fetch manga chapters
         var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
-
         // Fetch pages for the specified chapter
-        var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?[chapter-1]?.Id!);
+        var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?[chapter - 1]?.Id!);
+        if (pages == null || pages.Chapter == null || pages.Chapter.Data == null || pages.Chapter.Data.Length == 0)
+        {
+            Console.WriteLine($"No images found for chapter");
+        }
 
         var imageUrlBase = $"{pages.BaseUrl}/data/{pages.Chapter.Hash}/";
         foreach (var chapterFileName in pages.Chapter.Data)
@@ -102,8 +106,9 @@ public class MangaService : IMangaService
             var imageUrl = $"{imageUrlBase}{chapterFileName}";
             mangaPages.Add(imageUrl);
         }
-        
-        var mangaChapterViewModel = new MangaChapterViewModel {
+
+        var mangaChapterViewModel = new MangaChapterViewModel
+        {
             MangaId = mangaId,
             Pages = mangaPages,
             Chapter = chapter,
@@ -123,7 +128,7 @@ public class MangaService : IMangaService
         LastVolume = mangaToConvert.Attributes?.LastVolume,
         LastChapter = mangaToConvert.Attributes?.LastChapter,
         Year = mangaToConvert.Attributes?.Year,
-        Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value),
+        Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value).ToList(),
         State = mangaToConvert.Attributes?.State,
         CreatedAt = mangaToConvert.Attributes?.CreatedAt,
         UpdatedAt = mangaToConvert.Attributes?.UpdatedAt,
