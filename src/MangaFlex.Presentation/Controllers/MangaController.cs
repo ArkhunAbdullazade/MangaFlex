@@ -48,6 +48,13 @@ namespace MangaFlex.Presentation.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> AvailableLanguages(string id)
+        {
+            var availableLanguages = await mangaService.GetAvailableLanguages(id);
+            return View(availableLanguages);
+        }
+
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> About(string id)
         {

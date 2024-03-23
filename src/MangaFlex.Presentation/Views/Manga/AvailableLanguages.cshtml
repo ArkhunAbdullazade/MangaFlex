@@ -1,0 +1,9 @@
+@{
+    ViewData["Title"] = "AvailableLanguages";
+      Layout = null;
+}
+<h1>@ViewData["Title"]</h1>
+
+@foreach (string language in Model){
+    <button class="custom-button">@language</button>
+}
