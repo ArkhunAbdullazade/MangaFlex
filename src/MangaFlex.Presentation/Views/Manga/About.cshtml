@@ -338,6 +338,7 @@
             <a class="readNow" role="button" onclick="openLanguageOptions('@Model.Id')">Read now</a>
             <div id="mangaLanguageModal" class="modal">
                 <div class="modal-content">
+                    <input type="hidden" id="mangaId" name="mangaId" />
                     <!-- Content will be displayed here -->
                 </div>
             </div>
@@ -347,7 +348,7 @@
 </div>
 <script>
     function openLanguageOptions(mangaId) {
-        fetch('/manga/AvailableLanguages?id=' + mangaId, {
+        fetch('/Manga/AvailableLanguages?id=' + mangaId, {
             method: 'GET'
         })
             .then(response => {
@@ -360,6 +361,11 @@
             .then(data => {
                 const modalContent = document.querySelector('#mangaLanguageModal .modal-content');
                 modalContent.innerHTML = data;
+                // Добавляем mangaId к каждой кнопке выбора языка
+                const languageButtons = modalContent.querySelectorAll('.custom-button');
+                languageButtons.forEach(button => {
+                    button.dataset.mangaId = mangaId;
+                });
                 modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
                 const modal = document.getElementById('mangaLanguageModal');
                 modal.style.display = 'block';

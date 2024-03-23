@@ -14,96 +14,50 @@
         font-size: 30px;
         font-weight: bold;
     }
-    .dropbtn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {background-color: #f1f1f1}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
-}
 </style>
 
-<div class="dropdown">
-  <button class="dropbtn">Choose Language</button>
-  <div class="dropdown-content">
-  <a href="#"></a>
-  <a href="#">Link 2</a>
-  <a href="#">Link 3</a>
-  </div>
 @if (@Model.Pages is null || !@Model.Pages.Any())
 {
     <p class="noData">No chapters in english yet!</p>
 }
-</div>
-else {
-<div class="container">
-    <nav>
-        <ul class="pagination justify-content-center mt-2">
-            <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
-                <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link">@Model.Chapter</span>
-            </li>
-            <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
-                <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="col-md-4 align-items-center justify-content-center">
-                @foreach (string pageUrl in Model.Pages!)
-                {
-                    <img src="@pageUrl" alt="Manga Page">
-                }
+else
+{
+    <div class="container">
+        <nav>
+            <ul class="pagination justify-content-center mt-2">
+                <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">@Model.Chapter</span>
+                </li>
+                <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="col-md-4 align-items-center justify-content-center">
+                    @foreach (string pageUrl in Model.Pages!)
+                    {
+                        <img src="@pageUrl" alt="Manga Page">
+                    }
+                </div>
             </div>
         </div>
+        <nav>
+            <ul class="pagination justify-content-center mt-2">
+                <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <span class="page-link disabled">@Model.Chapter</span>
+                </li>
+                <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <nav>
-        <ul class="pagination justify-content-center mt-2">
-            <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
-                <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
-            </li>
-            <li class="page-item">
-                <span class="page-link disabled">@Model.Chapter</span>
-            </li>
-            <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
-                <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
-            </li>
-        </ul>
-    </nav>
-</div>
 }

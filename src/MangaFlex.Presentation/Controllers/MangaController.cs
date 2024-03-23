@@ -50,6 +50,7 @@ namespace MangaFlex.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> AvailableLanguages(string id)
         {
+            ViewBag.MangaId = id; // айди манги в ViewBag
             var availableLanguages = await mangaService.GetAvailableLanguages(id);
             return View(availableLanguages);
         }
@@ -85,11 +86,21 @@ namespace MangaFlex.Presentation.Controllers
             }
         }
 
+        public async Task<IActionResult> SetLanguage(string language, string mangaId)
+        {
+            // Устанавливаем язык в куки
+            Response.Cookies.Append("Language", language);
+            // Формируем URL для перенаправления на страницу чтения с выбранным языком и ID манги
+            string redirectUrl = Url.Action("Read", "Manga", new { id = mangaId });
+            return Redirect(redirectUrl);
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Read(string id, int chapter = 1)
         {
-            var mangaChapterViewModel = await mangaService.ReadAsync(id, chapter);
+            string language = HttpContext.Request.Cookies["Language"] ?? "en";
+            var mangaChapterViewModel = await mangaService.ReadAsync(id, chapter, language);
             return View(mangaChapterViewModel);
         }
     }

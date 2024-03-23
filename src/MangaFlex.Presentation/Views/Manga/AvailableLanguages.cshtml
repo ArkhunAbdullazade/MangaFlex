@@ -1,9 +1,17 @@
+@model IEnumerable<string>
+
 @{
     ViewData["Title"] = "AvailableLanguages";
-      Layout = null;
+    Layout = null;
 }
+
 <h1>@ViewData["Title"]</h1>
 
-@foreach (string language in Model){
-    <button class="custom-button">@language</button>
+@foreach (string language in Model)
+{
+    <form method="post" asp-controller="Manga" asp-action="SetLanguage" asp-route-language="@language">
+        <!-- Скрытое поле для передачи ID манги -->
+        <input type="hidden" name="mangaId" value="@ViewBag.MangaId" />
+        <button type="submit" class="custom-button">@language</button>
+    </form>
 }

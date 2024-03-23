@@ -63,8 +63,8 @@ public class MangaService : IMangaService
     public async Task<string[]> GetAvailableLanguages(string id)
     {
         var manga = await this.apiClient.Manga.Get(id);
-        var result = manga.Data.Attributes.AvailableTranslatedLanguages;
-        return result;
+        var result = manga?.Data?.Attributes?.AvailableTranslatedLanguages;
+        return result!;
     }
 
     public async Task<Manga> GetByIdAsync(string id)
