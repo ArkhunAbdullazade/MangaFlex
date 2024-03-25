@@ -66,6 +66,7 @@ namespace MangaFlex.Presentation.Controllers
                 {
                     var DeleteCommand = new DeleteLastWatchCommand(userid, id);
                     await sender.Send(DeleteCommand);
+
                     var command = new AddLastWatchCommand(userid, id);
                     await sender.Send(command);
                 }
@@ -83,6 +84,12 @@ namespace MangaFlex.Presentation.Controllers
         public async Task<IActionResult> Read(string id, int chapter = 1)
         {
             var mangaChapterViewModel = await mangaService.ReadAsync(id, chapter);
+
+            // if(mangaChapterViewModel?.Pages?.Count() < 1) 
+            // {
+            //     return RedirectToAction("Read", new {id, chapter = chapter + 1});
+            // }
+
             return View(mangaChapterViewModel);
         }
     }

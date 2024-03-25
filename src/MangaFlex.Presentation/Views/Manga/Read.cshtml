@@ -14,10 +14,6 @@
         font-weight: bold;
     }
 </style>
-@if(@Model.Pages is null || !@Model.Pages.Any()){
-    <p class="noData">No chapters in english yet!</p>
-}
-else {
 <div class="container">
     <nav>
         <ul class="pagination justify-content-center mt-2">
@@ -32,6 +28,10 @@ else {
             </li>
         </ul>
     </nav>
+    @if(@Model.Pages is null || !@Model.Pages.Any()){
+        <p class="noData">No pages in this chapter</p>
+    }
+    else {
     <div class="row justify-content-center">
         <div class="col-md-8">   
             <div class="col-md-4 align-items-center justify-content-center">
@@ -47,13 +47,13 @@ else {
             <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
             <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
             </li>
-            <li class="page-item">
-                <span class="page-link disabled">@Model.Chapter</span>
+            <li class="page-item disabled">
+                <span class="page-link">@Model.Chapter</span>
             </li>
             <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
             <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
             </li>
         </ul>
     </nav>
+    }
 </div>
-}
