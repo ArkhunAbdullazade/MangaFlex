@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MangaFlex.Core.Data.Users.Models;
+namespace MangaFlex.Core.Data.Users.Models.ManyToMany;
 
 public class LastWatch
 {
-    public int Id { get; set; } 
-    public string? UserId {  get; set; }
+    public int Id { get; set; }
+    public string? UserId { get; set; }
     public User? User { get; set; }
-    public string? MangaId {  get; set; }
+    public string? MangaId { get; set; }
 }

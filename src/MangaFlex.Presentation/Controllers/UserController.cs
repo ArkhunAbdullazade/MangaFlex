@@ -39,6 +39,14 @@ public class UserController : Controller
         return View();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> LastWatches()
+    {
+        var command = new GetUserLastWatchesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var result = await sender.Send(command);
+        return View(result);
+    }
+
     [HttpPut]
     public async Task<IActionResult> ChangeAvatar(IFormFile avatar)
     {
@@ -133,5 +141,32 @@ public class UserController : Controller
         var command = new SignOutCommand();
         await sender.Send(command);
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAnotherUsers()
+    {
+        var command = new GetAnotherUserCommand();
+        var result = await sender.Send(command);
+        return View(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ProfileById(string id)
+    {
+        var command = new GetUserProfileCommand(id);
+        var result = await sender.Send(command);
+        var userfriends = await sender.Send(new GetUserFriendsCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!));
+        result.IsSub = userfriends.Any(x => x.UserName == result.User.UserName);
+        result.IsFriends = (result.Friends.Any(x => x.UserName == User.Identity.Name) && userfriends.Any(x => x.UserName == result.User.UserName));
+        return View("Profile",result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Subscribe(string id)
+    {
+        var command = new SubscribeCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,id);
+        await sender.Send(command);
+        return RedirectToAction("ProfileById", id);
     }
 }

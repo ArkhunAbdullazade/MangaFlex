@@ -65,7 +65,24 @@
                      style="height:250px; width:250px;">
                 <div class="card-body">
                     <h5 class="card-title">@userProfileVM.User.UserName</h5>
-                    <h4 class="card-title">@userProfileVM.User.Email</h4>    
+                    @if(User.Identity.Name == Model.User.UserName)
+                    {
+                        <h4 class="card-title">@userProfileVM.User.Email</h4>    
+                    }
+                    @if(User.Identity.Name != Model.User.UserName)
+                    {
+                        if (Model.IsSub == false)
+                        {
+                            <button class="btn btn-primary" onclick="PostWithId('/User/Subscribe', '@Model.User.Id'); Reload();">Subscribe</button>
+                        }
+                        if (Model.IsFriends)
+                        {
+                            <button class="btn btn-primary">Chat</button>
+                        }
+                        if (Model.IsSub == true){
+                            <button class="btn btn-primary">Unsubscribe</button>
+                        }
+                    }
                 </div>
             </div>
         </div>

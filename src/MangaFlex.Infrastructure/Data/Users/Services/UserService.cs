@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using MangaFlex.Core.Data.Users.Models;
 using MangaFlex.Infrastructure.Data.DBContext;
 using Microsoft.EntityFrameworkCore;
+using MangaFlex.Core.Data.Users.Models.ManyToMany;
 
 public class UserService : IUserService
 {
@@ -20,7 +21,7 @@ public class UserService : IUserService
         this.dbContext = dbcotext;
     }
 
-    public async Task UpdateAvatar(string url, string id)
+    public async Task UpdateAvatarAsync(string url, string id)
     {
         var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
         user.AvatarPath = url;
@@ -103,5 +104,38 @@ public class UserService : IUserService
         var role = new IdentityRole { Name = "User" };
         await roleManager.CreateAsync(role);
         await userManager.AddToRoleAsync(user, role.Name);
+    }
+
+    public async Task AddFriendAsync(string userid, string friendid)
+    {
+        await dbContext.FriendShip.AddAsync(new FriendShip()
+        {
+            UserId = userid,
+            FriendId = friendid
+        });
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task RemoveFriendAsync(string userid, string friendid)
+    {
+        var result = await dbContext.FriendShip.FirstOrDefaultAsync(x => x.UserId == userid && x.FriendId == friendid);
+        dbContext.Remove(result);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<User>> GetAllFriendsAsync(string userid)
+    {
+        var users = await dbContext.FriendShip
+            .Include(fs => fs.User)  
+            .Where(fs => fs.UserId == userid)
+            .Select(fs => fs.Friend)  
+            .ToArrayAsync();
+        return users;
+    }
+
+    public async Task<IEnumerable<User>> GetAnotherPeopleAsync()
+    {
+        var users = await dbContext.Users.ToArrayAsync();
+        return users;
     }
 }

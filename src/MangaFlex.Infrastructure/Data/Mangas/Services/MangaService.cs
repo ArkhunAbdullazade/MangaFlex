@@ -5,6 +5,7 @@ namespace MangaFlex.Infrastructure.Data.Mangas.Services;
 
 using MangaFlex.Core.Data.Mangas.Models;
 using MangaFlex.Core.Data.Mangas.ViewModels;
+using System.Net.Http;
 
 public class MangaService : IMangaService
 {
@@ -78,7 +79,7 @@ public class MangaService : IMangaService
         var coverFileName = result.Data.CoverArt().FirstOrDefault()?.Attributes?.FileName;
         return this.Convert(result.Data, coverFileName);
     }
-    public async Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1)
+    public async Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1)// string language ="en"
     {
         var mangaPages = new List<string>();
 
@@ -90,15 +91,13 @@ public class MangaService : IMangaService
                 [MangaFeedFilter.OrderKey.chapter] = OrderValue.asc,
             },
         };
-        mangaFeedFilter.TranslatedLanguage = new[] { "en" };
+        using var httpClient = new HttpClient();
+        mangaFeedFilter.TranslatedLanguage = new[] { "ru" };
         // Fetch manga chapters
+        //  var chapters = await apiClient.Manga.Feed(mangaId,)
         var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
         // Fetch pages for the specified chapter
         var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?[chapter - 1]?.Id!);
-        if (pages == null || pages.Chapter == null || pages.Chapter.Data == null || pages.Chapter.Data.Length == 0)
-        {
-            Console.WriteLine($"No images found for chapter");
-        }
 
         var imageUrlBase = $"{pages.BaseUrl}/data/{pages.Chapter.Hash}/";
         foreach (var chapterFileName in pages.Chapter.Data)
@@ -128,7 +127,7 @@ public class MangaService : IMangaService
         LastVolume = mangaToConvert.Attributes?.LastVolume,
         LastChapter = mangaToConvert.Attributes?.LastChapter,
         Year = mangaToConvert.Attributes?.Year,
-        Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value).ToList(),
+        Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value),
         State = mangaToConvert.Attributes?.State,
         CreatedAt = mangaToConvert.Attributes?.CreatedAt,
         UpdatedAt = mangaToConvert.Attributes?.UpdatedAt,
@@ -136,4 +135,3 @@ public class MangaService : IMangaService
         Cover = $"https://uploads.mangadex.org/covers/{mangaToConvert.Id}/{coverFileName}",
     };
 }
-

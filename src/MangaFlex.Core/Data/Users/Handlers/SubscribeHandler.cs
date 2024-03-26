@@ -9,15 +9,16 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Handlers;
 
-public class ChangeAvatarHandler : IRequestHandler<ChangeAvatarCommand>
+public class SubscribeHandler : IRequestHandler<SubscribeCommand>
 {
     private readonly IUserService userService;
-    public ChangeAvatarHandler(IUserService userService)
+    public SubscribeHandler(IUserService userService)
     {
         this.userService = userService;
     }
-    public async Task Handle(ChangeAvatarCommand request, CancellationToken cancellationToken)
+
+    public async Task Handle(SubscribeCommand request, CancellationToken cancellationToken)
     {
-        await userService.UpdateAvatarAsync(request.Path, request.UserId);
+        await userService.AddFriendAsync(request.UserId, request.UserToId);
     }
 }

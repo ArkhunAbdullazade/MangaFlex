@@ -7,4 +7,7 @@ public class GetUserProfileViewModel
 {
     public User? User { get; set; }
     public IEnumerable<Manga>? LastWatched {  get; set; }    
+    public IEnumerable<User> Friends {  get; set; }
+    public bool IsSub { get; set; } = false;
+    public bool IsFriends { get; set; } = false;
 }

@@ -1,0 +1,34 @@
+﻿@model IEnumerable<User>
+@{
+    ViewData["Title"] = "Find Another Profile";
+    var username = string.Empty;
+}
+
+<div class="container">   
+
+    @if (Model is null || !Model.Any())
+    {
+        <p class="">No user in base</p>
+    }
+
+    else
+    {
+        <div class="d-flex flex-wrap">
+            @foreach (var item in Model)
+            {
+                if (User.Identity.Name == item.UserName)
+                {
+                    continue;
+                }
+                <div class="p-2">
+                    <div class="card border-4" style="max-width: 300px;" onclick="GoWithId('/User/ProfileById','@item.Id')">
+                        <img src="@item.AvatarPath" style="max-height:200px;max-width:150px" class="card-img-top" alt="User Image">
+                        <div class="card-body">
+                            <p class="card-text">@item.UserName</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
