@@ -17,7 +17,7 @@ internal class GetUserProfileHandler : IRequestHandler<GetUserProfileCommand, Ge
     private readonly IUserService userService;
     private readonly IMangaService mangaService;
 
-    public GetUserProfileHandler(IUserService userService,IMangaService mangaService)
+    public GetUserProfileHandler(IUserService userService, IMangaService mangaService)
     {
         this.userService = userService;
         this.mangaService = mangaService;
@@ -27,8 +27,9 @@ internal class GetUserProfileHandler : IRequestHandler<GetUserProfileCommand, Ge
         var user = await userService.GetByIdAsync(request.UserId!);
         var lastwatched = await userService.GetLastWatchAsync(request.UserId!);
         var lastWatched = new List<Manga>();
+        var friends = await userService.GetUserSubscribe(request.UserId!);
 
-        foreach(var manga in lastwatched)
+        foreach (var manga in lastwatched)
         {
             lastWatched.Add(await mangaService.GetByIdAsync(manga.MangaId!));
         }
@@ -37,6 +38,7 @@ internal class GetUserProfileHandler : IRequestHandler<GetUserProfileCommand, Ge
         {
             User = user,
             LastWatched = lastWatched,
+            Friends = friends,
         };
     }
 }

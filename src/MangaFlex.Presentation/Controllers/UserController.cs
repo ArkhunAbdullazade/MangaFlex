@@ -8,6 +8,7 @@ using MediatR;
 using MangaFlex.Core.Data.Users.Commands;
 using System.Security.Claims;
 using System.Drawing;
+using MangaFlex.Presentation.ViewModels;
 
 [Authorize]
 public class UserController : Controller
@@ -37,6 +38,14 @@ public class UserController : Controller
     public IActionResult ChangeAvatar()
     {
         return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> LastWatches()
+    {
+        var command = new GetUserLastWatchesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var result = await sender.Send(command);
+        return View(result);
     }
 
     [HttpPut]
@@ -134,4 +143,54 @@ public class UserController : Controller
         await sender.Send(command);
         return RedirectToAction("Index", "Home");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAnotherUsers()
+    {
+        var command = new GetAnotherUserCommand();
+        var result = await sender.Send(command);
+        return View(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ProfileById(string id)
+    {
+        var command = new GetUserProfileCommand(id);
+        var result = await sender.Send(command);
+        var userfriends = await sender.Send(new GetUserSubscribesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!));
+        result.IsSub = userfriends.Any(x => x.UserName == result.User.UserName);
+        result.IsFriends = (result.Friends.Any(x => x.UserName == User.Identity.Name) && userfriends.Any(x => x.UserName == result.User.UserName));
+        return View("Profile",result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Subscribe(string id)
+    {
+        var command = new SubscribeCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,id);
+        await sender.Send(command);
+        return RedirectToAction("ProfileById", id);
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> Unsubscribe(string id)
+    {
+        var command = new RemoveFriendCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, id);
+        await sender.Send(command);
+        return base.Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SubscriptionsandSubscribers()
+    {
+        var GetUserFriends = new GetUserSubscribesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var GetUserSub = new GetUserSubCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var GetUserSubCommandResult = await sender.Send(GetUserSub);
+        var GetUserFriendsResult = await sender.Send(GetUserFriends);
+        return View(new SubscriptionsAndSubscribeVM() 
+        { 
+            Subscriptions = GetUserFriendsResult,
+            Subscribe = GetUserSubCommandResult,
+        });
+    }
+
 }

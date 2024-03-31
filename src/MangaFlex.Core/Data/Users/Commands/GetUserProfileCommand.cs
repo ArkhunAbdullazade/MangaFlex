@@ -1,4 +1,5 @@
-﻿using MangaFlex.Core.Data.Users.ViewModels;
+﻿using MangaFlex.Core.Data.Mangas.Models;
+using MangaFlex.Core.Data.Users.ViewModels;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Commands;
 
-public class GetUserProfileCommand : IRequest<GetUserProfileViewModel>
+public class GetUserLastWatchesCommand : IRequest<IEnumerable<Manga>>
 {
     public string? UserId { get; set; }
 
-    public GetUserProfileCommand(string? userId)
+    public GetUserLastWatchesCommand(string? userId)
     {
         UserId = userId;
     }
 
-    public GetUserProfileCommand() { }
+    public GetUserLastWatchesCommand() { }
 }

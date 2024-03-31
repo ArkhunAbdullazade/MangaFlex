@@ -5,6 +5,7 @@ namespace MangaFlex.Infrastructure.Data.Mangas.Services;
 
 using MangaFlex.Core.Data.Mangas.Models;
 using MangaFlex.Core.Data.Mangas.ViewModels;
+using System.Net.Http;
 
 public class MangaService : IMangaService
 {
@@ -99,10 +100,8 @@ public class MangaService : IMangaService
         mangaFeedFilter.TranslatedLanguage = new[] { language };
         // Fetch manga chapters
         var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
-
         // Fetch pages for the specified chapter
         var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?[chapter-1]?.Id!);
-        
         var mangaChapterViewModel = new MangaChapterViewModel {
             MangaId = mangaId,
             Pages = pages?.GenerateImageLinks() ?? Enumerable.Empty<string>(),
@@ -124,7 +123,7 @@ public class MangaService : IMangaService
         LastVolume = mangaToConvert.Attributes?.LastVolume,
         LastChapter = mangaToConvert.Attributes?.LastChapter,
         Year = mangaToConvert.Attributes?.Year,
-        Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value).ToList(),
+        Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value),
         State = mangaToConvert.Attributes?.State,
         CreatedAt = mangaToConvert.Attributes?.CreatedAt,
         UpdatedAt = mangaToConvert.Attributes?.UpdatedAt,
@@ -132,4 +131,3 @@ public class MangaService : IMangaService
         Cover = $"https://uploads.mangadex.org/covers/{mangaToConvert.Id}/{coverFileName}",
     };
 }
-

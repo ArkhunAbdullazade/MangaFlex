@@ -18,6 +18,6 @@ public class ChangeAvatarHandler : IRequestHandler<ChangeAvatarCommand>
     }
     public async Task Handle(ChangeAvatarCommand request, CancellationToken cancellationToken)
     {
-        await userService.UpdateAvatar(request.Path, request.UserId);
+        await userService.UpdateAvatarAsync(request.Path, request.UserId);
     }
 }

@@ -22,7 +22,32 @@ namespace MangaFlex.Presentation.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.LastWatch", b =>
+            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.FriendShip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FriendId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FriendShip");
+                });
+
+            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.LastWatch", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -242,7 +267,26 @@ namespace MangaFlex.Presentation.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.LastWatch", b =>
+            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.FriendShip", b =>
+                {
+                    b.HasOne("MangaFlex.Core.Data.Users.Models.User", "Friend")
+                        .WithMany()
+                        .HasForeignKey("FriendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Friend");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.LastWatch", b =>
                 {
                     b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
                         .WithMany()

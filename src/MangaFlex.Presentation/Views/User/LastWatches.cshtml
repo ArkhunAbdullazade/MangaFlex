@@ -1,0 +1,85 @@
+﻿@using MangaFlex.Core.Data.Mangas.Models;
+@using MangaFlex.Core.Data.Mangas.ViewModels;
+@model IEnumerable<Manga>;
+
+@{
+    ViewData["Title"] = "Last Watches";
+}
+
+<style>
+    h1,
+    h2,
+    h3 {
+        text-align: center;
+    }
+
+    img {
+        border-radius: 10px;
+        width: 14.2em;
+        height: 21em;
+    }
+
+    span,
+    h1,
+    h2,
+    h3 {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    .title {
+        font-size: 1em;
+    }
+
+    .list,
+    .list > div {
+        flex-direction: column;
+        border: 2px solid dimgray;
+        border-radius: 15px;
+    }
+
+    .list {
+        display: block;
+        padding: 10px;
+        padding-bottom: 25px;
+    }
+
+        .list > div {
+            flex-direction: column;
+            display: inline-flex;
+            width: 240px;
+            height: 350px;
+            margin: 5px;
+            margin-bottom: 55px;
+        }
+
+            .list > div > div {
+                margin: 5px;
+                text-align: center;
+            }
+
+</style>
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model is not null && Model.Any<Manga>())
+{
+    <div class="page">
+        <div class="list">
+            @foreach (var manga in Model.Reverse())
+            {
+                <div>
+                    <div class="img-div">
+                        <a asp-action="About" asp-controller="Manga" asp-route-id="@manga.Id"><img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")" alt="manga cover" /></a>
+                    </div>
+                    <div>
+                        <span class="title"><b>@(manga.Title ?? "Unknown")</b></span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <h3>There is no manga in this category.</h3>
+}
