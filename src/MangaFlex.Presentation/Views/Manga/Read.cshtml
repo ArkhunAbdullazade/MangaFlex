@@ -1,4 +1,5 @@
 @using MangaFlex.Core.Data.Mangas.ViewModels;
+@using System.Text.Json
 @model MangaChapterViewModel
 
 <style>
@@ -18,7 +19,7 @@
 
 @if (@Model.Pages is null || !@Model.Pages.Any())
 {
-    <p class="noData">No chapters in english yet!</p>
+    <p class="noData">No chapters!</p>
 }
 else
 {
@@ -26,38 +27,101 @@ else
         <nav>
             <ul class="pagination justify-content-center mt-2">
                 <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo; Prev Chapter</a>
                 </li>
                 <li class="page-item disabled">
-                    <span class="page-link">@Model.Chapter</span>
+                    <span class="page-link">Chapter @Model.Chapter</span>
                 </li>
                 <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">Next Chapter &raquo;</a>
                 </li>
             </ul>
         </nav>
+
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="col-md-4 align-items-center justify-content-center">
-                    @foreach (string pageUrl in Model.Pages!)
-                    {
-                        <img src="@pageUrl" alt="Manga Page">
-                    }
+                    <img id="mangaPage" src="@Model.Pages.FirstOrDefault()" alt="Manga Page">
                 </div>
             </div>
         </div>
+
         <nav>
             <ul class="pagination justify-content-center mt-2">
                 <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo; Prev Chapter</a>
                 </li>
                 <li class="page-item disabled">
-                    <span class="page-link">@Model.Chapter</span>
+                    <span class="page-link">Chapter @Model.Chapter</span>
                 </li>
                 <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
+                    <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">Next Chapter &raquo;</a>
                 </li>
             </ul>
         </nav>
     </div>
+
+    <button class ="btn btn-secondary" id="prevPageBtn">Previous Page</button>
+    <button class="btn btn-secondary" id="nextPageBtn">Next Page</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var currentPageIndex = 0;
+            var jsPageUrls = @Html.Raw(JsonSerializer.Serialize(Model.Pages));
+            var mangaPage = document.getElementById("mangaPage");
+
+            showPage(currentPageIndex);
+
+            function showPage(pageIndex) {
+                var pageUrl = jsPageUrls[pageIndex];
+                if (pageUrl) {
+                    mangaPage.src = pageUrl;
+                }
+            }
+
+            document.getElementById("prevPageBtn").addEventListener("click", function () {
+                if (currentPageIndex > 0) {
+                    currentPageIndex--;
+                    showPage(currentPageIndex);
+                } else {
+                    var prevChapter = @(Model.Chapter - 1);
+                    if (prevChapter <= @(Model.TotalChapters)) {
+                        window.location.href = "?id=@(Model.MangaId)&chapter=" + prevChapter;
+                    }
+                }
+            });
+
+            document.getElementById("nextPageBtn").addEventListener("click", function () {
+                if (currentPageIndex < jsPageUrls.length - 1) {
+                    currentPageIndex++;
+                    showPage(currentPageIndex);
+                } else {
+                    var nextChapter = @(Model.Chapter + 1);
+                    if (nextChapter <= @(Model.TotalChapters)) {
+                        window.location.href = "?id=@(Model.MangaId)&chapter=" + nextChapter;
+                    }
+                }
+            });
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "ArrowLeft") {
+                    // Перейти к предыдущей странице, если возможно
+                    if (currentPageIndex > 0) {
+                        currentPageIndex--;
+                        showPage(currentPageIndex);
+                    }
+                } else if (event.key === "ArrowRight") {
+                    if (currentPageIndex < jsPageUrls.length - 1) {
+                        currentPageIndex++;
+                        showPage(currentPageIndex);
+                    } else {
+                        var nextChapter = @(Model.Chapter + 1);
+                        if (nextChapter <= @(Model.TotalChapters)) {
+                            window.location.href = "?id=@(Model.MangaId)&chapter=" + nextChapter;
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 }
