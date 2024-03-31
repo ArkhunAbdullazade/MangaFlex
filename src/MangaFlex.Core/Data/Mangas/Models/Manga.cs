@@ -5,6 +5,7 @@ public class Manga
     public string? Title { get; set; }
     public string? Description { get; set; }
     public bool IsLocked { get; set; }
+    public string[]? AvailableLanguages { get; set; }
     public string? Links { get; set; }
     public string? OriginalLanguage { get; set; }
     public string? LastVolume { get; set; }

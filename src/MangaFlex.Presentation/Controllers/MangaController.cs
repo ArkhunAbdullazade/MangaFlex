@@ -48,6 +48,14 @@ namespace MangaFlex.Presentation.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> AvailableLanguages(string id)
+        {
+            ViewBag.MangaId = id; // айди манги в ViewBag
+            var availableLanguages = await mangaService.GetAvailableLanguages(id);
+            return View(availableLanguages);
+        }
+
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> About(string id)
         {
@@ -66,7 +74,6 @@ namespace MangaFlex.Presentation.Controllers
                 {
                     var DeleteCommand = new DeleteLastWatchCommand(userid, id);
                     await sender.Send(DeleteCommand);
-
                     var command = new AddLastWatchCommand(userid, id);
                     await sender.Send(command);
                 }
@@ -79,17 +86,21 @@ namespace MangaFlex.Presentation.Controllers
             }
         }
 
+        public async Task<IActionResult> SetLanguage(string language, string mangaId)
+        {
+            // Устанавливаем язык в куки
+            Response.Cookies.Append("Language", language);
+            // Формируем URL для перенаправления на страницу чтения с выбранным языком и ID манги
+            string redirectUrl = Url.Action("Read", "Manga", new { id = mangaId });
+            return Redirect(redirectUrl);
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Read(string id, int chapter = 1)
         {
-            var mangaChapterViewModel = await mangaService.ReadAsync(id, chapter);
-
-            // if(mangaChapterViewModel?.Pages?.Count() < 1) 
-            // {
-            //     return RedirectToAction("Read", new {id, chapter = chapter + 1});
-            // }
-
+            string language = HttpContext.Request.Cookies["Language"] ?? "en";
+            var mangaChapterViewModel = await mangaService.ReadAsync(id, chapter, language);
             return View(mangaChapterViewModel);
         }
     }

@@ -4,6 +4,7 @@
     ViewData["Title"] = "About";
 }
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
 
 <style>
     body {
@@ -20,9 +21,22 @@
     .image-container {
         flex: 0 0 auto;
         margin-right: 15px;
+    .container {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .image-container {
+        flex: 0 0 auto;
+        margin-right: 15px;
     }
 
     img {
+        border: 2px solid #000;
+        box-shadow: #ecc500 4px 4px 0 0, #000 4px 4px 0 1.5px;
+        transform: translate(2px, 2px);
         border: 2px solid #000;
         box-shadow: #ecc500 4px 4px 0 0, #000 4px 4px 0 1.5px;
         transform: translate(2px, 2px);
@@ -37,7 +51,13 @@
     h3 {
         text-align: center;
     }
-    
+
+    h1,
+    h2,
+    h3 {
+        text-align: center;
+    }
+
     p,
     strong {
         text-align: center;
@@ -52,6 +72,7 @@
         color: black;
         max-width: 500px;
         margin: 1rem auto;
+        padding: 0.2rem 1.25rem;
         padding: 0.2rem 1.25rem;
         text-align: center;
         font-family: "Dekko", cursive;
@@ -73,10 +94,14 @@
     }
 
     .bubble:before {
+    .bubble:before {
         content: "";
         position: absolute;
         left: -1rem;
+        left: -1rem;
         top: 0.15rem;
+        width: calc(100% + 0.2rem);
+        height: calc(120% + 0.2rem);
         width: calc(100% + 0.2rem);
         height: calc(120% + 0.2rem);
         background: url('data:image/svg+xml;utf8,<svg width="100" height="100" transform="rotate(35)" opacity="1" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g fill="%23250E17"><circle cx="25" cy="25" r="12.5"/><circle cx="75" cy="75" r="12.5"/><circle cx="75" cy="25" r="12.5"/><circle cx="25" cy="75" r="12.5"/></g></svg>'), #000;
@@ -200,6 +225,85 @@
             max-width: 500px;
         }
     }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+
+    }
+
+    .modal-content {
+        background-color: #f9f9f9;
+        width: 80%;
+        max-width: 600px;
+        margin: 100px auto;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        position: relative;
+        top: 100px;
+    }
+
+
+    .modal-close {
+        align-items: center;
+        background-color: #FFCF00;
+        border: 2px solid #111;
+        border-radius: 8px;
+        box-sizing: border-box;
+        color: #111;
+        cursor: pointer;
+        display: flex;
+        font-family: Inter, sans-serif;
+        font-size: 16px;
+        height: 48px;
+        justify-content: center;
+        line-height: 24px;
+        max-width: 100%;
+        padding: 0 25px;
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .modal-close:after {
+        background-color: #111;
+        border-radius: 8px;
+        content: "";
+        display: block;
+        height: 48px;
+        left: 0;
+        width: 100%;
+        position: absolute;
+        top: -2px;
+        transform: translate(8px, 8px);
+        transition: transform .2s ease-out;
+        z-index: -1;
+    }
+
+    .modal-close:hover:after {
+        transform: translate(0, 0);
+    }
+
+    .modal-close:active {
+        background-color: #ffbf00;
+        outline: 0;
+    }
+
+    .modal-close:hover {
+        outline: 0;
+    }
 </style>
 
 
@@ -256,8 +360,48 @@
                     }
                 </ul>
             }
-            <a class="readNow" role="button" a asp-action="Read" asp-controller="Manga" asp-route-id="@Model.Id">Read
-                now</a>
+            <a class="readNow" role="button" onclick="openLanguageOptions('@Model.Id')">Read now</a>
+            <div id="mangaLanguageModal" class="modal">
+                <div class="modal-content">
+                    <input type="hidden" id="mangaId" name="mangaId" />
+                    <!-- Content will be displayed here -->
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+<script>
+    function openLanguageOptions(mangaId) {
+        fetch('/Manga/AvailableLanguages?id=' + mangaId, {
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Loading error.');
+                }
+            })
+            .then(data => {
+                const modalContent = document.querySelector('#mangaLanguageModal .modal-content');
+                modalContent.innerHTML = data;
+                // Добавляем mangaId к каждой кнопке выбора языка
+                const languageButtons = modalContent.querySelectorAll('.custom-button');
+                languageButtons.forEach(button => {
+                    button.dataset.mangaId = mangaId;
+                });
+                modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
+                const modal = document.getElementById('mangaLanguageModal');
+                modal.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Loading error: ' + error);
+            });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('mangaLanguageModal');
+        modal.style.display = 'none';
+    }
+</script>
