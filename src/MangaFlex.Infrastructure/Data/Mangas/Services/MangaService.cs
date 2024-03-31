@@ -31,7 +31,7 @@ public class MangaService : IMangaService
         mangaFilter.Order[MangaFilter.OrderKey.rating] = OrderValue.desc;
 
         MangaList mangaList = await this.apiClient.Manga.List(mangaFilter);
-
+        
         if (mangaList.ErrorOccurred)
         {
             var exceptions = new List<Exception>();
@@ -61,10 +61,16 @@ public class MangaService : IMangaService
         return mangasViewModel;
     }
 
+    public async Task<string[]> GetAvailableLanguages(string id)
+    {
+        var manga = await this.apiClient.Manga.Get(id);
+        var result = manga?.Data?.Attributes?.AvailableTranslatedLanguages;
+        return result!;
+    }
+
     public async Task<Manga> GetByIdAsync(string id)
     {
         var result = await this.apiClient.Manga.Get(id);
-
         if (result.ErrorOccurred)
         {
             var exceptions = new List<Exception>();
@@ -79,7 +85,7 @@ public class MangaService : IMangaService
         var coverFileName = result.Data.CoverArt().FirstOrDefault()?.Attributes?.FileName;
         return this.Convert(result.Data, coverFileName);
     }
-    public async Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1)// string language ="en"
+    public async Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1, string language = "en")
     {
         var mangaPages = new List<string>();
 
@@ -91,25 +97,14 @@ public class MangaService : IMangaService
                 [MangaFeedFilter.OrderKey.chapter] = OrderValue.asc,
             },
         };
-        using var httpClient = new HttpClient();
-        mangaFeedFilter.TranslatedLanguage = new[] { "ru" };
+        mangaFeedFilter.TranslatedLanguage = new[] { language };
         // Fetch manga chapters
-        //  var chapters = await apiClient.Manga.Feed(mangaId,)
         var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
         // Fetch pages for the specified chapter
-        var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?[chapter - 1]?.Id!);
-
-        var imageUrlBase = $"{pages.BaseUrl}/data/{pages.Chapter.Hash}/";
-        foreach (var chapterFileName in pages.Chapter.Data)
-        {
-            var imageUrl = $"{imageUrlBase}{chapterFileName}";
-            mangaPages.Add(imageUrl);
-        }
-
-        var mangaChapterViewModel = new MangaChapterViewModel
-        {
+        var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?[chapter-1]?.Id!);
+        var mangaChapterViewModel = new MangaChapterViewModel {
             MangaId = mangaId,
-            Pages = mangaPages,
+            Pages = pages?.GenerateImageLinks() ?? Enumerable.Empty<string>(),
             Chapter = chapter,
             TotalChapters = chapters.Total,
         };
@@ -122,6 +117,7 @@ public class MangaService : IMangaService
         Id = mangaToConvert.Id,
         Title = mangaToConvert.Attributes?.Title.FirstOrDefault().Value,
         Description = mangaToConvert.Attributes?.Description.FirstOrDefault().Value,
+        AvailableLanguages = mangaToConvert.Attributes?.AvailableTranslatedLanguages,
         IsLocked = mangaToConvert.Attributes?.IsLocked ?? false,
         OriginalLanguage = mangaToConvert.Attributes?.OriginalLanguage,
         LastVolume = mangaToConvert.Attributes?.LastVolume,
