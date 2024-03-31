@@ -10,17 +10,16 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Handlers;
 
-public class GetUserSubHandler : IRequestHandler<GetUserSubCommand, IEnumerable<User>>
+public class GetUsersHandler : IRequestHandler<GetUsersCommand, IEnumerable<User>>
 {
     private readonly IUserService userService;
-    public GetUserSubHandler(IUserService userService)
+    public GetUsersHandler(IUserService userService)
     {
         this.userService = userService;
     }
-
-    public async Task<IEnumerable<User>> Handle(GetUserSubCommand request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<User>> Handle(GetUsersCommand request, CancellationToken cancellationToken)
     {
-        var result = await userService.GetSubAsync(request.UserID);
+        var result = await userService.GetUsersAsync();
         return result;
     }
 }

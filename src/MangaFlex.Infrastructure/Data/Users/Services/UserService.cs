@@ -125,7 +125,7 @@ public class UserService : IUserService
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<User>> GetUserSubscribe(string userid)
+    public async Task<IEnumerable<User>> GetSubscriptionsAsync(string userid)
     {
         var users = await dbContext.FriendShip
             .Include(fs => fs.User)  
@@ -135,7 +135,7 @@ public class UserService : IUserService
         return users;
     }
 
-    public async Task<IEnumerable<User>> GetSubAsync(string userid)
+    public async Task<IEnumerable<User>> GetFollowersAsync(string userid)
     {
         var users = await dbContext.FriendShip
             .Include(fs => fs.User)
@@ -145,7 +145,7 @@ public class UserService : IUserService
         return users;
     }
 
-    public async Task<IEnumerable<User>> GetAnotherPeopleAsync()
+    public async Task<IEnumerable<User>> GetUsersAsync()
     {
         var users = await dbContext.Users.ToArrayAsync();
         return users;

@@ -16,7 +16,7 @@ public interface IUserService
     public Task UpdateAvatarAsync(string url, string id);
     public Task AddFriendAsync(string userid, string friendid);
     public Task RemoveFriendAsync(string userid,string friendid);
-    public Task<IEnumerable<User>> GetUserSubscribe(string userid);
-    public Task<IEnumerable<User>> GetAnotherPeopleAsync();
-    public Task<IEnumerable<User>> GetSubAsync(string userid);
+    public Task<IEnumerable<User>> GetSubscriptionsAsync(string userid);
+    public Task<IEnumerable<User>> GetUsersAsync();
+    public Task<IEnumerable<User>> GetFollowersAsync(string userid);
 }

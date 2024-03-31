@@ -32,6 +32,12 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMangaService, MangaService>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/User/Login";
+    //options.AccessDeniedPath = "/ErrorPage/Error";
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

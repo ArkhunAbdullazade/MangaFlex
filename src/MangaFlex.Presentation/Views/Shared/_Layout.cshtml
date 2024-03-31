@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    bool isAuth = User?.Identity?.IsAuthenticated ?? false;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -61,10 +65,13 @@
                     }
                     </ul>
                     <form class="form-inline my-2 my-lg-0" method="get" asp-controller="Manga" asp-action="Mangas">
-                        <div class="input-group"> 
-                            <input class="form-control mr-sm-2" name="search" type="text" aria-label="Search">
-                            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-                        </div>
+                        @if (isAuth)
+                        {
+                            <div class="input-group">
+                                <input class="form-control mr-sm-2" name="search" type="text" aria-label="Search">
+                                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                            </div>
+                        }
                     </form>
                 </div>
             </div>

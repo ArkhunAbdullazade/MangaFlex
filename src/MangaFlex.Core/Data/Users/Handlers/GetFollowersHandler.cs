@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Handlers;
 
-public class GetUserSubscribesHandler : IRequestHandler<GetUserSubscribesCommand, IEnumerable<User>>
+public class GetFollowersHandler : IRequestHandler<GetFollowersCommand, IEnumerable<User>>
 {
     private readonly IUserService userService;
-    public GetUserSubscribesHandler(IUserService userService)
+    public GetFollowersHandler(IUserService userService)
     {
         this.userService = userService;
     }
 
-    public async Task<IEnumerable<User>> Handle(GetUserSubscribesCommand request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<User>> Handle(GetFollowersCommand request, CancellationToken cancellationToken)
     {
-        var result = await userService.GetUserSubscribe(request.UserId);
+        var result = await userService.GetFollowersAsync(request.UserID);
         return result;
     }
 }

@@ -8,12 +8,6 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Commands;
 
-public class GetUserSubCommand : IRequest<IEnumerable<User>>
+public class GetUsersCommand : IRequest<IEnumerable<User>>
 {
-    public string UserID { get; set; }
-    public GetUserSubCommand(string userid)
-    {
-        this.UserID = userid;
-    }
-    public GetUserSubCommand() { }
 }

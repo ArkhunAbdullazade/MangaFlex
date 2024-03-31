@@ -147,7 +147,7 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> GetAnotherUsers()
     {
-        var command = new GetAnotherUserCommand();
+        var command = new GetUsersCommand();
         var result = await sender.Send(command);
         return View(result);
     }
@@ -183,7 +183,7 @@ public class UserController : Controller
     public async Task<IActionResult> SubscriptionsandSubscribers()
     {
         var GetUserFriends = new GetUserSubscribesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var GetUserSub = new GetUserSubCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var GetUserSub = new GetFollowersCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
         var GetUserSubCommandResult = await sender.Send(GetUserSub);
         var GetUserFriendsResult = await sender.Send(GetUserFriends);
         return View(new SubscriptionsAndSubscribeVM() 

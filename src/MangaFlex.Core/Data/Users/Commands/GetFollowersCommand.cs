@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Commands;
 
-public class GetUserSubscribeCommand : IRequest<IEnumerable<User>>
+public class GetFollowersCommand : IRequest<IEnumerable<User>>
 {
     public string UserID { get; set; }
-    public GetUserSubscribeCommand(string userid)
+    public GetFollowersCommand(string userid)
     {
         this.UserID = userid;
     }
-    public GetUserSubscribeCommand() { }
+    public GetFollowersCommand() { }
 }
