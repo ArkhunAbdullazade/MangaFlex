@@ -51,8 +51,8 @@ else
                 <li class="page-item @(Model.Chapter == 1 ? "disabled" : "")">
                     <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter-1)" tabindex="-1">&laquo;</a>
                 </li>
-                <li class="page-item">
-                    <span class="page-link disabled">@Model.Chapter</span>
+                <li class="page-item disabled">
+                    <span class="page-link">@Model.Chapter</span>
                 </li>
                 <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
                     <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">&raquo;</a>
