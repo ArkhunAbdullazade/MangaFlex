@@ -27,7 +27,7 @@ internal class GetUserProfileHandler : IRequestHandler<GetUserProfileCommand, Ge
         var user = await userService.GetByIdAsync(request.UserId!);
         var lastwatched = await userService.GetLastWatchAsync(request.UserId!);
         var lastWatched = new List<Manga>();
-        var friends = await userService.GetAllFriendsAsync(request.UserId!);
+        var friends = await userService.GetUserSubscribe(request.UserId!);
 
         foreach (var manga in lastwatched)
         {

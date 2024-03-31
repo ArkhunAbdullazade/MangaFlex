@@ -119,16 +119,28 @@ public class UserService : IUserService
     public async Task RemoveFriendAsync(string userid, string friendid)
     {
         var result = await dbContext.FriendShip.FirstOrDefaultAsync(x => x.UserId == userid && x.FriendId == friendid);
+        Console.WriteLine(userid);
+        Console.WriteLine(friendid);
         dbContext.Remove(result);
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<User>> GetAllFriendsAsync(string userid)
+    public async Task<IEnumerable<User>> GetUserSubscribe(string userid)
     {
         var users = await dbContext.FriendShip
             .Include(fs => fs.User)  
             .Where(fs => fs.UserId == userid)
             .Select(fs => fs.Friend)  
+            .ToArrayAsync();
+        return users;
+    }
+
+    public async Task<IEnumerable<User>> GetSubAsync(string userid)
+    {
+        var users = await dbContext.FriendShip
+            .Include(fs => fs.User)
+            .Where(fs => fs.FriendId == userid)
+            .Select(fs => fs.User)
             .ToArrayAsync();
         return users;
     }

@@ -75,12 +75,12 @@
                         {
                             <button class="btn btn-primary" onclick="PostWithId('/User/Subscribe', '@Model.User.Id'); Reload();">Subscribe</button>
                         }
-                        if (Model.IsFriends)
+                       @*  if (Model.IsFriends)
                         {
                             <button class="btn btn-primary">Chat</button>
-                        }
+                        } *@
                         if (Model.IsSub == true){
-                            <button class="btn btn-primary">Unsubscribe</button>
+                            <button class="btn btn-primary" onclick="GoWithIdAndMethod('/User/Unsubscribe','@Model.User.Id','DELETE');Reload();">Unsubscribe</button>
                         }
                     }
                 </div>

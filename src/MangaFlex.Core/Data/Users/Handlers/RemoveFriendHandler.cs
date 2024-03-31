@@ -10,17 +10,16 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.Users.Handlers;
 
-public class GetUserFriendsHandler : IRequestHandler<GetUserFriendsCommand, IEnumerable<User>>
+
+public class RemoveFriendHandler : IRequestHandler<RemoveFriendCommand>
 {
     private readonly IUserService userService;
-    public GetUserFriendsHandler(IUserService userService)
+    public RemoveFriendHandler(IUserService userService)
     {
         this.userService = userService;
     }
-
-    public async Task<IEnumerable<User>> Handle(GetUserFriendsCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RemoveFriendCommand request, CancellationToken cancellationToken)
     {
-        var result = await userService.GetAllFriendsAsync(request.UserId);
-        return result;
+        await userService.RemoveFriendAsync(request.UserId, request.FriendId);
     }
 }
