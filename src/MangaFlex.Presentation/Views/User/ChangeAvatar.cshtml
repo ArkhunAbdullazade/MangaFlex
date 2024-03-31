@@ -152,6 +152,10 @@
                     processData: false,
                     contentType: false,
                 });
+                location.href = '/User/Profile'
+                caches.open('my-cache').then(cache => {
+                    cache.delete('https://localhost:7098/User/Profile');
+                });
             }
 
             function dataURLtoBlob(dataUrl) {
