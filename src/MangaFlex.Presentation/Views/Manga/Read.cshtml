@@ -113,7 +113,6 @@ else
                 mangaPage.src = pageUrl;
             }
 
-            // Hide previous arrow if on the first page
             prevArrow.style.visibility = pageIndex === 0 ? "hidden" : "visible";
         }
 
@@ -123,7 +122,7 @@ else
                 showPage(currentPageIndex);
             } else {
                 var prevChapter = @(Model.Chapter - 1);
-                if (prevChapter <= @(Model.TotalChapters)) {
+                if (prevChapter >= 1) {
                     window.location.href = "?id=@(Model.MangaId)&chapter=" + prevChapter;
                 }
             }
@@ -148,7 +147,7 @@ else
                     showPage(currentPageIndex);
                 } else {
                     var prevChapter = @(Model.Chapter - 1);
-                    if (prevChapter != 0) {
+                    if (prevChapter >= 1) {
                         window.location.href = "?id=@(Model.MangaId)&chapter=" + prevChapter;
                     }
                 }
@@ -162,31 +161,6 @@ else
                         window.location.href = "?id=@(Model.MangaId)&chapter=" + nextChapter;
                     }
                 }
-            });
-
-            document.addEventListener("keydown", function (event) {
-                if (event.key === "ArrowLeft") {
-                    if (currentPageIndex > 0) {
-                        currentPageIndex--;
-                        showPage(currentPageIndex);
-                    } else {
-                        var prevChapter = @(Model.Chapter - 1);
-                        if (prevChapter >= 1) {
-                            window.location.href = "?id=@(Model.MangaId)&chapter=" + prevChapter;
-                        }
-                    }
-                } else if (event.key === "ArrowRight") {
-                    if (currentPageIndex < jsPageUrls.length - 1) {
-                        currentPageIndex++;
-                        showPage(currentPageIndex);
-                    } else {
-                        var nextChapter = @(Model.Chapter + 1);
-                        if (nextChapter <= @(Model.TotalChapters)) {
-                            window.location.href = "?id=@(Model.MangaId)&chapter=" + nextChapter;
-                        }
-                    }
-                }
-            });
             }
         });
     });
