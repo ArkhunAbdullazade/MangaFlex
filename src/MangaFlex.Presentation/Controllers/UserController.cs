@@ -186,7 +186,7 @@ public class UserController : Controller
         var GetUserSub = new GetFollowersCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
         var GetUserSubCommandResult = await sender.Send(GetUserSub);
         var GetUserFriendsResult = await sender.Send(GetUserFriends);
-        return View(new SubscriptionsAndSubscribeVM() 
+        return View(new FollowersVM() 
         { 
             Subscriptions = GetUserFriendsResult,
             Subscribe = GetUserSubCommandResult,

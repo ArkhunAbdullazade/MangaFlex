@@ -19,6 +19,13 @@ async function GoWithIdAndMethod(url, id, method) {
     await fetch(url + '?id=' + id, requestOptions)       
 }
 
+async function GoWithMethod(url, method) {
+    const requestOptions = {
+        method: method.toUpperCase()
+    };
+    await fetch(url, requestOptions)
+}
+
 async function PostWithId(url, id) {
     console.log(url);
     await fetch(url + '?id=' + id, { method: "POST" })

@@ -50,7 +50,7 @@ namespace MangaFlex.Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> AvailableLanguages(string id)
         {
-            ViewBag.MangaId = id; // айди манги в ViewBag
+            ViewBag.MangaId = id; 
             var availableLanguages = await mangaService.GetAvailableLanguages(id);
             return View(availableLanguages);
         }
@@ -89,7 +89,6 @@ namespace MangaFlex.Presentation.Controllers
         public async Task<IActionResult> SetLanguage(string language, string mangaId)
         {
             Response.Cookies.Append("Language", language);
-            // Формируем URL для перенаправления на страницу чтения с выбранным языком и ID манги
             string redirectUrl = Url.Action("Read", "Manga", new { id = mangaId });
             return Redirect(redirectUrl);
         }
