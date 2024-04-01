@@ -2,8 +2,35 @@
     bool isAuth = User?.Identity?.IsAuthenticated ?? false;
 }
 
+<style>
+    body {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important; 
+    }
+
+    .search-container {
+        position: relative;
+        width: fit-content;
+    }
+
+    .search-input {
+        border: 2px solid #000;
+        box-shadow: #ecc500 4px 4px 0 0, #000 4px 4px 0 1.5px;
+        border-radius: 10px;
+        padding: 6px 10px;
+        padding-left: 30px;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+</style>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,65 +38,87 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MangaFlex.Presentation.styles.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MangaFlex</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    @if (User?.Identity?.IsAuthenticated == false)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Registration">Registration</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Login">Login</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Manga" asp-action="Mangas">Mangas</a>
-                        </li>
+                        @if (User?.Identity?.IsAuthenticated == false)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User"
+                                    asp-action="Registration">Registration</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="GetUsers">Users</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Login">Login</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Manga"
+                                    asp-action="Mangas">Mangas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="User"
+                                    asp-action="GetAnotherUsers">Find Another Users</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-black" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle text-black" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     @User?.Identity?.Name
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-item text-dark">
-                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="Profile">Profile</a>
+                                        <a class="nav-link" asp-area="" asp-controller="User"
+                                            asp-action="Profile">Profile</a>
                                     </li>
                                     <li class="dropdown-item text-dark">
-                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="Settings">Settings</a>
+                                        <a class="nav-link" asp-area="" asp-controller="User"
+                                            asp-action="Settings">Settings</a>
                                     </li>
                                     <li class="dropdown-item text-dark">
-                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="LastWatches">Last Watches</a>
+                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="LastWatches">Last
+                                            Watches</a>
                                     </li>
                                     <li class="dropdown-item text-dark">
                                         <a class="nav-link" asp-area="" asp-controller="User" asp-action="Followers">Followers</a>
+                                    <li>
+                                        <a class="nav-link" asp-area="" asp-controller="User"
+                                            asp-action="SubscriptionsandSubscribers">Subscriptions and Subscribers</a>
                                     </li>
                                     <li class="dropdown-item text-dark">
-                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="LogOut">Log out</a>
+                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="LogOut">Log
+                                            out</a>
                                     </li>
                                 </ul>
                             </li>
-                    }
+                        }
                     </ul>
                     <form class="form-inline my-2 my-lg-0" method="get" asp-controller="Manga" asp-action="Mangas">
                         @if (isAuth)
                         {
-                            <div class="input-group">
-                                <input class="form-control mr-sm-2" name="search" type="text" aria-label="Search">
-                                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                            <div class="search-container">
+                                <input class="search-input" name="search" type="text" aria-label="Search"
+                                    placeholder="Search here">
+                                <svg class="search-icon" width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24"
+                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M15.5 15.5L19 19" stroke="currentColor" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path
+                                        d="M5 11C5 14.3137 7.68629 17 11 17C12.6597 17 14.1621 16.3261 15.2483 15.237C16.3308 14.1517 17 12.654 17 11C17 7.68629 14.3137 5 11 5C7.68629 5 5 7.68629 5 11Z"
+                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
                             </div>
                         }
                     </form>
@@ -93,4 +142,5 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
