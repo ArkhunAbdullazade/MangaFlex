@@ -88,7 +88,6 @@ namespace MangaFlex.Presentation.Controllers
 
         public async Task<IActionResult> SetLanguage(string language, string mangaId)
         {
-            // Устанавливаем язык в куки
             Response.Cookies.Append("Language", language);
             // Формируем URL для перенаправления на страницу чтения с выбранным языком и ID манги
             string redirectUrl = Url.Action("Read", "Manga", new { id = mangaId });
