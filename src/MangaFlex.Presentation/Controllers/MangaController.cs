@@ -1,8 +1,8 @@
+using MangaFlex.Core.Data.LastWatches.Command;
 using MangaFlex.Core.Data.Mangas.Models;
 using MangaFlex.Core.Data.Mangas.Services;
 using MangaFlex.Core.Data.Mangas.ViewModels;
 using MangaFlex.Core.Data.Users.Commands;
-using MangaFlex.Core.Data.Users.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

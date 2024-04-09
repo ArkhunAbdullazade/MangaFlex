@@ -9,6 +9,8 @@ using MangaFlex.Core.Data.Users.Commands;
 using System.Security.Claims;
 using System.Drawing;
 using MangaFlex.Presentation.ViewModels;
+using MangaFlex.Core.Data.LastWatches.Command;
+using MangaFlex.Core.Data.FriendShip.Commands;
 
 [Authorize]
 public class UserController : Controller
@@ -96,7 +98,7 @@ public class UserController : Controller
     {
         try
         {
-            var command = new LoginInCommand(dto.Login, dto.Password);
+            var command = new SignInCommand(dto.Login, dto.Password);
             await sender.Send(command);
             return RedirectToAction("Index", "Home");
         }
@@ -117,7 +119,7 @@ public class UserController : Controller
     {
         try
         {
-            var command = new SignInCommand(new User()
+            var command = new SignUpCommand(new User()
             {
                 UserName = dto.Login,
                 Email = dto.Email,

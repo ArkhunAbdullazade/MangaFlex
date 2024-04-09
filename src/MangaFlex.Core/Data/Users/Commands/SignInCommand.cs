@@ -1,16 +1,15 @@
 ﻿using MediatR;
-using MangaFlex.Core.Data.Users.Models;
 
 namespace MangaFlex.Core.Data.Users.Commands;
 
 public class SignInCommand : IRequest
 {
-    public User? User { get; set; }
+    public string? Login { get; set; }
     public string? Password { get; set; }
 
-    public SignInCommand(User? user, string? password)
+    public SignInCommand(string? login, string? password)
     {
-        User = user;
+        Login = login;
         Password = password;
     }
 

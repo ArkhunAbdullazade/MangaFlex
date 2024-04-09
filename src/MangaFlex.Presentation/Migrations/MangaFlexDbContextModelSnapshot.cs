@@ -22,7 +22,7 @@ namespace MangaFlex.Presentation.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.FriendShip", b =>
+            modelBuilder.Entity("MangaFlex.Core.Data.FriendShip.Models.FriendShip", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,10 +44,10 @@ namespace MangaFlex.Presentation.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FriendShip");
+                    b.ToTable("FriendShips");
                 });
 
-            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.LastWatch", b =>
+            modelBuilder.Entity("MangaFlex.Core.Data.LastWatches.Models.LastWatch", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,7 +65,7 @@ namespace MangaFlex.Presentation.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLastWatch");
+                    b.ToTable("UserLastWatches");
                 });
 
             modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.User", b =>
@@ -267,7 +267,7 @@ namespace MangaFlex.Presentation.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.FriendShip", b =>
+            modelBuilder.Entity("MangaFlex.Core.Data.FriendShip.Models.FriendShip", b =>
                 {
                     b.HasOne("MangaFlex.Core.Data.Users.Models.User", "Friend")
                         .WithMany()
@@ -286,7 +286,7 @@ namespace MangaFlex.Presentation.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.ManyToMany.LastWatch", b =>
+            modelBuilder.Entity("MangaFlex.Core.Data.LastWatches.Models.LastWatch", b =>
                 {
                     b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
                         .WithMany()

@@ -1,12 +1,16 @@
-using MangaFlex.Infrastructure.Data.User.Services;
 using MangaFlex.Infrastructure.Data.DBContext;
 using MangaFlex.Core.Data.Users.Models;
-using MangaFlex.Core.Data.Users.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 using MangaFlex.Core.Data.Mangas.Services;
 using MangaFlex.Infrastructure.Data.Mangas.Services;
+using MangaFlex.Infrastructure.Data.Users.Repository;
+using MangaFlex.Core.Data.Users.Repository;
+using MangaFlex.Core.Data.FriendShip.Repository;
+using MangaFlex.Infrastructure.Data.FriendShip.Repository;
+using MangaFlex.Core.Data.LastWatches.Repository;
+using MangaFlex.Infrastructure.Data.LastWatches.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +33,9 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
     options.Password.RequiredLength = 8;
 }).AddEntityFrameworkStores<MangaFlexDbContext>();
 
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IFriendShipRepository, FriendShipRepository>();
+builder.Services.AddScoped<ILastWatchesRepository, LastWatchesRepository>();
 builder.Services.AddScoped<IMangaService, MangaService>();
 
 builder.Services.ConfigureApplicationCookie(options =>

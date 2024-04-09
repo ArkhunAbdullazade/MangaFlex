@@ -1,22 +1,36 @@
 ﻿namespace MangaFlex.Core.Data.Users.Handlers;
 
 using MangaFlex.Core.Data.Users.Commands;
-using MangaFlex.Core.Data.Users.Services;
+using MangaFlex.Core.Data.Users.Models;
+using MangaFlex.Core.Data.Users.Repository;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using System.Threading;
 using System.Threading.Tasks;
 
 public class SignInHandler : IRequestHandler<SignInCommand>
 {
-    private readonly IUserService userService;
-
-    public SignInHandler(IUserService userService)
+    private readonly SignInManager<User> signInManager;
+    private readonly UserManager<User> userManager;
+    public SignInHandler(UserManager<User> userManager, SignInManager<User> signInManager)
     {
-        this.userService = userService;
+        this.userManager = userManager;
+        this.signInManager = signInManager;
     }
-
     public async Task Handle(SignInCommand request, CancellationToken cancellationToken)
     {
-        await this.userService.SignupAsync(request.User!, request.Password!);
+        var user = await userManager.FindByNameAsync(request.Login!);
+
+        if (user is null)
+        {
+            throw new NullReferenceException("Incorrect Login");
+        }
+
+        var result = await signInManager.PasswordSignInAsync(user, request.Password!, true, true);
+
+        if (!result.Succeeded)
+        {
+            throw new ArgumentException("Incorrect Password");
+        }
     }
 }

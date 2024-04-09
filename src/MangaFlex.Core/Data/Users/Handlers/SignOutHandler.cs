@@ -1,21 +1,23 @@
 ﻿namespace MangaFlex.Core.Data.Users.Handlers;
 
 using MangaFlex.Core.Data.Users.Commands;
-using MangaFlex.Core.Data.Users.Services;
+using MangaFlex.Core.Data.Users.Models;
+using MangaFlex.Core.Data.Users.Repository;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using System.Threading;
 using System.Threading.Tasks;
 
 internal class SignOutHandler : IRequestHandler<SignOutCommand>
 {
-    private readonly IUserService userService;
+    private readonly SignInManager<User> signInManager;
 
-    public SignOutHandler(IUserService userService)
+    public SignOutHandler(SignInManager<User> signInManager)
     {
-        this.userService = userService;
+        this.signInManager = signInManager;
     }
     public async Task Handle(SignOutCommand request, CancellationToken cancellationToken)
     {
-        await this.userService.SignOutAsync();
+        await signInManager.SignOutAsync();
     }
 }
