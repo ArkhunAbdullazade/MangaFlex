@@ -27,9 +27,19 @@
         transform: translateY(-50%);
         pointer-events: none;
     }
-
+.header{
+      position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #ffffff;
+        z-index: 2;
+}
     .footer {
-        background-color: white;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #ffffff;
+        z-index: 2;
     }
 </style>
 <!DOCTYPE html>
@@ -132,12 +142,20 @@
             @RenderBody()
         </main>
     </div>
-
-    <footer class="border-top footer text-muted">
+  @if (IsSectionDefined("hidefooter"))
+    {
+         @RenderSection("hidefooter", false)
+    }
+    else  
+    {
+      <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2024 - MangaFlex
         </div>
     </footer>
+        }
+
+   
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
