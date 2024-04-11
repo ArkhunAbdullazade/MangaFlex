@@ -10,14 +10,14 @@
     <div class="row">
         <div class="col-md-6">
             <h2>Subscriptions</h2>
-            @if (Model.Subscriptions.Any() == false)
+            @if (Model?.Subscriptions?.Any() == false)
             {
                 <p>You don't have any Subscriptions</p>
             }
             else
             {
                 <ul class="list-group">
-                    @foreach (var subscription in Model.Subscriptions)
+                    @foreach (var subscription in Model?.Subscriptions!)
                     {
                         <li class="list-group-item" onclick="GoWithId('/User/ProfileById','@subscription.Id')"><img src="@subscription.AvatarPath" class="mr-2" style="max-width: 50px; max-height: 50px;" />@subscription.UserName</li>
                     }
@@ -27,14 +27,14 @@
         </div>
         <div class="col-md-6">
             <h2>Subscribers</h2>
-            @if (Model.Subscribe.Any() == false)
+            @if (Model?.Followers?.Any() == false)
             {
-                <p>You don't have any Subscribers</p>
+                <p>You don't have any Followers</p>
             }
             else
             {
                 <ul class="list-group">
-                    @foreach (var subscriber in Model.Subscribe)
+                    @foreach (var subscriber in Model?.Followers!)
                     {
                         <li class="list-group-item" onclick="GoWithId('/User/ProfileById','@subscriber.Id')"><img src="@subscriber.AvatarPath" class="mr-2" style="max-width: 50px; max-height: 50px;" />@subscriber</li>
                     }

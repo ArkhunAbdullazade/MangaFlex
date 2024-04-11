@@ -6,26 +6,28 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using MangaFlex.Core.Data.Users.Commands;
-using System.Security.Claims;
 using System.Drawing;
 using MangaFlex.Presentation.ViewModels;
 using MangaFlex.Core.Data.LastWatches.Command;
 using MangaFlex.Core.Data.FriendShip.Commands;
+using Microsoft.AspNetCore.Identity;
 
 [Authorize]
 public class UserController : Controller
 {
     private readonly ISender sender;
+    private readonly UserManager<User> userManager;
 
-    public UserController(ISender sender)
+    public UserController(ISender sender, UserManager<User> userManager)
     {
         this.sender = sender;
+        this.userManager = userManager;
     }
 
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
-        var command = new GetUserProfileCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var command = new GetUserProfileCommand(userManager.GetUserId(User!));
         var result = await sender.Send(command);
         return View(result);
     }
@@ -45,7 +47,7 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> LastWatches()
     {
-        var command = new GetUserLastWatchesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var command = new GetUserLastWatchesCommand(userManager.GetUserId(User!));
         var result = await sender.Send(command);
         return View(result);
     }
@@ -53,16 +55,18 @@ public class UserController : Controller
     [HttpPut]
     public async Task<IActionResult> ChangeAvatar(IFormFile avatar)
     {
+        #pragma warning disable CA1416 // Validate platform compatibility
         using (var image = Image.FromStream(avatar.OpenReadStream()))
         {
-            if (image.Width > 600 || image.Height > 600)
+            if (image?.Width > 600 || image?.Height > 600)
             {
                 ModelState.AddModelError(string.Empty, "Photo cannot be more than 600 x 600 pixels.");
                 return View("ChangeAvatar");
             }
         }
+        #pragma warning restore CA1416 // Validate platform compatibility
 
-        var userName = User.Identity.Name;
+        var userName = User?.Identity?.Name;
         var fileName = $"{userName}{Path.GetExtension(avatar.FileName)}";
 
         var destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
@@ -81,7 +85,7 @@ public class UserController : Controller
         }
         var relativePath = "/uploads/" + fileName;
 
-        var command = new ChangeAvatarCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, relativePath);
+        var command = new ChangeAvatarCommand(userManager.GetUserId(User!), relativePath);
         await sender.Send(command);
 
         return RedirectToAction("Profile");
@@ -159,16 +163,16 @@ public class UserController : Controller
     {
         var command = new GetUserProfileCommand(id);
         var result = await sender.Send(command);
-        var userfriends = await sender.Send(new GetUserSubscribesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!));
-        result.IsSub = userfriends.Any(x => x.UserName == result.User.UserName);
-        result.IsFriends = (result.Friends.Any(x => x.UserName == User.Identity.Name) && userfriends.Any(x => x.UserName == result.User.UserName));
-        return View("Profile",result);
+        var subscribtions = await sender.Send(new GetUserSubscriptionsCommand(userManager.GetUserId(User)!));
+        result.IsSub = subscribtions.Any(x => x.UserName == result?.User?.UserName);
+        result.IsFriends = result.Friends!.Any(x => x.UserName == User?.Identity?.Name) && subscribtions.Any(x => x.UserName == result?.User?.UserName);
+        return View("Profile", result);
     }
 
     [HttpPost]
     public async Task<IActionResult> Subscribe(string id)
     {
-        var command = new SubscribeCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!,id);
+        var command = new SubscribeCommand(userManager.GetUserId(User)!, id);
         await sender.Send(command);
         return RedirectToAction("ProfileById", id);
     }
@@ -176,7 +180,7 @@ public class UserController : Controller
     [HttpDelete]
     public async Task<IActionResult> Unsubscribe(string id)
     {
-        var command = new RemoveFriendCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!, id);
+        var command = new RemoveFriendCommand(userManager.GetUserId(User!), id);
         await sender.Send(command);
         return base.Ok();
     }
@@ -184,14 +188,14 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> Followers()
     {
-        var GetUserFriends = new GetUserSubscribesCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var GetUserSub = new GetFollowersCommand(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var GetUserSubCommandResult = await sender.Send(GetUserSub);
-        var GetUserFriendsResult = await sender.Send(GetUserFriends);
+        var GetUserSubscriptions = new GetUserSubscriptionsCommand(userManager.GetUserId(User)!);
+        var GetUserFollowers = new GetFollowersCommand(userManager.GetUserId(User)!);
+        var GetUserFollowersCommandResult = await sender.Send(GetUserFollowers);
+        var GetUserSubscriptionsResult = await sender.Send(GetUserSubscriptions);
         return View(new FollowersVM() 
         { 
-            Subscriptions = GetUserFriendsResult,
-            Subscribe = GetUserSubCommandResult,
+            Followers = GetUserFollowersCommandResult,
+            Subscriptions = GetUserSubscriptionsResult,
         });
     }
 

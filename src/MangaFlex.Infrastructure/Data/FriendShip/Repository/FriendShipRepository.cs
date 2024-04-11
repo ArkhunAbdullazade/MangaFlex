@@ -26,9 +26,9 @@ public class FriendShipRepository : IFriendShipRepository
     public async Task RemoveFriendAsync(string userid, string friendid)
     {
         var result = await dbContext.FriendShips.FirstOrDefaultAsync(x => x.UserId == userid && x.FriendId == friendid);
-        Console.WriteLine(userid);
-        Console.WriteLine(friendid);
+        #pragma warning disable CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
         dbContext.Remove(result);
+        #pragma warning restore CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
         await dbContext.SaveChangesAsync();
     }
 
@@ -38,8 +38,8 @@ public class FriendShipRepository : IFriendShipRepository
             .Include(fs => fs.User)
             .Where(fs => fs.UserId == userid)
             .Select(fs => fs.Friend)
-            .ToArrayAsync();
-        return users;
+            .ToListAsync();
+        return users!;
     }
 
     public async Task<IEnumerable<User>> GetFollowersAsync(string userid)
@@ -48,7 +48,7 @@ public class FriendShipRepository : IFriendShipRepository
             .Include(fs => fs.User)
             .Where(fs => fs.FriendId == userid)
             .Select(fs => fs.User)
-            .ToArrayAsync();
-        return users;
+            .ToListAsync();
+        return users!;
     }
 }

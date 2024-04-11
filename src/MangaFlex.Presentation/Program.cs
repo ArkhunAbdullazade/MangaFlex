@@ -11,6 +11,8 @@ using MangaFlex.Core.Data.FriendShip.Repository;
 using MangaFlex.Infrastructure.Data.FriendShip.Repository;
 using MangaFlex.Core.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.LastWatches.Repository;
+using MangaFlex.Core.Data.UserMangas.Repositories;
+using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFriendShipRepository, FriendShipRepository>();
 builder.Services.AddScoped<ILastWatchesRepository, LastWatchesRepository>();
 builder.Services.AddScoped<IMangaService, MangaService>();
+builder.Services.AddScoped<IUserMangaRepository, UserMangaRepository>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

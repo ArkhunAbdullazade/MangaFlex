@@ -14,6 +14,6 @@ public class RemoveFriendHandler : IRequestHandler<RemoveFriendCommand>
     }
     public async Task Handle(RemoveFriendCommand request, CancellationToken cancellationToken)
     {
-        await friendShipRepository.RemoveFriendAsync(request.UserId, request.FriendId);
+        await friendShipRepository.RemoveFriendAsync(request?.UserId!, request?.FriendId!);
     }
 }
