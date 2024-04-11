@@ -27,6 +27,16 @@ else
             <span class="chapterTitle">@Model.ChapterTitle</span>
         }
                     </div>
+<select id="chapterSelector" class="form-select">
+    <option value="@Model.Chapter">Chapter @Model.Chapter</option>
+    @for (int i = 1; i <= Model.TotalChapters; i++)
+    {
+        if (i != Model.Chapter)
+        {
+            <option value="@i">Chapter @i</option>
+        }
+    }
+</select>
                 </li>
                 <li class="page-item @(Model.Chapter == Model.TotalChapters ? "disabled" : "")">
                     <a class="page-link" href="?id=@(Model.MangaId)&chapter=@(Model.Chapter+1)">Next Chapter &raquo;</a>
@@ -87,6 +97,14 @@ else
     </div>
 }
 <script>
+document.getElementById("chapterSelector").addEventListener("change", function () {
+    var selectedChapter = this.value;
+    window.location.href = "?id=@(Model.MangaId)&chapter=" + selectedChapter;
+});
+$(document).ready(function() {
+    $("#chapterSelector option[value='@(Model.Chapter)']").addClass("current-chapter");
+});
+
     document.addEventListener("DOMContentLoaded", function () {
         var currentPageIndex = 0;
         var jsPageUrls = @Html.Raw(JsonSerializer.Serialize(Model.Pages));

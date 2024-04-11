@@ -100,6 +100,8 @@ public class MangaService : IMangaService
         mangaFeedFilter.TranslatedLanguage = new[] { language };
         // Fetch manga chapters
         var chapters = await apiClient.Manga.Feed(mangaId, mangaFeedFilter);
+        // Filter chapters by language
+        var chaptersInLanguage = chapters.Data?.Where(chapter => chapter.Attributes.TranslatedLanguage == language);
         // Fetch pages for the specified chapter
         var pages = await apiClient.Pages.Pages(chapterId: chapters.Data?[chapter - 1]?.Id!);
         var currentChapter = await apiClient.Chapter.Get(chapters.Data?[chapter - 1]?.Id!);
@@ -110,7 +112,7 @@ public class MangaService : IMangaService
             MangaId = mangaId,
             Pages = pages?.GenerateImageLinks() ?? Enumerable.Empty<string>(),
             Chapter = chapter,
-            TotalChapters = chapters.Total,
+            TotalChapters = chaptersInLanguage?.Count() ?? 0,
             ChapterTitle = chapterTitle,
             Volume = volume,
         };
