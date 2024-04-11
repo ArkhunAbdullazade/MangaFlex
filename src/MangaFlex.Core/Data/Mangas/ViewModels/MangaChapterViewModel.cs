@@ -6,5 +6,7 @@ namespace MangaFlex.Core.Data.Mangas.ViewModels
         public IEnumerable<string>? Pages { get; set; }
         public int Chapter { get; set; }
         public int TotalChapters { get; set; }
+        public string? ChapterTitle  { get; set; }
+        public string? Volume { get; set; }
     }
 }
