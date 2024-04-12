@@ -11,6 +11,7 @@ using MangaFlex.Core.Data.FriendShip.Repository;
 using MangaFlex.Infrastructure.Data.FriendShip.Repository;
 using MangaFlex.Core.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.LastWatches.Repository;
+using MangaFlex.Presentation.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     //options.AccessDeniedPath = "/ErrorPage/Error";
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("BannedPolicy", policy =>
+        policy.RequireRole("Banned")
+             .Build());
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -54,6 +62,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+
+app.UseMiddleware<CheckIsBannedMiddleware>();
 
 app.UseRouting();
 

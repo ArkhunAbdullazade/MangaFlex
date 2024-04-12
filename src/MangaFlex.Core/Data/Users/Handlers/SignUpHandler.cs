@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 public class SignUpHandler : IRequestHandler<SignUpCommand>
 {
-    private readonly UserManager<User> userManager;  
+    private readonly UserManager<User> userManager;
 
     public SignUpHandler(UserManager<User> userManager) 
     {
