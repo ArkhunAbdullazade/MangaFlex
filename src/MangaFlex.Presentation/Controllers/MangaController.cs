@@ -148,6 +148,23 @@ namespace MangaFlex.Presentation.Controllers
             return RedirectToAction("About", new { id = userMangaDto.MangaId });
         }
 
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteUserManga(string id)
+        {
+            try
+            {
+                var userMangaCommand = new DeleteUserMangaCommand(this.userManager.GetUserId(User!), id);
+                await sender.Send(userMangaCommand);
+            }
+            catch (Exception)
+            {
+                return BadRequest("There is No Such Movie To Update");
+            }
+
+            return RedirectToAction("About", new { id });
+        }
+
         public IActionResult SetLanguage(string language, string mangaId)
         {
             Response.Cookies.Append("Language", language);
