@@ -2,8 +2,11 @@
 
 namespace MangaFlex.Presentation.Dto;
 
-public class LoginDto
+public class RegistrationDto
 {
+    [EmailAddress]
+    [Required]
+    public string? Email { get; set; }
     [Required]
     public string? Login { get; set; }
     [Required]

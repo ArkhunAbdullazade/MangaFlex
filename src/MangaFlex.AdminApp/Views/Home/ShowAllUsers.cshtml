@@ -1,0 +1,123 @@
+﻿@using MangaFlex.AdminApp.ViewModels
+@model IEnumerable<ShowAllUsersVM>
+@{
+    ViewData["Title"] = "Admin Panel";
+    var username = string.Empty;
+}
+
+<style>
+    .text-primary {
+        color: blue;
+    }
+
+    .text-danger {
+        color: red;
+    }
+</style>
+
+<div class="container">
+
+    @if (Model is null || !Model.Any())
+    {
+        <p class="">No user in base</p>
+    }
+    
+    else
+    {
+        <div class="d-flex flex-wrap">
+            @foreach (var item in Model)
+            {
+                if (User.Identity.Name == item.User.UserName || item.User.UserName.Contains("admin"))
+                {
+                    continue;
+                }
+                <div class="p-2">
+                    <div class="card border-4" style="max-width: 300px;">
+                        <img src="~/MangaFlex.Presentation/wwwroot/@item.User.AvatarPath" style="max-height:200px;max-width:150px" class="card-img-top" alt="User Image">
+                        <div class="card-body">
+                            <p class="card-text">@item.User.UserName</p>
+                            <p class="card-text @(item.Role == "Moderator" ? "text-primary" : (item.Role == "Banned" ? "text-danger" : ""))">Role: @item.Role</p>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+
+                                if (item.Role == "Moderator")
+                                {
+                                    <button class="card-text btn btn-danger" onclick="removeModerator('@item.User.Id')">Remove moderator</button>
+                                }
+                                else
+                                {
+                                    <button class="card-text btn btn-primary" onclick="setModerator('@item.User.Id')">Appoint as moderator</button>
+                                }
+                            }
+                            @if (User.IsInRole("Moderator") || User.IsInRole("Admin"))
+                            {
+                                if (item.Role == "Banned")
+                                {
+                                    <button class="card-text btn btn-danger" onclick="unbanUser('@item.User.Id')">Unban</button>
+                                }
+                                else
+                                {
+                                    @if(item.Role == "Moderator")
+                                    {
+                                        if (User.IsInRole("Admin"))
+                                        {
+                                            <button class="card-text btn btn-primary" onclick="banUser('@item.User.Id')">Ban</button>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <button class="card-text btn btn-primary" onclick="banUser('@item.User.Id')">Ban</button>
+                                    }
+                                }
+                            }
+                           
+                            
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    function banUser(userId) {
+        fetch(`/Home/Ban?id=${userId}`, {
+            method: 'PUT'
+        })
+            .then(response => {
+                location.reload(); 
+            })
+            
+    }
+
+    function unbanUser(userId) {
+        fetch(`/Home/UnBan?id=${userId}`, {
+            method: 'PUT'
+        })
+            .then(response => {
+                location.reload();
+            })
+
+    }
+
+    function setModerator(userId) {
+        fetch(`/Home/SetModerator?id=${userId}`, {
+            method: 'PUT'
+        })
+            .then(response => {
+                location.reload();
+            })
+
+    }
+
+    function removeModerator(userId) {
+        fetch(`/Home/RemoveModerator?id=${userId}`, {
+            method: 'PUT'
+        })
+            .then(response => {
+                location.reload();
+            })
+    }
+</script>
