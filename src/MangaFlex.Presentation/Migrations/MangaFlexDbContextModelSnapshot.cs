@@ -68,6 +68,30 @@ namespace MangaFlex.Presentation.Migrations
                     b.ToTable("UserLastWatches");
                 });
 
+            modelBuilder.Entity("MangaFlex.Core.Data.UserMangas.Models.UserManga", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("MangaId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserMangas");
+                });
+
             modelBuilder.Entity("MangaFlex.Core.Data.Users.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -287,6 +311,15 @@ namespace MangaFlex.Presentation.Migrations
                 });
 
             modelBuilder.Entity("MangaFlex.Core.Data.LastWatches.Models.LastWatch", b =>
+                {
+                    b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MangaFlex.Core.Data.UserMangas.Models.UserManga", b =>
                 {
                     b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
                         .WithMany()

@@ -29,7 +29,9 @@ public class LastWatchesRepository : ILastWatchesRepository
     public async Task DeleteLastWatchAsync(string userid, string mangaid)
     {
         var todelete = await dbContext.UserLastWatches.FirstOrDefaultAsync(x => x.UserId == userid && x.MangaId == mangaid);
+        #pragma warning disable CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
         dbContext.Remove(todelete);
+        #pragma warning restore CS8634 // The type cannot be used as type parameter in the generic type or method. Nullability of type argument doesn't match 'class' constraint.
         await dbContext.SaveChangesAsync();
     }
 

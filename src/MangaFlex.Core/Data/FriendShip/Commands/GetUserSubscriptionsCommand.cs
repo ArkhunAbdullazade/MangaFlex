@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace MangaFlex.Core.Data.FriendShip.Commands;
 
-public class GetUserSubscribesCommand : IRequest<IEnumerable<User>>
+public class GetUserSubscriptionsCommand : IRequest<IEnumerable<User>>
 {
     public string UserId { get; set; }
-    public GetUserSubscribesCommand(string userId)
+    public GetUserSubscriptionsCommand(string userId)
     {
         UserId = userId;
     }

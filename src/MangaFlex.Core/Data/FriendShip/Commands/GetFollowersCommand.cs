@@ -15,5 +15,4 @@ public class GetFollowersCommand : IRequest<IEnumerable<User>>
     {
         UserID = userid;
     }
-    public GetFollowersCommand() { }
 }

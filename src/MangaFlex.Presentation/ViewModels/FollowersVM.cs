@@ -4,6 +4,6 @@ namespace MangaFlex.Presentation.ViewModels;
 
 public class FollowersVM
 {
-    public IEnumerable<User> Subscriptions { get; set;}
-    public IEnumerable<User> Subscribe { get; set; }
+    public IEnumerable<User>? Followers { get; set;}
+    public IEnumerable<User>? Subscriptions { get; set; }
 }

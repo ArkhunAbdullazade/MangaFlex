@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "About";
+
+    bool? isMangaLogged = ViewData["IsMangaLogged"] as bool?;
+    string? mangaStatus = ViewData["MangaStatus"] as string;
 }
 
 <style>
@@ -341,6 +344,19 @@
                     }
                 </ul>
             }
+            <select id="status" onchange="logManga('@Model.Id', @isMangaLogged.ToString()?.ToLower())" class="form-control" id="rating" name="score">
+                <option disabled selected="@(mangaStatus is null || mangaStatus == "Delete")">None</option>  
+                <option value="Planning to Read" selected="@(mangaStatus == "Planning to Read")">Planning to Read</option>
+                <option value="Reading" selected="@(mangaStatus == "Reading")">Reading</option>
+                <option value="Completed" selected="@(mangaStatus == "Completed")">Completed</option>
+                <option value="On-Hold" selected="@(mangaStatus == "On-Hold")">On-Hold</option>
+                <option value="Dropped" selected="@(mangaStatus == "Dropped")">Dropped</option>
+                @if (mangaStatus is not null)
+                {
+                    <option value="Delete" style="color: red;">Delete</option>
+                }
+            </select>
+            <br>
             <a class="readNow" role="button" onclick="openLanguageOptions('@Model.Id')">Read now</a>
             <div id="mangaLanguageModal" class="modal">
                 <div class="modal-content">
@@ -367,7 +383,6 @@
             .then(data => {
                 const modalContent = document.querySelector('#mangaLanguageModal .modal-content');
                 modalContent.innerHTML = data;
-                // Добавляем mangaId к каждой кнопке выбора языка
                 const languageButtons = modalContent.querySelectorAll('.custom-button');
                 languageButtons.forEach(button => {
                     button.dataset.mangaId = mangaId;
@@ -384,5 +399,48 @@
     function closeModal() {
         const modal = document.getElementById('mangaLanguageModal');
         modal.style.display = 'none';
+    }
+
+    async function logManga(mangaId, isLogged) {
+        var selectElement = document.getElementById("status");
+        var selectedValue = selectElement.value;
+
+        let jsonData = {
+            MangaId: mangaId,
+            Status: selectedValue,
+        };
+        if(selectedValue === "Delete") {
+            await fetch('/Manga/DeleteUserManga?id=' + mangaId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(data => {
+                location.reload();
+            })
+        }
+        else if(isLogged) {
+            await fetch('/Manga/UpdateUserManga', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            }).then(data => {
+                location.reload();
+            })
+        }
+        else {
+            await fetch('/Manga/AddUserManga', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            }).then(data => {
+                location.reload();
+            })
+        }
+        
     }
 </script>

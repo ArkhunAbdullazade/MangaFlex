@@ -16,7 +16,7 @@
         <div class="d-flex flex-wrap">
             @foreach (var item in Model)
             {
-                if (User.Identity.Name == item.UserName)
+                if (User?.Identity?.Name == item.UserName)
                 {
                     continue;
                 }
