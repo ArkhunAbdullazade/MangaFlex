@@ -2,35 +2,284 @@
 @{
     ViewData["Title"] = "Registraion";
 }
+@section hidefooter {
+}
+<style>
+    .form {
+        gap: 10px;
+        background-color: #ffffff;
+        padding: 30px;
+        width: 450px;
+        border-radius: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+    }
 
- <div class="row justify-content-center ">
-            <div class="col-md-6 bg-opacity-75">
-            <h5 class="text-center">@ViewData["Title"]</h5>
+    .form button {
+        align-self: flex-end;
+    }
 
-            <form asp-action="Registration" method="post" class="p-3 border rounded">
-                <div asp-validation-summary="All"></div>
+    .flex-column>label {
+        color: #151717;
+        font-weight: 600;
+    }
 
-                <div class="mb-3">
-                    <label asp-for="Email" class="form-label">Email</label>
-                    <input class="form-control" asp-for="Email" type="email">
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
+    .inputForm {
+        border: 1.5px solid #ecedec;
+        border-radius: 10px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        transition: 0.2s ease-in-out;
+    }
 
-                <div class="mb-3">
-                    <label asp-for="Login" class="form-label">Username</label>
-                    <input class="form-control" asp-for="Login" type="text">
-                    <span asp-validation-for="Login" class="text-danger"></span>
-                </div>
+    .input {
+        margin-left: 10px;
+        border-radius: 10px;
+        border: none;
+        width: 100%;
+        height: 100%;
+    }
 
-                <div class="mb-3">
-                    <label asp-for="Password" class="form-label">Password</label>
-                    <input class="form-control" asp-for="Password" type="password">
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
+    .input:focus {
+        outline: none;
+    }
 
-                <button class="btn btn-success" type="submit">Register</button>
-            </form>
-        </div>
+    .inputForm:focus-within {
+        border: 1.5px solid #2d79f3;
+    }
+
+
+    .flex-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+    }
+
+    .flex-row>div>label {
+        font-size: 14px;
+        color: black;
+        font-weight: 400;
+    }
+
+    .span {
+        font-size: 14px;
+        margin-left: 5px;
+        color: #2d79f3;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .button-submit {
+        margin: 20px 0 10px 0;
+        background-color: #151717;
+        border: none;
+        color: white;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 10px;
+        height: 50px;
+        width: 100%;
+        cursor: pointer;
+    }
+
+    .p {
+        text-align: center;
+        color: black;
+        font-size: 14px;
+        margin: 5px 0;
+    }
+
+    .button-submit {
+        margin-top: 10px;
+        width: 100%;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 500;
+        gap: 10px;
+        border: 1px solid #ededef;
+        background-color: #78A2B3;
+        cursor: pointer;
+        transition: 0.2s ease-in-out;
+    }
+
+    .button-submit:hover {
+        border: 1px solid #000000;
+    }
+
+    .split {
+        height: 100%;
+        width: 50%;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        padding-top: 20px;
+    }
+
+    .left {
+        left: 0;
+    }
+
+    .right {
+        right: 0;
+        object-fit: fill;
+    }
+
+    .image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background-color: #ffffff;
+        padding: 30px;
+        width: 450px;
+        border-radius: 10px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+
+    .split {
+    @*height:calc(100%-80px);*@top: 56px;
+    }
+
+    .split.left {
+        left: 0;
+    }
+
+    .split.right {
+        right: 0;
+        width: 50%;
+        background-color: rgb(199, 203, 213);
+    }
+
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .right {
+        right: 0;
+        width: 50%;
+        background-color: rgb(199, 203, 213);
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .image {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+    }
+
+    .text {
+        font-size: 0.75rem;
+        font-size: 17px;
+        color: #78A2B3 !important;
+        font-weight: 700;
+        position: relative;
+        top: 0.5rem;
+        margin-left: -40vh;
+        margin-bottom: -0.5vh;
+        padding: 0 3px;
+        background: #ffffff;
+        width: fit-content;
+        border: 1.5px solid transparent;
+        transition: border-color 0.2s ease-in-out;
+    }
+</style>
+<div class="split left">
+    <div class="centered">
+        <h5 class="text-center" style="font-size: 10vh;">Welcome!</h5>
+        <p>Discover manga, manhua and manhwa, track your progress, have fun, read manga.</p>
+        <form asp-action="Registration" method="post">
+            <div asp-validation-summary="All"></div>
+            <div class="flex-column">
+                <label asp-for="Email" class="text">Email </label>
+            </div>
+            <div class="inputForm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 32 32" height="20">
+                    <g data-name="Layer 3" id="Layer_3">
+                        <path
+                            d="m30.853 13.87a15 15 0 0 0 -29.729 4.082 15.1 15.1 0 0 0 12.876 12.918 15.6 15.6 0 0 0 2.016.13 14.85 14.85 0 0 0 7.715-2.145 1 1 0 1 0 -1.031-1.711 13.007 13.007 0 1 1 5.458-6.529 2.149 2.149 0 0 1 -4.158-.759v-10.856a1 1 0 0 0 -2 0v1.726a8 8 0 1 0 .2 10.325 4.135 4.135 0 0 0 7.83.274 15.2 15.2 0 0 0 .823-7.455zm-14.853 8.13a6 6 0 1 1 6-6 6.006 6.006 0 0 1 -6 6z">
+                        </path>
+                    </g>
+                </svg>
+                <input asp-for="Email" placeholder="Enter Email" class="input" type="text">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="flex-column">
+                <label class="text" asp-for="Login" class="form-label">Username</label>
+            </div>
+            <div class="inputForm">
+                <svg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'
+                    xmlns:xlink='http://www.w3.org/1999/xlink'>
+                    <rect width='24' height='24' stroke='none' fill='#000000' opacity='0' />
+
+
+                    <g transform="matrix(1.43 0 0 1.43 12 12)">
+                        <g style="">
+                            <g transform="matrix(1 0 0 1 0 -3.25)">
+                                <circle
+                                    style="stroke: rgb(0,0,0); stroke-width: 1; stroke-dasharray: none; stroke-linecap: round; stroke-dashoffset: 0; stroke-linejoin: round; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;"
+                                    cx="0" cy="0" r="3.25" />
+                            </g>
+                            <g transform="matrix(1 0 0 1 0 4.25)">
+                                <path
+                                    style="stroke: rgb(0,0,0); stroke-width: 1; stroke-dasharray: none; stroke-linecap: round; stroke-dashoffset: 0; stroke-linejoin: round; stroke-miterlimit: 4; fill: none; fill-rule: nonzero; opacity: 1;"
+                                    transform=" translate(-7, -11.25)"
+                                    d="M 13.18 13.5 C 12.318612897595246 10.813927778801498 9.82081047177642 8.991842576997477 7 8.991842576997477 C 4.17918952822358 8.991842576997477 1.681387102404754 10.8139277788015 0.8200000000000003 13.5 Z"
+                                    stroke-linecap="round" />
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+                <input placeholder="Enter Username" class="input" asp-for="Login" type="text">
+                <span asp-validation-for="Login" class="text-danger"></span>
+            </div>
+            <div class="flex-column">
+                <label class="text" asp-for="Password">Password </label>
+            </div>
+            <div class="inputForm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="-64 0 512 512" height="20">
+                    <path
+                        d="m336 512h-288c-26.453125 0-48-21.523438-48-48v-224c0-26.476562 21.546875-48 48-48h288c26.453125 0 48 21.523438 48 48v224c0 26.476562-21.546875 48-48 48zm-288-288c-8.8125 0-16 7.167969-16 16v224c0 8.832031 7.1875 16 16 16h288c8.8125 0 16-7.167969 16-16v-224c0-8.832031-7.1875-16-16-16zm0 0">
+                    </path>
+                    <path
+                        d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0">
+                    </path>
+                </svg>
+                <input placeholder="Enter Password" asp-for="Password" class="input" type="password">
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="flex-row">
+            </div>
+            <button class="button-submit">Sign Up</button>
+            <p  style="font-size:16px;" class="p">Already have an account? <a href="@Url.Action("Login", "User")" style="text-decoration: none;"
+                    class="span">Log In</a></p>
+        </form>
+    </div>
+</div>
+<div class="split right">
+    <div class="centered">
+        <img src="~/assets/auth.png"></img>
     </div>
 </div>
 

@@ -47,6 +47,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     //options.AccessDeniedPath = "/ErrorPage/Error";
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("BannedPolicy", policy =>
+        policy.RequireRole("Banned")
+             .Build());
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -57,6 +64,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+
+app.UseMiddleware<CheckIsBannedMiddleware>();
 
 app.UseRouting();
 
