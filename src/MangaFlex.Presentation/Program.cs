@@ -13,6 +13,7 @@ using MangaFlex.Core.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.LastWatches.Repository;
 using MangaFlex.Core.Data.UserMangas.Repositories;
 using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
+using MangaFlex.Presentation.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
