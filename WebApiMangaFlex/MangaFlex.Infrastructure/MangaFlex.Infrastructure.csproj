@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+ 
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+	
+	<ItemGroup>		
+		<ProjectReference Include="..\MangaFlex.Core\MangaFlex.Core.csproj" />
+		<PackageReference Include="MangaDexSharp" Version="1.1.1" />		
+		<PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />		
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
+	</ItemGroup>
+
+</Project>

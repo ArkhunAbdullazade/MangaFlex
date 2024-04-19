@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaFlex.Core", "MangaFlex.Core\MangaFlex.Core.csproj", "{9ED52846-F466-4976-B3D0-15539F6137F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaFlex.Infrastructure", "MangaFlex.Infrastructure\MangaFlex.Infrastructure.csproj", "{4850D4A5-2D57-443B-8FEB-769BA2060F47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaFlex.Api", "MangaFlex.Api\MangaFlex.Api.csproj", "{B398FDE9-B116-4EC5-A8D1-9E9B1EE4E8BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9ED52846-F466-4976-B3D0-15539F6137F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ED52846-F466-4976-B3D0-15539F6137F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ED52846-F466-4976-B3D0-15539F6137F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ED52846-F466-4976-B3D0-15539F6137F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4850D4A5-2D57-443B-8FEB-769BA2060F47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4850D4A5-2D57-443B-8FEB-769BA2060F47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4850D4A5-2D57-443B-8FEB-769BA2060F47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4850D4A5-2D57-443B-8FEB-769BA2060F47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B398FDE9-B116-4EC5-A8D1-9E9B1EE4E8BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B398FDE9-B116-4EC5-A8D1-9E9B1EE4E8BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B398FDE9-B116-4EC5-A8D1-9E9B1EE4E8BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B398FDE9-B116-4EC5-A8D1-9E9B1EE4E8BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

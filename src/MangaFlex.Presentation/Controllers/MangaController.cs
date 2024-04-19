@@ -119,7 +119,7 @@ namespace MangaFlex.Presentation.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("There is No Such Movie To Add");
+                return BadRequest("There is No Such Manga To Add");
             }
 
             return RedirectToAction("About", new { id = userMangaDto.MangaId });
@@ -142,7 +142,7 @@ namespace MangaFlex.Presentation.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("There is No Such Movie To Update");
+                return BadRequest("There is No Such Manga To Update");
             }
 
             return RedirectToAction("About", new { id = userMangaDto.MangaId });
@@ -159,7 +159,7 @@ namespace MangaFlex.Presentation.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("There is No Such Movie To Update");
+                return BadRequest("There is No Such Manga To Update");
             }
 
             return RedirectToAction("About", new { id });
