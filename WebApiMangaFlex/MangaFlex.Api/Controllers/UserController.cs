@@ -9,6 +9,9 @@ using MangaFlex.Core.Data.LastWatches.Command;
 using MangaFlex.Core.Data.FriendShip.Commands;
 using Microsoft.AspNetCore.Identity;
 using MangaFlex.Api.ViewModels;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace MangaFlex.Api.Controllers;
 
@@ -26,68 +29,16 @@ public class UserController : Controller
         this.userManager = userManager;
     }
 
-    [HttpPost]
-    [AllowAnonymous]
-    public async Task<IActionResult> Login([FromForm] LoginDto dto)
-    {
-        try
-        {
-            var command = new SignInCommand(dto.Login, dto.Password);
-            await sender.Send(command);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            ModelState.AddModelError(ex.Source!, ex.Message);
-            return BadRequest();
-        }
-    }
-
-    [HttpPost]
-    [AllowAnonymous]
-    public async Task<IActionResult> Registration([FromForm] RegistrationDto dto)
-    {
-        try
-        {
-            var command = new SignUpCommand(new User()
-            {
-                UserName = dto.Login,
-                Email = dto.Email,
-            }, dto.Password);
-            await sender.Send(command);
-        }
-        catch (AggregateException ex)
-        {
-            foreach (ArgumentException error in ex.Flatten().InnerExceptions)
-            {
-                base.ModelState.AddModelError(error.ParamName!, error.Message);
-            }
-            return BadRequest();
-        }
-
-        return Ok();
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> LogOut()
-    {
-        var command = new SignOutCommand();
-        await sender.Send(command);
-        return Ok();
-    }
-
     [HttpGet]
     public async Task<IActionResult> Profile()
     {
-        var command = new GetUserProfileCommand(userManager.GetUserId(User!));
+        Console.WriteLine(1);
+        var user = HttpContext.User;
+        var id = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        Console.WriteLine(id);
+        var command = new GetUserProfileCommand(user.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await sender.Send(command);
         return Ok(result);
-    }
-
-    [HttpGet]
-    public IActionResult Settings()
-    {
-        return Ok();
     }
 
     [HttpGet]
@@ -98,44 +49,42 @@ public class UserController : Controller
         return Ok(result);
     }
 
-    // [HttpPut]
-    // public async Task<IActionResult> ChangeAvatar(IFormFile avatar)
-    // {
-    //     #pragma warning disable CA1416 // Validate platform compatibility
-    //     using (var image = Image.FromStream(avatar.OpenReadStream()))
-    //     {
-    //         if (image?.Width > 600 || image?.Height > 600)
-    //         {
-    //             ModelState.AddModelError(string.Empty, "Photo cannot be more than 600 x 600 pixels.");
-    //             return View("ChangeAvatar");
-    //         }
-    //     }
-    //     #pragma warning restore CA1416 // Validate platform compatibility
+    [HttpPut]
+    public async Task<IActionResult> ChangeAvatar(IFormFile avatar)
+    {
+        using (var image = Image.FromStream(avatar.OpenReadStream()))
+        {
+            if (image?.Width > 600 || image?.Height > 600)
+            {
+                ModelState.AddModelError(string.Empty, "Photo cannot be more than 600 x 600 pixels.");
+                return View("ChangeAvatar");
+            }
+        }
 
-    //     var userName = User?.Identity?.Name;
-    //     var fileName = $"{userName}{Path.GetExtension(avatar.FileName)}";
+        var userName = User?.Identity?.Name;
+        var fileName = $"{userName}{Path.GetExtension(avatar.FileName)}";
 
-    //     var destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-    //     var destinationPath = Path.Combine(destinationFolder, fileName);
+        var destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+        var destinationPath = Path.Combine(destinationFolder, fileName);
 
-    //     if (System.IO.File.Exists(destinationPath))
-    //     {
-    //         System.IO.File.Delete(destinationPath);
-    //     }
+        if (System.IO.File.Exists(destinationPath))
+        {
+            System.IO.File.Delete(destinationPath);
+        }
 
-    //     Directory.CreateDirectory(destinationFolder);
+        Directory.CreateDirectory(destinationFolder);
 
-    //     using (var stream = new FileStream(destinationPath, FileMode.Create))
-    //     {
-    //         await avatar.CopyToAsync(stream);
-    //     }
-    //     var relativePath = "/uploads/" + fileName;
+        using (var stream = new FileStream(destinationPath, FileMode.Create))
+        {
+            await avatar.CopyToAsync(stream);
+        }
+        var relativePath = "/uploads/" + fileName;
 
-    //     var command = new ChangeAvatarCommand(userManager.GetUserId(User!), relativePath);
-    //     await sender.Send(command);
+        var command = new ChangeAvatarCommand(userManager.GetUserId(User!), relativePath);
+        await sender.Send(command);
 
-    //     return RedirectToAction("Profile");
-    // }
+        return Ok();
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetUsers()
@@ -161,7 +110,7 @@ public class UserController : Controller
     {
         var command = new SubscribeCommand(userManager.GetUserId(User)!, id);
         await sender.Send(command);
-        return Ok(id);
+        return Ok();
     }
 
     [HttpDelete]
@@ -179,7 +128,7 @@ public class UserController : Controller
         var GetUserFollowers = new GetFollowersCommand(userManager.GetUserId(User)!);
         var GetUserFollowersCommandResult = await sender.Send(GetUserFollowers);
         var GetUserSubscriptionsResult = await sender.Send(GetUserSubscriptions);
-        return View(new FollowersVM()
+        return Ok(new FollowersVM()
         {
             Followers = GetUserFollowersCommandResult,
             Subscriptions = GetUserSubscriptionsResult,

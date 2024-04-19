@@ -12,6 +12,8 @@ using MangaFlex.Core.Data.UserMangas.Commands;
 using MangaFlex.Core.Data.UserMangas.Models;
 using MangaFlex.Api.Dtos;
 using MangaFlex.Core.Data.Mangas.Models;
+using MangaFlex.Api.ViewModels;
+using System;
 
 namespace MangaFlex.Api.Controllers;
 
@@ -62,11 +64,9 @@ public class MangaController : Controller
             foreach (ArgumentException error in ex.Flatten().InnerExceptions)
             {
                 System.Console.WriteLine(error.Message);
-                base.ModelState.AddModelError(error.ParamName!, error.Message);
             }
             return BadRequest("While searching for this request an error happened");
         }
-
         return Ok(mangasViewModel);
     }
 
@@ -74,9 +74,13 @@ public class MangaController : Controller
     [Authorize]
     public async Task<IActionResult> AvailableLanguages(string id)
     {
-        ViewBag.MangaId = id; 
         var availableLanguages = await mangaService.GetAvailableLanguages(id);
-        return Ok(availableLanguages);
+        var AvailableLanguagesVm = new AvailableLanguagesVM()
+        {
+            Id = id,
+            Languages = availableLanguages
+        };
+        return Ok(AvailableLanguagesVm);
     }
 
     [HttpGet]
@@ -105,13 +109,6 @@ public class MangaController : Controller
                 await sender.Send(command);
             }
 
-            var isMangaReadByUserCommand = new IsMangaReadByUserCommand(userId, manga.Id);
-            ViewData["IsMangaLogged"] = await sender.Send(isMangaReadByUserCommand);
-
-            if(ViewData["IsMangaLogged"] as bool? ?? false) {
-                var UserMangaCommand = new GetByUserAndMangaIdCommand(userId, manga.Id);
-                ViewData["MangaStatus"] = (await sender.Send(UserMangaCommand))?.Status;
-            }
         }
         catch
         {
@@ -120,6 +117,31 @@ public class MangaController : Controller
 
         return Ok(manga);
     }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> IsMangaLogged(string id)
+    {
+        Manga manga;
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        manga = await mangaService.GetByIdAsync(id);
+        var isMangaReadByUserCommand = new IsMangaReadByUserCommand(userId, manga.Id);
+        var result = await sender.Send(isMangaReadByUserCommand);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> UserMangaStatus(string id)
+    {
+        Manga manga;
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        manga = await mangaService.GetByIdAsync(id);
+        var UserMangaCommand = new GetByUserAndMangaIdCommand(userId, manga.Id);
+        var result = (await sender.Send(UserMangaCommand))?.Status;
+        return Ok(result);
+    }
+
 
     [HttpPost]
     [Authorize]

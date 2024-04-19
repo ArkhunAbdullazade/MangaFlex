@@ -11,9 +11,12 @@ using MangaFlex.Infrastructure.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.Mangas.Services;
 using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
 using MangaFlex.Infrastructure.Data.Users.Repository;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -75,13 +78,18 @@ builder.Services.AddSwaggerGen(options =>
                 new string[] {}
             }
         }
-    ); 
+    );
 
     // var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     // options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+
+builder.Services.AddAuthentication((o) =>
+{
+    o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters()
@@ -99,7 +107,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .Build();
+});
 
 builder.Services.AddDbContext<MangaFlexDbContext>(options =>
 {
