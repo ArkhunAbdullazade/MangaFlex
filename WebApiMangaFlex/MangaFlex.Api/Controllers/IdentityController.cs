@@ -1,9 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using MangaFlex.Api.Dto;
-using MangaFlex.Api.Options;
+using MangaFlex.Api.Dtos;
+using MangaFlex.Core.Data.JWT.Options;
+using MangaFlex.Core.Data.RefreshToken.Model;
 using MangaFlex.Core.Data.Users.Commands;
 using MangaFlex.Core.Data.Users.Models;
+using MangaFlex.Core.Data.Users.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -16,79 +19,61 @@ namespace MangaFlex.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
+[AllowAnonymous]
 public class IdentityController : ControllerBase
 {
-    private readonly JwtOptions jwtOptions;
-    private readonly SignInManager<User> signInManager;
-    private readonly UserManager<User> userManager;
     private readonly ISender sender;
+    private readonly JwtOptions jwtOptions;
+ 
 
-    public IdentityController(IOptionsSnapshot<JwtOptions> JwtOptions, SignInManager<User> signInManager, UserManager<User> userManager,ISender sender)
+    public IdentityController(ISender sender, JwtOptions jwtOptions)
     {
-        this.jwtOptions = JwtOptions.Value;
-        this.signInManager = signInManager;
-        this.userManager = userManager;
         this.sender = sender;
+        this.jwtOptions = jwtOptions;
     }
 
     [HttpPost]
     public async Task<IActionResult> LoginAsync(LoginDto loginDto)
     {
-        var user = await this.userManager.FindByNameAsync(loginDto.Login!);
-
-        if (user is null)
+        var result = new TokenVM();
+        try
         {
-            return base.BadRequest(new
-            {
-                Message = "Incorrect login or password",
-            });
+            var command = new SignInCommand(loginDto.Login,loginDto.Password,jwtOptions);
+            result = await sender.Send(command);
+        }
+        catch(ArgumentNullException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch(InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
         }
 
-        var signInResult = await this.signInManager.PasswordSignInAsync(user, loginDto.Password!, false, false);
-
-        if (signInResult.IsLockedOut)
+        return base.Ok(new
         {
-            return base.BadRequest(new
-            {
-                Message = "Account was locked",
-            });
-        }
+            accessToken = result.jwt,
+            refreshToken = result.RefreshToken
+        });
+    }
 
-        if (signInResult.Succeeded == false)
+    [HttpPut]
+    public async Task<IActionResult> UpdateTokenAsync(UpdateTokenDto  updateTokenDto)
+    {
+        var result = new TokenVM();
+        try
         {
-            return base.BadRequest(new
-            {
-                Message = "Incorrect login or password",
-            });
+            var command = new UpdateTokenCommand(updateTokenDto.AccessToken, updateTokenDto.RefreshToken, jwtOptions);
+            result = await sender.Send(command);
         }
-
-        var roles = await userManager.GetRolesAsync(user);
-
-        var claims = roles
-         .Select(role => new Claim(ClaimTypes.Role, role))
-         .Append(new Claim(ClaimTypes.Name, loginDto.Login))
-         .Append(new Claim(ClaimTypes.NameIdentifier, user.Id));
-
-
-        var securityKey = new SymmetricSecurityKey(this.jwtOptions.KeyInBytes);
-        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        var securityToken = new JwtSecurityToken(
-           issuer: this.jwtOptions.Issuers.First(),
-           audience: this.jwtOptions.Audience,
-           claims,
-           expires: DateTime.Now.AddMinutes(this.jwtOptions.LifetimeInMinutes),
-           signingCredentials: signingCredentials
-        );
-
-        var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-        var jwt = jwtSecurityTokenHandler.WriteToken(securityToken);
-
-        return base.Ok(jwt);
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return Ok(result);
     }
 
     [HttpPost]
-    [AllowAnonymous]
     public async Task<IActionResult> RegistrationAsync(RegistrationDto dto)
     {
         try

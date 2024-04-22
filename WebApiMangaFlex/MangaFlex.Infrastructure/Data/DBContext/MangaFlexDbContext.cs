@@ -7,12 +7,14 @@ using MangaFlex.Core.Data.Users.Models;
 using MangaFlex.Core.Data.FriendShip.Models;
 using MangaFlex.Core.Data.LastWatches.Models;
 using MangaFlex.Core.Data.UserMangas.Models;
+using MangaFlex.Core.Data.RefreshToken.Model;
 
 public class MangaFlexDbContext : IdentityDbContext<User, IdentityRole, string>
 {
     public DbSet<LastWatch> UserLastWatches { get; set; }
     public DbSet<FriendShip> FriendShips { get; set; }
     public DbSet<UserManga> UserMangas { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
     public MangaFlexDbContext(DbContextOptions<MangaFlexDbContext> options) : base(options) {}
 }
 

@@ -1,7 +1,8 @@
-using MangaFlex.Api.Options;
 using MangaFlex.Core.Data.FriendShip.Repository;
+using MangaFlex.Core.Data.JWT.Options;
 using MangaFlex.Core.Data.LastWatches.Repository;
 using MangaFlex.Core.Data.Mangas.Services;
+using MangaFlex.Core.Data.RefreshToken.Repository;
 using MangaFlex.Core.Data.UserMangas.Repositories;
 using MangaFlex.Core.Data.Users.Models;
 using MangaFlex.Core.Data.Users.Repository;
@@ -9,6 +10,7 @@ using MangaFlex.Infrastructure.Data.DBContext;
 using MangaFlex.Infrastructure.Data.FriendShip.Repository;
 using MangaFlex.Infrastructure.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.Mangas.Services;
+using MangaFlex.Infrastructure.Data.RefreshToken;
 using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
 using MangaFlex.Infrastructure.Data.Users.Repository;
 using Microsoft.AspNetCore.Authentication;
@@ -29,6 +31,7 @@ var jwtOptionsSection = builder.Configuration
 var jwtOptions = jwtOptionsSection.Get<JwtOptions>() ?? throw new Exception("Couldn't create jwt options object");
 
 builder.Services.Configure<JwtOptions>(jwtOptionsSection);
+builder.Services.AddSingleton(jwtOptions);
 
 builder.Services.AddControllers();
 
@@ -139,6 +142,7 @@ builder.Services.AddScoped<IFriendShipRepository, FriendShipRepository>();
 builder.Services.AddScoped<ILastWatchesRepository, LastWatchesRepository>();
 builder.Services.AddScoped<IMangaService, MangaService>();
 builder.Services.AddScoped<IUserMangaRepository, UserMangaRepository>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
 var app = builder.Build();
 

@@ -2,7 +2,7 @@
 
 using System.Text;
 
-namespace MangaFlex.Api.Options;
+namespace MangaFlex.Core.Data.JWT.Options;
 
 public class JwtOptions
 {
