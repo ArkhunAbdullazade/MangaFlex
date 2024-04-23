@@ -12,8 +12,8 @@ using MangaFlex.Core.Data.UserMangas.Commands;
 using MangaFlex.Core.Data.UserMangas.Models;
 using MangaFlex.Api.Dtos;
 using MangaFlex.Core.Data.Mangas.Models;
-using MangaFlex.Api.ViewModels;
 using System;
+using MnagaFlex.Api.ViewModels;
 
 namespace MangaFlex.Api.Controllers;
 

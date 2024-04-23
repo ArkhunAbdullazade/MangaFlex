@@ -1,8 +1,10 @@
 @page "/User/Login"
 @using Blazored.LocalStorage
 @using MangaFlexFront.Data.Dtos
+@using MangaFlexFront.Data.ViewModels
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
 @inject NavigationManager navigationManager
 @inject ILocalStorageService localStorageService
 @inject AuthenticationStateProvider authenticationStateProvider
@@ -230,6 +232,16 @@
         <EditForm Model="@loginDto" OnValidSubmit="LoginSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
+
+            @if (validationErrors.Any())
+            {
+                <div class="text-danger">
+                    @foreach (var error in validationErrors)
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            }
             <div class="flex-column">
                 <label for="Login" class="text form-label">Username</label>
             </div>
@@ -288,18 +300,30 @@
 </div>
 @code {
     private LoginDto loginDto = new LoginDto();
+    private List<ValidationResult> validationErrors = new List<ValidationResult>();
 
     private async Task LoginSubmit()
     {
         var httpClient = new HttpClient();
         try
         {
+            validationErrors.Clear();
             var response = await httpClient.PostAsJsonAsync("http://localhost:5262/api/Identity/Login", loginDto);
+            if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+
+                validationErrors.Add(new ValidationResult(error,new[] {"Login error"}));
+            }
+            Console.WriteLine(1);
 
             if (response.IsSuccessStatusCode)
             {
-                var tokenResponse = await response.Content.ReadAsStringAsync();
-                await localStorageService.SetItemAsStringAsync("jwt", tokenResponse);
+                var tokenResponse = await response.Content.ReadFromJsonAsync<TokenVM>();
+                var accessToken = tokenResponse!.accessToken;
+                var refreshToken = tokenResponse!.refreshToken;
+                await localStorageService.SetItemAsStringAsync("accessToken", accessToken);
+                await localStorageService.SetItemAsStringAsync("refreshToken", refreshToken.ToString());
                 await authenticationStateProvider.GetAuthenticationStateAsync();
                 navigationManager.NavigateTo("/");
             }

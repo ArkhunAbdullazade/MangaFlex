@@ -1,10 +1,17 @@
 @page "/Manga/About/{Id}"
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@using Blazored.LocalStorage
 @using MangaFlexFront.Data.Mangas.Models;
 @using MangaFlexFront.Data.ViewModels
+@using Microsoft.AspNetCore.Authorization
+@inject ILocalStorageService localStorageService
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Net.Http.Headers
 
 <PageTitle>About</PageTitle>
+
+
 
 <style>
     .container {
@@ -288,7 +295,7 @@
         min-width: 100%;
     }
 </style>
-z
+
 
 <div class="info">
     <div class="container">
@@ -434,7 +441,10 @@ z
     {
         try
         {
-            var response = await httpClient.GetAsync($"http://localhost:5262/api/Manga/About?id={mangaId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/About?id={mangaId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -453,7 +463,10 @@ z
     {
         try
         {
-            var response = await Http.GetAsync($"http://localhost:5262/api/Mangas/AvailableLanguages?id={mangaId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Mangas/AvailableLanguages?id={mangaId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {

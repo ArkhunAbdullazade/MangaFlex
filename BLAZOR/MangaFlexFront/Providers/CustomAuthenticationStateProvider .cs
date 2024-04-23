@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using Blazored.LocalStorage;
+using MangaFlexFront.Data.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,8 +20,9 @@ namespace MangaFlexFront.Providers
             this.jwtTokenHandler = new JwtSecurityTokenHandler();
         }
 
-        private async Task<ClaimsIdentity> GetClaimsIdentityAsync(string? jwt)
+        private async Task<ClaimsIdentity> GetClaimsIdentityAsync(string? jwt,string? refreshToken)
         {
+            Console.WriteLine(jwt);
             if (string.IsNullOrWhiteSpace(jwt))
             {
                 return new ClaimsIdentity();
@@ -51,15 +53,19 @@ namespace MangaFlexFront.Providers
                     // get token again
                     var httpClient = new HttpClient();
 
-                    var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { jwt });
+                    var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshToken });
 
                     if (updateTokenResponse.IsSuccessStatusCode && updateTokenResponse.StatusCode == System.Net.HttpStatusCode.OK)
                     {
-                        var newJwt = await updateTokenResponse.Content.ReadAsStringAsync();
+                        var tokenResponse = await updateTokenResponse.Content.ReadFromJsonAsync<TokenVM>();
 
-                        await this.localStorageService.SetItemAsStringAsync("jwt", newJwt);
+                        var accessToken = tokenResponse!.accessToken;
+                        var refreshTokenupdate = tokenResponse!.refreshToken;
 
-                        var newToken = jwtTokenHandler.ReadJwtToken(newJwt);
+                        await this.localStorageService.SetItemAsStringAsync("accessToken", accessToken);
+                        await this.localStorageService.SetItemAsStringAsync("refreshToken", refreshTokenupdate.ToString());
+
+                        var newToken = jwtTokenHandler.ReadJwtToken(accessToken);
 
                         return new ClaimsIdentity(newToken.Claims, "jwt");
                     }
@@ -75,11 +81,20 @@ namespace MangaFlexFront.Providers
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var jwt = await this.localStorageService.GetItemAsStringAsync("jwt");
+            Console.WriteLine(1);
+            var jwt = await this.localStorageService.GetItemAsStringAsync("accessToken");
+            var refreshtoken = await this.localStorageService.GetItemAsStringAsync("refreshToken");
 
-            var claimsIdentity = await this.GetClaimsIdentityAsync(jwt);
+            Console.WriteLine(jwt);
+
+            var claimsIdentity = await this.GetClaimsIdentityAsync(jwt,refreshtoken);
+
+            Console.WriteLine(claimsIdentity.Name);
 
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+            Console.WriteLine(claimsPrincipal.Identity.Name);
+            Console.WriteLine(claimsPrincipal.IsInRole("User"));
 
             var authenticationState = new AuthenticationState(claimsPrincipal);
 

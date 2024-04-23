@@ -8,10 +8,10 @@ using System.Drawing;
 using MangaFlex.Core.Data.LastWatches.Command;
 using MangaFlex.Core.Data.FriendShip.Commands;
 using Microsoft.AspNetCore.Identity;
-using MangaFlex.Api.ViewModels;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MnagaFlex.Api.ViewModels;
 
 namespace MangaFlex.Api.Controllers;
 
