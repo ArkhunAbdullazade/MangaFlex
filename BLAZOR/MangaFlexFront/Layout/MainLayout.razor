@@ -1,0 +1,205 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+<style>
+    body {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;
+    }
+
+    .search-container {
+        position: relative;
+        width: fit-content;
+    }
+
+    .search-input {
+        border: 2px solid #000;
+        box-shadow: #ecc500 4px 4px 0 0, #000 4px 4px 0 1.5px;
+        border-radius: 10px;
+        padding: 6px 10px;
+        padding-left: 30px;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    .footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: #ffffff;
+        z-index: 2;
+    }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
+<div class="page">
+    <main>
+        <div class="top-row px-4">
+            <div class="container-fluid">
+                <a href="/">MangaFlex</a>
+                <svg asp-controller="Home" asp-action="Index" xmlns="http://www.w3.org/2000/svg"
+                    shape-rendering="crispEdges" viewBox="0 0 256 256" width="32" height="32">
+                    <rect fill="rgba(68,68,68,255)" x="80" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="128" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="208" y="16" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="128" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="208" y="32" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="48" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="80" y="48" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="96" y="48" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="112" y="48" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="128" y="48" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="48" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="48" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="48" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="48" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="208" y="48" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="64" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="80" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="64" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="128" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="208" y="64" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="80" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="80" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="80" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="128" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="208" y="80" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="96" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="80" y="96" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="96" y="96" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="112" y="96" width="16" height="16" />
+                    <rect fill="rgba(247,247,247,255)" x="128" y="96" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="96" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="96" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="96" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="96" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="208" y="96" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="128" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="208" y="112" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="32" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="128" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="144" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="176" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="192" y="128" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="32" y="144" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="48" y="144" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="144" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="144" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="144" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="112" y="144" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="128" y="144" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="144" y="144" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="32" y="160" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="48" y="160" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="160" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="160" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="96" y="160" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="160" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="128" y="160" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="144" y="160" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="160" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="48" y="176" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="176" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="176" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="96" y="176" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="112" y="176" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="128" y="176" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="144" y="176" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="160" y="176" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="48" y="192" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="192" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="192" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="96" y="192" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="112" y="192" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="128" y="192" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="144" y="192" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="64" y="208" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="208" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="96" y="208" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="112" y="208" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="128" y="208" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="80" y="224" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="96" y="224" width="16" height="16" />
+                    <rect fill="rgba(154,185,44,255)" x="112" y="224" width="16" height="16" />
+                    <rect fill="rgba(68,68,68,255)" x="128" y="224" width="16" height="16" />
+                </svg>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="User"
+                        asp-action="Registration" href="User/Registration" >Registration</a>
+                    <a class="nav-link text-dark" asp-area="" href="User/Login">Login</a>
+                    <a class="nav-link text-dark" href="/mangas">Mangas</a>
+                </div>
+            </div>
+            <div class="search-container">
+                <input class="search-input" @bind-value="searchQuery" @bind-value:event="oninput" type="text"
+                    aria-label="Search" placeholder="Search here" @onkeydown="OnSearchInputKeyDown">
+                <svg class="search-icon" width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.5 15.5L19 19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                        d="M5 11C5 14.3137 7.68629 17 11 17C12.6597 17 14.1621 16.3261 15.2483 15.237C16.3308 14.1517 17 12.654 17 11C17 7.68629 14.3137 5 11 5C7.68629 5 5 7.68629 5 11Z"
+                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+@code {
+    private string searchQuery;
+    private void Search()
+    {
+        NavigationManager.NavigateTo($"/Mangas?search={Uri.EscapeDataString(searchQuery)}");
+    }
+
+    private void OnSearchInputKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            Search();
+        }
+    }
+}

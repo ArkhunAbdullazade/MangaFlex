@@ -61,7 +61,8 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition(
         name: scheme,
 
-        new OpenApiSecurityScheme() {
+        new OpenApiSecurityScheme()
+        {
             Description = "Enter here jwt token with Bearer",
             In = ParameterLocation.Header,
             Name = "Authorization",
@@ -143,6 +144,15 @@ builder.Services.AddScoped<ILastWatchesRepository, LastWatchesRepository>();
 builder.Services.AddScoped<IMangaService, MangaService>();
 builder.Services.AddScoped<IUserMangaRepository, UserMangaRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", builder =>
+    {
+        builder.WithOrigins("*")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -162,5 +172,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.UseCors("AllowSpecificOrigin");
 app.Run();

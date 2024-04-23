@@ -1,4 +1,4 @@
-﻿namespace MangaFlex.Api.ViewModels;
+﻿namespace MangaFlexFront.Data.ViewModels;
 
 public class AvailableLanguagesVM
 {

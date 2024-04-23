@@ -1,6 +1,6 @@
-﻿using MangaFlex.Core.Data.Users.Models;
+﻿using MangaFlexFront.Data.Users.Models;
 
-namespace MangaFlex.Api.ViewModels;
+namespace MangaFlexFront.Data.ViewModels;
 
 public class FollowersVM
 {

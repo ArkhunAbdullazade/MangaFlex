@@ -87,7 +87,7 @@ public class IdentityController : ControllerBase
         }
         catch (AggregateException ex)
         {
-            return BadRequest(ex);
+            return BadRequest(ex.Message);
         }
 
         return Created(HttpContext.Request.GetDisplayUrl(),null);

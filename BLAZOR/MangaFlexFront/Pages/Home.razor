@@ -1,0 +1,247 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+<PageTitle>Home</PageTitle>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<style>
+    .poppins-thin {
+        font-family: "Poppins", sans-serif;
+        font-weight: 100;
+        font-style: normal;
+    }
+
+    .material-symbols-outlined {
+        font-variation-settings:
+            'FILL' 0,
+            'wght' 900,
+            'GRAD' 0,
+            'opsz' 24
+    }
+
+    .poppins-extralight {
+        font-family: "Poppins", sans-serif;
+        font-weight: 200;
+        font-style: normal;
+    }
+
+    .poppins-light {
+        font-family: "Poppins", sans-serif;
+        font-weight: 300;
+        font-style: normal;
+    }
+
+    .poppins-regular {
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    .poppins-medium {
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-style: normal;
+    }
+
+    .poppins-semibold {
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    .poppins-bold {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-style: normal;
+    }
+
+    .poppins-extrabold {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-style: normal;
+    }
+
+    .poppins-black {
+        font-family: "Poppins", sans-serif;
+        font-weight: 900;
+        font-style: normal;
+    }
+
+    .poppins-thin-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 100;
+        font-style: italic;
+    }
+
+    .poppins-extralight-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 200;
+        font-style: italic;
+    }
+
+    .poppins-light-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 300;
+        font-style: italic;
+    }
+
+    .poppins-regular-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    .poppins-medium-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-style: italic;
+    }
+
+    .poppins-semibold-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 600;
+        font-style: italic;
+    }
+
+    .poppins-bold-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 700;
+        font-style: italic;
+    }
+
+    .poppins-extrabold-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 800;
+        font-style: italic;
+    }
+
+    .poppins-black-italic {
+        font-family: "Poppins", sans-serif;
+        font-weight: 900;
+        font-style: italic;
+    }
+
+    body {
+        background-color: rgb(75, 154, 149);
+        margin-bottom: auto !important;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    h1 {
+        color: rgb(248, 249, 250);
+        font-size: 13vh;
+    }
+
+    * {
+        box-sizing: border-box !important;
+    }
+
+    .container {
+        max-height: 95%;
+        display: flex;
+        align-items: center;
+    }
+
+    .text {
+        flex: 1;
+    }
+
+    img {
+        max-height: 93.5vh;
+        transform: scaleX(-1);
+    }
+
+    .pink-text {
+        color: rgb(248, 154, 142);
+    }
+
+    .under-text {
+        font-size: 2.5vh;
+        color: rgb(208, 230, 231);
+    }
+
+
+    .read-btn {
+        align-items: center;
+        background-color: rgb(238, 130, 117);
+        color: rgb(252, 233, 229);
+        border: 0;
+        border-radius: 100px;
+        box-sizing: border-box;
+        cursor: pointer;
+        display: inline-flex;
+        font-size: 35px;
+        justify-content: center;
+        line-height: 20px;
+        max-width: 480px;
+        min-height: 60px;
+        min-width: 0px;
+        overflow: hidden;
+        padding: 15px 30px;
+        text-align: center;
+        touch-action: manipulation;
+        transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s, color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+        user-select: none;
+        -webkit-user-select: none;
+        vertical-align: middle;
+    }
+
+    .read-btn:hover,
+    .read-btn:focus {
+        background-color: rgb(225, 107, 107);
+        color: #ffffff;
+    }
+
+    .read-btn:active {
+        background: rgb(206, 94, 94);
+        color: rgb(255, 255, 255, .7);
+    }
+
+    .learn-more {
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .learn-more:hover {
+        color: rgb(225, 107, 107);
+    }
+
+    @@media only screen and (max-width: 767px) {
+        .text {
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 10vh;
+        }
+    }
+</style>
+
+
+<div class="container">
+    <img src="/assets/home.png" />
+    <div class="text">
+        <h1 class="poppins-bold"><span class="pink-text poppins-regular">EXPLORE</span> MANGA WORLDS <span
+                class="pink-text poppins-regular">TODAY</span></h1>
+        <p class="under-text poppins-regular">
+            Discover MangaFlex, your gateway to the world of manga. Explore our extensive collection of manga and
+            manhva, create personalized lists, and connect with a vibrant community. Start your manga adventure today!
+            <a href="/mangas" class="pink-text learn-more">Learn more...</a>
+        </p>
+        <button onclick="@ReadClick" class="read-btn poppins-bold">Read now <span class="material-symbols-outlined">
+                arrow_forward_ios
+            </span></button>
+    </div>
+</div>
+@code{
+    private void ReadClick(){
+        NavigationManager.NavigateTo("/mangas");
+    }
+}
