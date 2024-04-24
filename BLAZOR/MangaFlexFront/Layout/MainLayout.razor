@@ -1,5 +1,12 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
+@using Blazored.LocalStorage
+@using MangaFlexFront.Providers;
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject AuthenticationStateProvider provider;
+@inject ILocalStorageService localstorage;
+
 <style>
     body {
         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif !important;
@@ -35,6 +42,10 @@
     }
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato&display=swap">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<CascadingAuthenticationState>
 <div class="page">
     <main>
         <div class="top-row px-4">
@@ -164,10 +175,43 @@
                     <rect fill="rgba(68,68,68,255)" x="128" y="224" width="16" height="16" />
                 </svg>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="User"
-                        asp-action="Registration" href="User/Registration" >Registration</a>
-                    <a class="nav-link text-dark" asp-area="" href="User/Login">Login</a>
-                    <a class="nav-link text-dark" href="/mangas">Mangas</a>
+                                <a class="nav-link text-dark" href="/mangas">Mangas</a>
+                    <AuthorizeView>
+                        <NotAuthorized>
+                            <a class="nav-link text-dark"  href="User/Registration">Registration</a>
+                            <a class="nav-link text-dark"href="User/Login">Login</a>
+                        </NotAuthorized>
+                    <Authorized>
+                                <a class="nav-link dropdown-toggle text-black" href="#" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    @username
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link text-black" href="/User/Profile">Profile</a>
+                                    </li>
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link text-black" href="/User/Settings">Settings</a>
+                                    </li>
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link text-black" href="/User/LastWatches">
+                                            Last
+                                            Watches
+                                        </a>
+                                    </li>
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link text-black" href="/User/Followers">Followers</a>
+                                    </li>
+                                    <li class="dropdown-item text-dark">
+                                        <a class="nav-link text-black" @onclick="LogOut">
+                                            Log
+                                            out
+                                        </a>
+                                    </li>
+                                </ul>
+
+                            </Authorized>
+                    </AuthorizeView>
                 </div>
             </div>
             <div class="search-container">
@@ -188,7 +232,9 @@
         </article>
     </main>
 </div>
+</CascadingAuthenticationState>
 @code {
+    private string username = string.Empty;
     private string searchQuery;
     private void Search()
     {
@@ -202,4 +248,26 @@
             Search();
         }
     }
+
+    private async Task LogOut()
+    {
+        await localstorage.RemoveItemAsync("accessToken");
+        await localstorage.RemoveItemAsync("refreshToken");
+        NavigationManager.Refresh();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await provider.GetAuthenticationStateAsync();
+        if(result.User.Identity.IsAuthenticated == true)
+        {
+            username = result.User.Identity.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                NavigationManager.Refresh();
+            }
+        }
+        
+    }
 }
+

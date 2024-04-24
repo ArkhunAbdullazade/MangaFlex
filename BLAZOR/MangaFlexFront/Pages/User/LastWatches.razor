@@ -1,0 +1,127 @@
+﻿@page "/User/LastWatches"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Blazored.LocalStorage
+@using MangaFlexFront.Data.Mangas.Models;
+@using MangaFlexFront.Data.Users.ViewModels
+@using MangaFlexFront.Data.ViewModels
+@using Microsoft.AspNetCore.Authorization
+@inject ILocalStorageService localStorageService
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider provider;
+@using System.Net.Http.Headers
+
+
+<style>
+    h1,
+    h2,
+    h3 {
+        text-align: center;
+    }
+
+    img {
+        border-radius: 10px;
+        width: 14.2em;
+        height: 21em;
+    }
+
+    span,
+    h1,
+    h2,
+    h3 {
+        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    }
+
+    .title {
+        font-size: 1em;
+    }
+
+    .list,
+    .list > div {
+        flex-direction: column;
+        border: 2px solid dimgray;
+        border-radius: 15px;
+    }
+
+    .list {
+        display: block;
+        padding: 10px;
+        padding-bottom: 25px;
+    }
+
+        .list > div {
+            flex-direction: column;
+            display: inline-flex;
+            width: 240px;
+            height: 350px;
+            margin: 5px;
+            margin-bottom: 55px;
+        }
+
+            .list > div > div {
+                margin: 5px;
+                text-align: center;
+            }
+
+</style>
+
+
+@if (LastWathces is not null && LastWathces.Any<Manga>())
+{
+    <div class="page">
+        <div class="list">
+            @foreach (var manga in LastWathces.Reverse())
+            {
+                <div>
+                    <div class="img-div">
+                        <a asp-action="About" asp-controller="Manga" asp-route-id="@manga.Id"><img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")" alt="manga cover" /></a>
+                    </div>
+                    <div>
+                        <span class="title"><b>@(manga.Title ?? "Unknown")</b></span>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else if(LastWathces is null)
+{
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+    </div>
+}
+else
+{
+    <h3>There is no manga in this category.</h3>
+}
+
+@code {
+    public IEnumerable<Manga> LastWathces { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetLastWatches();
+    }
+
+    private async Task GetLastWatches()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/LastWatches");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                LastWathces = await response.Content.ReadFromJsonAsync<IEnumerable<Manga>>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+    }
+}
+

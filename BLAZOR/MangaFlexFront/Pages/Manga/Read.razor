@@ -3,9 +3,31 @@
 @using MangaFlexFront.Data.Mangas.ViewModels
 @using System.Text.Json
 @using System.Net.Http.Headers
+@using Microsoft.JSInterop
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorageService
+
+
+
+<style >
+    .prev-btn,
+    .next-btn {
+        background-color: transparent;
+        border: none;
+        color: #333; /* Цвет текста кнопок */
+        font-size: 100px; /* Размер шрифта */
+        cursor: pointer;
+        transition: color 0.3s ease; /* Плавное изменение цвета при наведении */
+    }
+
+        .prev-btn:hover,
+        .next-btn:hover {
+            color: #666; /* Изменение цвета текста при наведении */
+        }
+
+    
+</style>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -15,198 +37,197 @@
 
 @if (mangaChapter.Pages == null || !mangaChapter.Pages.Any())
 {
-    <p class="noData">No chapters!</p>
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+    </div>
 }
 else
 {
-    <div class="container">
-        <nav>
-            <ul class="pagination justify-content-center mt-2">
-                <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(mangaChapter.MangaId)&chapter=@(mangaChapter.Chapter-1)" tabindex="-1">&laquo; Prev
-                        Chapter</a>
-                </li>
-                <li class="page-item disabled">
-                    <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
-                        @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
-        {
-            <span class="chapterTitle">@mangaChapter.ChapterTitle</span>
-        }
-                    </div>
-<select id="chapterSelector" class="form-select">
-    <option value="@mangaChapter.Chapter">Chapter @mangaChapter.Chapter</option>
-    @for (int i = 1; i <= mangaChapter.TotalChapters; i++)
-    {
-        if (i != mangaChapter.Chapter)
-        {
-            <option value="@i">Chapter @i</option>
-        }
-    }
-</select>
-                </li>
-                <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(mangaChapter.MangaId)&chapter=@(mangaChapter.Chapter+1)">Next Chapter &raquo;</a>
-                </li>
-            </ul>
-        </nav>
-
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-
-                <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster"
-                    id="loading">
-                    <div class="wheel"></div>
-                    <div class="hamster">
-                        <div class="hamster__body">
-                            <div class="hamster__head">
-                                <div class="hamster__ear"></div>
-                                <div class="hamster__eye"></div>
-                                <div class="hamster__nose"></div>
-                            </div>
-                            <div class="hamster__limb hamster__limb--fr"></div>
-                            <div class="hamster__limb hamster__limb--fl"></div>
-                            <div class="hamster__limb hamster__limb--br"></div>
-                            <div class="hamster__limb hamster__limb--bl"></div>
-                            <div class="hamster__tail"></div>
+    <div tabindex="0" @onkeydown="HandleKeyDown" style="border:none">
+        <div class="container">
+            <nav>
+                <ul class="pagination justify-content-center mt-2">
+                    <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
+                        <a class="page-link" @onclick="PrevChapter" tabindex="-1">
+                            &laquo; Prev
+                            Chapter
+                        </a>
+                    </li>
+                    <li class="page-item disabled">
+                        <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
+                            @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
+            {
+                <span class="chapterTitle">@mangaChapter.ChapterTitle</span>
+            }
                         </div>
-                    </div>
-                    <div class="spoke"></div>
-                </div>
+                        <select id="chapterSelector" class="form-select" @onchange="ChangeChapter">
+                            <option value="@mangaChapter.Chapter">Chapter @mangaChapter.Chapter</option>
+                            @for (int i = 1; i <= mangaChapter.TotalChapters; i++)
+                            {
+                                if (i != mangaChapter.Chapter)
+                                {
+                                    <option value="@i">Chapter @i</option>
+                                }
+                            }
+                        </select>
+                    </li>
+                    <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
+                        <a class="page-link" @onclick="NextChapter">Next Chapter &raquo;</a>
+                    </li>
+                </ul>
+            </nav>
 
-                <div class="col-md-4 align-items-center justify-content-center">
-                    <img class="manga-page" id="mangaPage" src="@mangaChapter.Pages.FirstOrDefault()" alt="Manga Page">
-                    <span class="material-symbols-rounded prev-arrow" id="prevPageBtn">arrow_back_ios</span>
-                    <span class="material-symbols-rounded next-arrow" id="nextPageBtn">arrow_forward_ios</span>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+
+                    <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster"
+                        id="loading">
+                        <div class="wheel"></div>
+                        <div class="hamster">
+                            <div class="hamster__body">
+                                <div class="hamster__head">
+                                    <div class="hamster__ear"></div>
+                                    <div class="hamster__eye"></div>
+                                    <div class="hamster__nose"></div>
+                                </div>
+                                <div class="hamster__limb hamster__limb--fr"></div>
+                                <div class="hamster__limb hamster__limb--fl"></div>
+                                <div class="hamster__limb hamster__limb--br"></div>
+                                <div class="hamster__limb hamster__limb--bl"></div>
+                                <div class="hamster__tail"></div>
+                            </div>
+                        </div>
+                        <div class="spoke"></div>
+                    </div>
+
+                    <div class="col-md-4 align-items-center justify-content-center">
+                        <img class="manga-page" id="mangaPage" src="@mangaChapter.Pages.ElementAt(currentPage)" alt="Manga Page">
+                    </div>
+                    <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%);">
+                        <button class="prev-btn" @onclick="PrefMangaChapter">&#8249;</button>
+                    </div>
+
+                    <div style="position: fixed; right: 10px; bottom: 50%; transform: translateY(50%);">
+                        <button class="next-btn" @onclick="NextMangaChapter">&#8250;</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <nav>
-            <ul class="pagination justify-content-center mt-2">
-                <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(mangaChapter.MangaId)&chapter=@(mangaChapter.Chapter-1)" tabindex="-1">&laquo; Prev
-                        Chapter</a>
-                </li>
-                <li class="page-item disabled">
-                    <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
-                        @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
-        {
-            <span class="chapterTitle">@mangaChapter.ChapterTitle</span>
-        }
-                    </div>
-                </li>
-                <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
-                    <a class="page-link" href="?id=@(mangaChapter.MangaId)&chapter=@(mangaChapter.Chapter+1)">Next Chapter &raquo;</a>
-                </li>
-            </ul>
-        </nav>
+            <nav>
+                <ul class="pagination justify-content-center mt-2">
+                    <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
+                        <a class="page-link" @onclick="PrevChapter" tabindex="-1">
+                            &laquo; Prev
+                            Chapter</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
+                            @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
+            {
+                <span class="chapterTitle">@mangaChapter.ChapterTitle</span>
+            }
+                        </div>
+                    </li>
+                    <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
+                        <a class="page-link" @onclick="NextChapter">Next Chapter &raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 }
-<script>
-document.getElementById("chapterSelector").addEventListener("change", function () {
-    var selectedChapter = this.value;
-    window.location.href = "?id=@(mangaChapter.MangaId)&chapter=" + selectedChapter;
-});
-$(document).ready(function() {
-    $("#chapterSelector option[value='@(mangaChapter.Chapter)']").addClass("current-chapter");
-});
 
-    document.addEventListener("DOMContentLoaded", function () {
-        var currentPageIndex = 0;
-        var jsPageUrls = Html.Raw(JsonSerializer.Serialize(mangaChapter.Pages));
-        var mangaPage = document.getElementById("mangaPage");
-        var prevArrow = document.getElementById("prevPageBtn");
-        var nextArrow = document.getElementById("nextPageBtn");
-
-        showPage(currentPageIndex);
-
-        function showPage(pageIndex) {
-            var pageUrl = jsPageUrls[pageIndex];
-            if (pageUrl) {
-                mangaPage.src = pageUrl;
-            }
-
-            prevArrow.style.visibility = pageIndex === 0 ? "hidden" : "visible";
-        }
-
-        prevArrow.addEventListener("click", function () {
-            if (currentPageIndex > 0) {
-                currentPageIndex--;
-                showPage(currentPageIndex);
-            } else {
-                var prevChapter = @(mangaChapter.Chapter - 1);
-                if (prevChapter >= 1) {
-                    window.location.href = "?id=@(mangaChapter.MangaId)&chapter=" + prevChapter;
-                }
-            }
-            prevArrow.classList.add("clicked");
-            setTimeout(function () {
-                prevArrow.classList.remove("clicked");
-            }, 300);
-        });
-
-        nextArrow.addEventListener("click", function () {
-            if (currentPageIndex < jsPageUrls.length - 1) {
-                currentPageIndex++;
-                showPage(currentPageIndex);
-            } else {
-                var nextChapter = @(mangaChapter.Chapter + 1);
-                if (nextChapter <= @(mangaChapter.TotalChapters)) {
-                    window.location.href = "?id=@(mangaChapter.MangaId)&chapter=" + nextChapter;
-                }
-            }
-            nextArrow.classList.add("clicked");
-            setTimeout(function () {
-                nextArrow.classList.remove("clicked"); 
-            }, 300);
-        });
-
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "ArrowLeft") {
-                if (currentPageIndex > 0) {
-                    currentPageIndex--;
-                    showPage(currentPageIndex);
-                } else {
-                    var prevChapter = @(mangaChapter.Chapter - 1);
-                    if (prevChapter >= 1) {
-                        window.location.href = "?id=@(mangaChapter.MangaId)&chapter=" + prevChapter;
-                    }
-                }
-            } else if (event.key === "ArrowRight") {
-                if (currentPageIndex < jsPageUrls.length - 1) {
-                    currentPageIndex++;
-                    showPage(currentPageIndex);
-                } else {
-                    var nextChapter = @(mangaChapter.Chapter + 1);
-                    if (nextChapter <= @(mangaChapter.TotalChapters)) {
-                        window.location.href = "?id=@(mangaChapter.MangaId)&chapter=" + nextChapter;
-                    }
-                }
-            }
-        });
-    });
-
-    $(window).on('load', function () {
-        $('#loading').hide();
-    }) 
-</script>
 
 @code{
     MangaChapterViewModel mangaChapter = new MangaChapterViewModel();
     [Parameter]
-     public string mangaId { get; set; }
-     [Parameter]
-     public int chapter { get; set; }
-     
-     protected override async Task OnInitializedAsync()
+    public string mangaId { get; set; }
+    [Parameter]
+    public string chapter { get; set; }
+    public int currentPage { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
     {
         await GetMangaChapter(mangaId,chapter);
     }
 
-    private async Task GetMangaChapter(string mangaId = "", int chapter = 1){
+    private async Task HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "ArrowLeft") 
+        {
+            await PrefMangaChapter();
+        }
+        else if (args.Key == "ArrowRight") 
+        {
+            await NextMangaChapter();
+        }
+    }
+
+
+    private async Task NextChapter()
+    {    
+        NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{mangaChapter.Chapter + 1}");
+        NavigationManager.Refresh();
+    }
+
+    private async Task PrevChapter()
+    {
+        NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{mangaChapter.Chapter - 1}");
+        NavigationManager.Refresh();
+    }
+
+    private async Task ChangeChapter(ChangeEventArgs e)
+    {
+        var selectedChapter = e.Value.ToString();
+        NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{selectedChapter}");
+        NavigationManager.Refresh();
+    }
+
+    private async Task NextMangaChapter()
+    {
+        Console.WriteLine(currentPage + 1 > mangaChapter.Pages.Count());
+        if(currentPage+1 >= mangaChapter.Pages.Count())
+        {
+            int tochapter = int.Parse(chapter) + 1 > mangaChapter.TotalChapters ? mangaChapter.TotalChapters : int.Parse(chapter) + 1;
+            if (tochapter == mangaChapter.TotalChapters)
+            {
+                return;
+            }
+            NavigationManager.NavigateTo($"/Manga/Read/{mangaId}/{tochapter}");
+            NavigationManager.Refresh();
+        }
+        else
+        {
+            currentPage++;
+        }
+    }
+
+    
+
+    private async Task PrefMangaChapter()
+    {
+        Console.WriteLine(currentPage + 1 > mangaChapter.Pages.Count());
+        if (currentPage - 1 < 0)
+        {
+            int tochapter = int.Parse(chapter) - 1 < 1 ? 1 : int.Parse(chapter) - 1;
+            if(tochapter == 1)
+            {
+                return;
+            }
+            NavigationManager.NavigateTo($"/Manga/Read/{mangaId}/{tochapter}");
+            NavigationManager.Refresh();
+        }
+        else
+        {
+            currentPage--;
+        }
+    }
+
+    private async Task GetMangaChapter(string mangaId = "", string chapter = "1")
+    {
          try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/Read?id={mangaId}&chapter={chapter}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/Read?id={mangaId}&chapter={int.Parse(chapter)}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);

@@ -4,6 +4,7 @@
 @using MangaFlexFront.Data.ViewModels;
 @using System.Net.Http.Json;
 @using System.Net.Http.Headers
+@inject NavigationManager navigationManager
 @inject ILocalStorageService localStorageService
 
 <h3>Available Languages</h3>
@@ -17,6 +18,12 @@
         </div>
     }
 }
+else if(availableLanguages == null)
+{
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+    </div>
+}
 else
 {
     <p>No available languages found.</p>
@@ -26,7 +33,7 @@ else
     [Parameter]
     public string MangaId { get; set; }
     public AvailableLanguagesVM availableLanguages { get; set; }
-    string linkToRead;
+    string mangaId = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,9 +67,11 @@ else
             localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
+
             if (response.IsSuccessStatusCode)
             {
-                linkToRead = await response.Content.ReadFromJsonAsync<string>();
+                mangaId = await response.Content.ReadAsStringAsync();
+                navigationManager.NavigateTo($"/Manga/Read/{mangaId}/1");
             }
         }
         catch (Exception ex)

@@ -70,7 +70,8 @@ public class UpdateTokenHandler : IRequestHandler<UpdateTokenCommand,TokenVM>
 
         var claims = roles
             .Select(role => new Claim(ClaimTypes.Role, role))
-            .Append(new Claim(ClaimTypes.Email, user.Email ?? "notset"))
+            .Append(new Claim(ClaimTypes.Name, user.UserName))
+            .Append(new Claim(ClaimTypes.Email, user.Email))
             .Append(new Claim(ClaimTypes.NameIdentifier, id));
 
         var securityKey = new SymmetricSecurityKey(request.JwtOptions.KeyInBytes);

@@ -7,6 +7,7 @@ using MangaFlex.Core.Data.UserMangas.Repositories;
 using MangaFlex.Core.Data.Users.Models;
 using MangaFlex.Core.Data.Users.Repository;
 using MangaFlex.Infrastructure.Data.DBContext;
+using Microsoft.AspNetCore.Hosting;
 using MangaFlex.Infrastructure.Data.FriendShip.Repository;
 using MangaFlex.Infrastructure.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.Mangas.Services;
@@ -16,12 +17,15 @@ using MangaFlex.Infrastructure.Data.Users.Repository;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.Extensions.Hosting.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 

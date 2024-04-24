@@ -1,0 +1,89 @@
+﻿@page "/User/Followers"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Blazored.LocalStorage
+@using MangaFlexFront.Data.Mangas.Models;
+@using MangaFlexFront.Data.Users.ViewModels
+@using MangaFlexFront.Data.ViewModels
+@using Microsoft.AspNetCore.Authorization
+@inject ILocalStorageService localStorageService
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider provider;
+@using System.Net.Http.Headers
+
+
+@if (followers is null)
+{
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+    </div>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Subscriptions</h2>
+                @if (followers.Subscriptions?.Any() == false)
+                {
+                    <p>You don't have any Subscriptions</p>
+                }
+                else
+                {
+                    <ul class="list-group">
+                        @foreach (var subscription in followers.Subscriptions!)
+                        {
+                            <li class="list-group-item"><img src="@subscription.AvatarPath" class="mr-2" style="max-width: 50px; max-height: 50px;" />@subscription.UserName</li>
+                        }
+                    </ul>
+                }
+
+            </div>
+            <div class="col-md-6">
+                <h2>Subscribers</h2>
+                @if (followers.Followers?.Any() == false)
+                {
+                    <p>You don't have any Followers</p>
+                }
+                else
+                {
+                    <ul class="list-group">
+                        @foreach (var subscriber in followers.Followers!)
+                        {
+                            <li class="list-group-item"><img src="@subscriber.AvatarPath" class="mr-2" style="max-width: 50px; max-height: 50px;" />@subscriber</li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+
+}
+
+@code{
+    private FollowersVM followers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        followers = await GetFollowersVMAsync();
+    }
+
+    private async Task<FollowersVM> GetFollowersVMAsync(){
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/Followers");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<FollowersVM>();
+            }
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+        return null;
+    }
+}

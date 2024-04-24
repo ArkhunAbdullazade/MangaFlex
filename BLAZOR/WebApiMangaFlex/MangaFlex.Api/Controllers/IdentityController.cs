@@ -70,7 +70,11 @@ public class IdentityController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
-        return Ok(result);
+        return Ok(new
+        {
+            accessToken = result.jwt,
+            refreshToken = result.RefreshToken
+        });
     }
 
     [HttpPost]

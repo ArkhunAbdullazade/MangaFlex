@@ -208,9 +208,11 @@ public class MangaController : Controller
     [Authorize]
     public IActionResult SetLanguage(string language, string mangaId)
     {
-        Response.Cookies.Append("Language", language);
-        string? redirectUrl = Url.Action("Read", "Manga", new { id = mangaId });
-        return Ok(redirectUrl!);
+        Response.Cookies.Append("Language", language, new CookieOptions
+        {
+            Path = "/",
+        });
+        return Ok(mangaId);
     }
 
     [HttpGet]

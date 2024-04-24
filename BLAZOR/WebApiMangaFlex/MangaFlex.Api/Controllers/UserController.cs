@@ -52,6 +52,7 @@ public class UserController : Controller
     [HttpPut]
     public async Task<IActionResult> ChangeAvatar(IFormFile avatar)
     {
+        Console.WriteLine(1111);
         using (var image = Image.FromStream(avatar.OpenReadStream()))
         {
             if (image?.Width > 600 || image?.Height > 600)
@@ -84,6 +85,14 @@ public class UserController : Controller
         await sender.Send(command);
 
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetUserAvatar()
+    {
+        var relativePath = Path.Combine("wwwroot", "uploads", User.Identity.Name + ".png");
+        var imageBytes = System.IO.File.ReadAllBytes(relativePath);
+        return File(imageBytes, "image/jpeg"); 
     }
 
     [HttpGet]

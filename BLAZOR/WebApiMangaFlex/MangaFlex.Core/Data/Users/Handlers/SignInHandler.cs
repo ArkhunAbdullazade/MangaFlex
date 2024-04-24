@@ -51,6 +51,7 @@ public class SignInHandler : IRequestHandler<SignInCommand, TokenVM>
         var claims = roles
          .Select(role => new Claim(ClaimTypes.Role, role))
          .Append(new Claim(ClaimTypes.Name, request.Login!))
+         .Append(new Claim(ClaimTypes.Email, user.Email))
          .Append(new Claim(ClaimTypes.NameIdentifier, user.Id!));
 
 

@@ -50,18 +50,19 @@ namespace MangaFlexFront.Providers
             {
                 if (validationResult.Exception is SecurityTokenInvalidLifetimeException lifetimeException)
                 {
-                    // get token again
                     var httpClient = new HttpClient();
 
                     var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshToken });
 
+                    Console.WriteLine(updateTokenResponse.IsSuccessStatusCode);
                     if (updateTokenResponse.IsSuccessStatusCode && updateTokenResponse.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         var tokenResponse = await updateTokenResponse.Content.ReadFromJsonAsync<TokenVM>();
 
                         var accessToken = tokenResponse!.accessToken;
                         var refreshTokenupdate = tokenResponse!.refreshToken;
-
+                        Console.WriteLine(accessToken);
+                        Console.WriteLine(refreshTokenupdate);
                         await this.localStorageService.SetItemAsStringAsync("accessToken", accessToken);
                         await this.localStorageService.SetItemAsStringAsync("refreshToken", refreshTokenupdate.ToString());
 

@@ -217,15 +217,15 @@
     }
 
     .modal-content {
-        background-color: #f9f9f9;
-        width: 30%;
-        margin: 100px auto;
-        flex: 1;
+        background-color: #fefefe;
+        margin: 10% auto; /* –асположение по центру, 10% от верхнего кра€ */
         padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* 80% ширины от родительского элемента */
+        max-height: 80%; /* 80% высоты от родительского элемента */
+        overflow-y: auto; /* –азрешает прокрутку внутри модального окна */
         border-radius: 5px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         position: relative;
-        top: 100px;
     }
 
 
@@ -294,63 +294,78 @@
         flex: 0 0 200px;
         min-width: 100%;
     }
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
 </style>
 
 
 <div class="info">
     <div class="container">
-        <div class="image-container">
-            @if (!string.IsNullOrEmpty(manga.Cover))
-            {
-                <img src="@manga.Cover" alt="Cover Image" />
-            }
-        </div>
-        <div class="description">
-            <h2>@manga.Title</h2>
-            @if (!string.IsNullOrEmpty(manga.Description))
-            {
+       
+            <div class="image-container">
+                @if (!string.IsNullOrEmpty(manga.Cover))
+                {
+                    <img src="@manga.Cover" alt="Cover Image" />
+                }
+            </div>
+            <div class="description">
+                <h2>@manga.Title</h2>
+                @if (!string.IsNullOrEmpty(manga.Description))
+                {
                 <p>@manga.Description</p>
             }
-            @if (!string.IsNullOrEmpty(manga.OriginalLanguage))
-            {
-                <p class="custom-button"><strong>Original Language:</strong> @manga.OriginalLanguage</p>
-            }
-            @if (manga.Year.HasValue)
-            {
-                <p class="custom-button"><strong>Year:</strong> @manga.Year</p>
-            }
-            @if (!string.IsNullOrEmpty(manga.LastVolume))
-            {
-                <p class="custom-button"><strong>Last Volume:</strong> @manga.LastVolume</p>
-            }
-            @if (!string.IsNullOrEmpty(manga.LastChapter))
-            {
-                <p class="custom-button"><strong>Last Chapter:</strong> @manga.LastChapter</p>
-            }
-            @if (!string.IsNullOrEmpty(manga.State))
-            {
-                <p class="custom-button">@manga.State</p>
-            }
-            @if (manga.CreatedAt.HasValue)
-            {
-                <p class="custom-button"><strong>Created At:</strong> @manga.CreatedAt</p>
-            }
-            @if (manga.UpdatedAt.HasValue)
-            {
-                <p class="custom-button"><strong>Updated At:</strong> @manga.UpdatedAt</p>
-            }
+            else{
 
-            @if (manga.Tags != null && manga.Tags.Any())
-            {
-                <h3>Genres:</h3>
-                <ul>
-                    @foreach (var tag in manga.Tags)
-                    {
-                        <p class="custom-button">@tag</p>
-                    }
-                </ul>
+                <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
             }
-            @* <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
+            @if (!string.IsNullOrEmpty(manga.OriginalLanguage))
+                {
+                    <p class="custom-button"><strong>Original Language:</strong> @manga.OriginalLanguage</p>
+                }
+                @if (manga.Year.HasValue)
+                {
+                    <p class="custom-button"><strong>Year:</strong> @manga.Year</p>
+                }
+                @if (!string.IsNullOrEmpty(manga.LastVolume))
+                {
+                    <p class="custom-button"><strong>Last Volume:</strong> @manga.LastVolume</p>
+                }
+                @if (!string.IsNullOrEmpty(manga.LastChapter))
+                {
+                    <p class="custom-button"><strong>Last Chapter:</strong> @manga.LastChapter</p>
+                }
+                @if (!string.IsNullOrEmpty(manga.State))
+                {
+                    <p class="custom-button">@manga.State</p>
+                }
+                @if (manga.CreatedAt.HasValue)
+                {
+                    <p class="custom-button"><strong>Created At:</strong> @manga.CreatedAt</p>
+                }
+                @if (manga.UpdatedAt.HasValue)
+                {
+                    <p class="custom-button"><strong>Updated At:</strong> @manga.UpdatedAt</p>
+                }
+
+                @if (manga.Tags != null && manga.Tags.Any())
+                {
+                    <h3>Genres:</h3>
+                    <ul>
+                        @foreach (var tag in manga.Tags)
+                        {
+                            <p class="custom-button">@tag</p>
+                        }
+                    </ul>
+                }
+                @* <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
             class="form-control" id="rating" name="score">
             <option disabled selected="@(mangaStatus is null || mangaStatus == "Delete")">None</option>
             <option value="Planning to Read" selected="@(mangaStatus == "Planning to Read")">Planning to Read
@@ -364,22 +379,28 @@
             <option value="Delete" style="color: red;">Delete</option>
             }
             </select> *@
-            <br>
-            <a class="readNow" role="button" onclick="openLanguageOptions('@manga.Id')">Read now</a>
-            <div id="mangaLanguageModal" class="modal">
-                <div class="modal-content">
-                    <input type="hidden" id="mangaId" name="mangaId" />
-                    <!-- Content will be displayed here -->
+                <br>
+                <a class="readNow" role="button" onclick="openLanguageOptions('@manga.Id')">Read now</a>
+                <div id="mangaLanguageModal" class="modal">
+                    <div class="modal-content">
+                    <span class="modal-close" onclick="closeModal()">&times;</span>
+                        <input type="hidden" id="mangaId" name="mangaId" />
+                        <AvailableLanguages MangaId="@Id" />
+                    </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
     </div>
 </div>
 <script>
     function closeModal() {
         const modal = document.getElementById('mangaLanguageModal');
         modal.style.display = 'none';
+    }
+
+    function openLanguageOptions() {
+        const modal = document.getElementById('mangaLanguageModal');
+        modal.style.display = 'flex';
     }
 
     async function logManga(mangaId, isLogged) {
@@ -445,6 +466,7 @@
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
+
 
             if (response.IsSuccessStatusCode)
             {

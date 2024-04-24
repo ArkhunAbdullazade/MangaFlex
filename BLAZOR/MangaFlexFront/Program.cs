@@ -5,6 +5,7 @@ using MangaFlexFront;
 using Blazored.LocalStorage;
 using MangaFlexFront.Providers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.JSInterop;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
