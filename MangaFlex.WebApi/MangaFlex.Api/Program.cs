@@ -1,15 +1,20 @@
+using MangaFlex.Api.Hubs;
+using MangaFlex.Core.Data.FriendsChat.Repository;
 using MangaFlex.Core.Data.FriendShip.Repository;
 using MangaFlex.Core.Data.JWT.Options;
 using MangaFlex.Core.Data.LastWatches.Repository;
 using MangaFlex.Core.Data.Mangas.Services;
+using MangaFlex.Core.Data.Message.Repository;
 using MangaFlex.Core.Data.RefreshToken.Repository;
 using MangaFlex.Core.Data.UserMangas.Repositories;
 using MangaFlex.Core.Data.Users.Models;
 using MangaFlex.Core.Data.Users.Repository;
 using MangaFlex.Infrastructure.Data.DBContext;
+using MangaFlex.Infrastructure.Data.FriendsChat.Repository;
 using MangaFlex.Infrastructure.Data.FriendShip.Repository;
 using MangaFlex.Infrastructure.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.Mangas.Services;
+using MangaFlex.Infrastructure.Data.Message.Repository;
 using MangaFlex.Infrastructure.Data.RefreshToken;
 using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
 using MangaFlex.Infrastructure.Data.Users.Repository;
@@ -32,6 +37,8 @@ builder.Services.Configure<JwtOptions>(jwtOptionsSection);
 builder.Services.AddSingleton(jwtOptions);
 
 builder.Services.AddControllers();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -142,6 +149,8 @@ builder.Services.AddScoped<ILastWatchesRepository, LastWatchesRepository>();
 builder.Services.AddScoped<IUserMangaRepository, UserMangaRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddHttpClient<IMangaService, MangaService>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IFriendsChatRepository, FriendsChatRepository>();
 
 builder.Services.AddCors(options =>
 {

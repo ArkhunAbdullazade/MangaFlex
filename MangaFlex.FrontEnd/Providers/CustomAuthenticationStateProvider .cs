@@ -50,26 +50,33 @@ namespace MangaFlexFront.Providers
             {
                 if (validationResult.Exception is SecurityTokenInvalidLifetimeException lifetimeException)
                 {
-                    var httpClient = new HttpClient();
-
-                    var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshToken });
-
-                    Console.WriteLine(updateTokenResponse.IsSuccessStatusCode);
-                    if (updateTokenResponse.IsSuccessStatusCode && updateTokenResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                    try
                     {
-                        var tokenResponse = await updateTokenResponse.Content.ReadFromJsonAsync<TokenVM>();
+                        var httpClient = new HttpClient();
 
-                        var accessToken = tokenResponse!.accessToken;
-                        var refreshTokenupdate = tokenResponse!.refreshToken;
-                        Console.WriteLine(accessToken);
-                        Console.WriteLine(refreshTokenupdate);
-                        await this.localStorageService.SetItemAsStringAsync("accessToken", accessToken);
-                        await this.localStorageService.SetItemAsStringAsync("refreshToken", refreshTokenupdate.ToString());
+                        var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshToken });
 
-                        var newToken = jwtTokenHandler.ReadJwtToken(accessToken);
+                        Console.WriteLine(updateTokenResponse.IsSuccessStatusCode);
+                        if (updateTokenResponse.IsSuccessStatusCode && updateTokenResponse.StatusCode == System.Net.HttpStatusCode.OK)
+                        {
+                            var tokenResponse = await updateTokenResponse.Content.ReadFromJsonAsync<TokenVM>();
 
-                        return new ClaimsIdentity(newToken.Claims, "jwt");
+                            var accessToken = tokenResponse!.accessToken;
+                            var refreshTokenupdate = tokenResponse!.refreshToken;
+                            Console.WriteLine(accessToken);
+                            Console.WriteLine(refreshTokenupdate);
+                            await this.localStorageService.SetItemAsStringAsync("accessToken", accessToken);
+                            await this.localStorageService.SetItemAsStringAsync("refreshToken", refreshTokenupdate.ToString());
+
+                            var newToken = jwtTokenHandler.ReadJwtToken(accessToken);
+
+                            return new ClaimsIdentity(newToken.Claims, "jwt");
+                        }
+                    }catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
                     }
+                  
                 }
 
                 return new ClaimsIdentity();
@@ -102,6 +109,7 @@ namespace MangaFlexFront.Providers
             base.NotifyAuthenticationStateChanged(Task.FromResult(authenticationState));
 
             return authenticationState;
-        }
+        }        
+
     }
 }

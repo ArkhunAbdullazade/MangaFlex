@@ -20,11 +20,19 @@
             <br>
             <button class="btn btn-primary btn-lg" @onclick="ChangeAvatar">Update User Avatar</button>
         </div>
+        <div class="col-md-6" style="text-align: center;">
+            <br>
+            <button class="btn btn-primary btn-lg" @onclick="UpdateData">Update User Data</button>
+        </div>  
     </div>
 </div>
 
 @code{
     private void ChangeAvatar(){
         NavigationManager.NavigateTo("/User/ChangeAvatar");
+    }
+    private void UpdateData()
+    {
+        NavigationManager.NavigateTo("/User/UpdateData");
     }
 }

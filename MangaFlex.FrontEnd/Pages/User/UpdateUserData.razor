@@ -1,0 +1,98 @@
+﻿@page "/User/UpdateData"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Blazored.LocalStorage
+@using MangaFlexFront.Data.Dtos
+@using MangaFlexFront.Data.Mangas.Models;
+@using MangaFlexFront.Data.ViewModels
+@using Microsoft.AspNetCore.Authorization
+@inject ILocalStorageService localStorageService
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Net.Http.Headers
+@using System.Text.Json.Serialization
+@using System.Text.Json
+@using System.Text
+@using System.ComponentModel.DataAnnotations
+@inject AuthenticationStateProvider provider;
+
+
+
+<EditForm Model="@Dto" OnValidSubmit="SubmitUdpdate">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label class="form-label">Password</label>
+    <InputText @bind-Value="Dto.Password" id="Login" class="form-control" />
+
+    <div></div>
+    <label class="form-label">Old Password</label>
+    <InputText @bind-Value="Dto.OldPassword" id="Login" class="form-control" />
+
+    <label class="form-label">Nickname</label>
+    <InputText @bind-Value="Dto.UserName" id="Login" class="form-control" />
+
+    <button class="d-block btn btn-success" type="submit">Update</button>
+</EditForm>
+
+
+@code{
+    private UpdateUserDataDto Dto = new UpdateUserDataDto()
+        {
+            OldPassword = string.Empty,
+            Password = string.Empty
+        };
+    private List<ValidationResult> validationErrors = new List<ValidationResult>();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result = await provider.GetAuthenticationStateAsync();
+        if (result.User.Identity.IsAuthenticated == true)
+        {
+            Dto.UserName = result.User.Identity.Name;
+        }
+
+    }
+
+    private async Task SubmitUdpdate()
+    {
+        try
+        {
+            var json = JsonSerializer.Serialize(Dto);
+
+            var request = new HttpRequestMessage(HttpMethod.Put,
+               $"http://localhost:5262/api/User/UpdateUserData");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+
+            var response = await Http.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var jwt = await this.localStorageService.GetItemAsStringAsync("accessToken");
+                var refreshtoken = await this.localStorageService.GetItemAsStringAsync("refreshToken");
+                var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshtoken });
+                var tokenResponse = await updateTokenResponse.Content.ReadFromJsonAsync<TokenVM>();
+                var accessToken = tokenResponse!.accessToken;
+                var refreshTokenupdate = tokenResponse!.refreshToken;
+                await this.localStorageService.SetItemAsStringAsync("accessToken", accessToken);
+                await this.localStorageService.SetItemAsStringAsync("refreshToken", refreshTokenupdate.ToString());
+                await provider.GetAuthenticationStateAsync();
+                NavigationManager.NavigateTo("/User/Profile");
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                validationErrors.Add(new ValidationResult(error, new[] { "Update data error" }));
+            }
+        }
+        catch(Exception ex)
+        {
+            validationErrors.Add(new ValidationResult(ex.Message, new[] { "Update data" }));
+        }
+
+    }
+
+}

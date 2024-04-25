@@ -1,5 +1,6 @@
-﻿using MangaFlex.Core.Data.Users.Models;
-using MangaFlex.Api.Dto;
+﻿namespace MangaFlex.Api.Controllers;
+
+using MangaFlex.Core.Data.Users.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
@@ -10,10 +11,14 @@ using MangaFlex.Core.Data.FriendShip.Commands;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MnagaFlex.Api.ViewModels;
-
-namespace MangaFlex.Api.Controllers;
+using MangaFlex.Api.Dtos;
+using MangaFlex.Core.Data.FriendsChat.Commands;
+using MangaFlex.Core.Data.Message.Commands;
+using MangaFlex.Api.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using System.Net.WebSockets;
+using System.Text;
 
 [Authorize]
 [ApiController]
@@ -23,10 +28,52 @@ public class UserController : Controller
     private readonly ISender sender;
     private readonly UserManager<User> userManager;
 
+
     public UserController(ISender sender, UserManager<User> userManager)
     {
         this.sender = sender;
         this.userManager = userManager;
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateUserData(UpdateUserDataDto dto)
+    {
+        try
+        {
+            var command = new UpdateUserDataCommand(dto.UserName,dto.OldPassword,dto.Password, userManager.GetUserId(User!));
+            await sender.Send(command);
+        }
+        catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return Ok();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> PostMessage(string message,string friendid)
+    {
+        var getchatfirstid = new GetChatIdCommand(userManager.GetUserId(User!), friendid);
+        var result = await sender.Send(getchatfirstid);
+
+        var getchatsecondid = new GetChatIdCommand(friendid,userManager.GetUserId(User!));
+        var resultsecond = await sender.Send(getchatsecondid);
+
+        var postmessage = new PostMessageCommand(userManager.GetUserId(User!), message, result);
+        var postmessagetosecondchat = new PostMessageCommand(userManager.GetUserId(User!), message, resultsecond);
+
+        await sender.Send(postmessage);
+        await sender.Send(postmessagetosecondchat);
+
+        return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Chat(string Id)
+    {
+        var command = new GetChatCommand(userManager.GetUserId(User!), Id);
+        var result = await sender.Send(command);
+        return Ok(result);
     }
 
     [HttpGet]
@@ -90,9 +137,51 @@ public class UserController : Controller
     [HttpGet]
     public async Task<IActionResult> GetUserAvatar()
     {
+        byte[] imageBytes;
         var relativePath = Path.Combine("wwwroot", "uploads", User.Identity.Name + ".png");
-        var imageBytes = System.IO.File.ReadAllBytes(relativePath);
+        try
+        {
+            imageBytes = System.IO.File.ReadAllBytes(relativePath);
+        }catch(Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
         return File(imageBytes, "image/jpeg"); 
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetUserAvatarById(string id)
+    {
+        var user = new GetUserProfileCommand(id);
+        var result = await sender.Send(user);
+
+        byte[] imageBytes;
+        var relativePath = Path.Combine("wwwroot", "uploads", result.User.UserName + ".png");
+        try
+        {
+            imageBytes = System.IO.File.ReadAllBytes(relativePath);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return File(imageBytes, "image/jpeg");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetDefaultAvatar()
+    {
+        byte[] imageBytes;
+        var relativePath = Path.Combine("wwwroot", "uploads", "default.png");
+        try
+        {
+            imageBytes = System.IO.File.ReadAllBytes(relativePath);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return File(imageBytes, "image/jpeg");
     }
 
     [HttpGet]
@@ -111,6 +200,7 @@ public class UserController : Controller
         var subscribtions = await sender.Send(new GetUserSubscriptionsCommand(userManager.GetUserId(User)!));
         result.IsSub = subscribtions.Any(x => x.UserName == result?.User?.UserName);
         result.IsFriends = result.Friends!.Any(x => x.UserName == User?.Identity?.Name) && subscribtions.Any(x => x.UserName == result?.User?.UserName);
+        Console.WriteLine(result.Friends!.Any(x => x.UserName == User?.Identity?.Name) && subscribtions.Any(x => x.UserName == result?.User?.UserName));
         return Ok(result);
     }
 

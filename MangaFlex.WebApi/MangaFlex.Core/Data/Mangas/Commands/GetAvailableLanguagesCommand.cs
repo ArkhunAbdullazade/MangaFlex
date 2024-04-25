@@ -3,7 +3,7 @@
 using MangaFlex.Core.Data.Mangas.ViewModels;
 using MediatR;
 
-public class GetAvailableLanguagesCommand : IRequest<string[]?>
+public class GetAvailableLanguagesCommand : IRequest<AvailableLanguagesVM?>
 {
     public string Id { get; set; }
 

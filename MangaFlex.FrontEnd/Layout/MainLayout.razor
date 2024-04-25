@@ -253,20 +253,28 @@
     {
         await localstorage.RemoveItemAsync("accessToken");
         await localstorage.RemoveItemAsync("refreshToken");
+        NavigationManager.NavigateTo("/");
         NavigationManager.Refresh();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await provider.GetAuthenticationStateAsync();
-        if(result.User.Identity.IsAuthenticated == true)
+        try
         {
-            username = result.User.Identity.Name;
-            if (string.IsNullOrEmpty(username))
+            var result = await provider.GetAuthenticationStateAsync();
+            if (result.User.Identity.IsAuthenticated == true)
             {
-                NavigationManager.Refresh();
+                username = result.User.Identity.Name;
+                if (string.IsNullOrEmpty(username))
+                {
+                    NavigationManager.Refresh();
+                }
             }
+        }catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
         }
+
         
     }
 }

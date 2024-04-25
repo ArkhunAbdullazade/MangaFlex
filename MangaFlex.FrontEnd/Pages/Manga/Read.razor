@@ -1,4 +1,4 @@
-@page "/Manga/Read/{mangaId}/{chapter}"
+@page "/Manga/Read/{mangaId}/{chapter}"  
 @using Blazored.LocalStorage
 @using MangaFlexFront.Data.Mangas.ViewModels
 @using System.Text.Json
@@ -7,6 +7,7 @@
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 @inject ILocalStorageService localStorageService
+@inject IJSRuntime JSRuntime
 
 
 
@@ -137,6 +138,19 @@ else
     </div>
 }
 
+<script>
+    window.getCookies = function () {
+        var nameEQ = "Language" + "=";
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            while (cookie.charAt(0) == ' ') cookie = cookie.substring(1, cookie.length);
+            if (cookie.indexOf(nameEQ) == 0) return cookie.substring(nameEQ.length, cookie.length);
+        }
+        return null;
+    }
+</script>
+
 
 @code{
     MangaChapterViewModel mangaChapter = new MangaChapterViewModel();
@@ -202,7 +216,7 @@ else
         }
     }
 
-    
+
 
     private async Task PrefMangaChapter()
     {
@@ -223,12 +237,18 @@ else
         }
     }
 
+    private async Task<string> GetLanguageAsync()
+    {
+        return await JSRuntime.InvokeAsync<string>("getCookies");
+    }
+
     private async Task GetMangaChapter(string mangaId = "", string chapter = "1")
     {
-         try
+        try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/Read?id={mangaId}&chapter={int.Parse(chapter)}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Add("Language",await GetLanguageAsync());
 
             var response = await httpClient.SendAsync(request);
 

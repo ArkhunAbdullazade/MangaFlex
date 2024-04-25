@@ -8,6 +8,7 @@ using MangaDexWebApi.Models;
 namespace MangaDexWebApi.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route("api/[controller]/[action]")]
 public class MangaController : Controller
 {
@@ -40,9 +41,9 @@ public class MangaController : Controller
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> AvailableLanguages(string id)
     {
+        Console.WriteLine(id);
         var availableLanguages = await mangaService.GetAvailableLanguages(id);
         var AvailableLanguagesVm = new AvailableLanguagesVM()
         {
@@ -53,7 +54,6 @@ public class MangaController : Controller
     }
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> About(string id)
     {
         Manga manga;
@@ -71,7 +71,6 @@ public class MangaController : Controller
     }
 
     [HttpGet]
-    [AllowAnonymous]
     public async Task<IActionResult> Read(string id, int chapter = 1, string language = "en")
     {
         var mangaChapterViewModel = await mangaService.ReadAsync(id, chapter, language);

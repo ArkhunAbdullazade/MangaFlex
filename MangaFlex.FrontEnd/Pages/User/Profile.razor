@@ -79,25 +79,7 @@ else
                          style="height:250px; width:250px;">
                     <div class="card-body">
                         <h5 class="card-title">@username</h5>
-                        @if (username == UserProfileView.User?.UserName)
-                        {
-                            <h4 class="card-title">@UserProfileView?.User?.Email</h4>
-                        }
-                        @if (username != UserProfileView?.User?.UserName)
-                        {
-                            if (UserProfileView?.IsSub == false)
-                            {
-                                <button class="btn btn-primary">Subscribe</button>
-                            }
-                            @*  if (Model.IsFriends)
-                    {
-                    <button class="btn btn-primary">Chat</button>
-                    } *@
-                            if (UserProfileView?.IsSub == true)
-                            {
-                                <button class="btn btn-primary">Unsubscribe</button>
-                            }
-                        }
+                        <h4 class="card-title">@UserProfileView?.User?.Email</h4>
                     </div>
                 </div>
             </div>
@@ -133,6 +115,7 @@ else
 
 
 @code{
+    [Parameter]   
     public GetUserProfileViewModel UserProfileView { get; set; }
     private string username = string.Empty;
     private string AvatarBase64;
@@ -141,6 +124,10 @@ else
     {
         var avatarImageBytes = await GetUserAvatar();
         AvatarBase64 = Convert.ToBase64String(avatarImageBytes);
+        if(AvatarBase64 == null)
+        {
+            AvatarBase64 = "default.png";
+        }
         var result = await provider.GetAuthenticationStateAsync();
         if (result.User.Identity.IsAuthenticated == true)
         {
@@ -171,9 +158,9 @@ else
             {
                 return await response.Content.ReadAsByteArrayAsync();
             }
-            else
+            else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
-                return null;
+                return await GetDefaultAvatar();
             }
         }
         catch (Exception ex)
@@ -181,6 +168,7 @@ else
             Console.WriteLine(ex.Message);
             return null;
         }
+        return null;
     }
 
     private async Task GetUserProfileViewModel()
@@ -201,6 +189,23 @@ else
         {
             Console.WriteLine(ex.Message);
         }
+    }
 
+    private async Task<byte[]> GetDefaultAvatar()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetDefaultAvatar");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading default avatar: {ex.Message}");
+            return null;
+        }
     }
 }

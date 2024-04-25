@@ -8,10 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="7.0.18" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.17" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.17" >
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.17">
 	<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	<PrivateAssets>all</PrivateAssets>
 	</PackageReference>

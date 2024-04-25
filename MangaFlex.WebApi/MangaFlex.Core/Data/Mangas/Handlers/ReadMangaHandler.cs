@@ -21,6 +21,7 @@ public class ReadMangaHandler : IRequestHandler<ReadMangaCommand, MangaChapterVi
         // MangaChapterViewModel? manga = await response.Content.ReadFromJsonAsync<MangaChapterViewModel>();
         // return manga!;
 
+        
         return await mangaService.ReadAsync(request.Id, request.Chapter, request.Language);
     }
 } 

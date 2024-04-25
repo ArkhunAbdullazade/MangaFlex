@@ -12,7 +12,6 @@ using MangaFlex.Core.Data.UserMangas.Commands;
 using MangaFlex.Core.Data.UserMangas.Models;
 using MangaFlex.Api.Dtos;
 using MangaFlex.Core.Data.Mangas.Models;
-using MangaFlex.Api.ViewModels;
 
 namespace MangaFlex.Api.Controllers;
 
@@ -75,12 +74,7 @@ public class MangaController : Controller
     {
         var command = new GetAvailableLanguagesCommand(id);
         var availableLanguages = await sender.Send(command);
-        var AvailableLanguagesVm = new AvailableLanguagesVM()
-        {
-            Id = id,
-            Languages = availableLanguages!,
-        };
-        return Ok(AvailableLanguagesVm);
+        return Ok(availableLanguages);
     }
 
     [HttpGet]
@@ -210,19 +204,19 @@ public class MangaController : Controller
     [Authorize]
     public IActionResult SetLanguage(string language, string mangaId)
     {
-        Response.Cookies.Append("Language", language, new CookieOptions
+        return Ok(new SetLanguageVM()
         {
-            Path = "/",
+            MangaId = mangaId,
+            Language = language,
         });
-        return Ok(mangaId);
     }
 
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> Read(string id, int chapter = 1)
     {
-        string language = HttpContext.Request.Cookies["Language"] ?? "en";
-
+        string language = HttpContext.Request.Headers["language"];     
+        Console.WriteLine(language);
         var readMangaCommand = new ReadMangaCommand(id, chapter, language);
         var mangaChapterViewModel = await sender.Send(readMangaCommand);
 

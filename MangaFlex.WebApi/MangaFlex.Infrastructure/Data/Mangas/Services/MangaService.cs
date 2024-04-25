@@ -32,10 +32,10 @@ public class MangaService : IMangaService
         return mangasVM;
     }
 
-    public async Task<string[]> GetAvailableLanguages(string id)
+    public async Task<AvailableLanguagesVM> GetAvailableLanguages(string id)
     {
         var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/AvailableLanguages?id={id}");
-        string[]? availableLanguages = await response.Content.ReadFromJsonAsync<string[]>();
+        var availableLanguages = await response.Content.ReadFromJsonAsync<AvailableLanguagesVM>();
         return availableLanguages!;
     }
 
@@ -47,7 +47,7 @@ public class MangaService : IMangaService
     }
     public async Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1, string language = "en")
     {
-        var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/Read?id={mangaId}&chapter={chapter}&id={language}");
+        var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/Read?id={mangaId}&chapter={chapter}&language={language}");
         MangaChapterViewModel? manga = await response.Content.ReadFromJsonAsync<MangaChapterViewModel>();
         return manga!;
     }

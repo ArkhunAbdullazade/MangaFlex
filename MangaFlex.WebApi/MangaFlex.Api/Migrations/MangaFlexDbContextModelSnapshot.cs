@@ -45,6 +45,34 @@ namespace MangaFlex.Api.Migrations
                     b.ToTable("FriendShips");
                 });
 
+            modelBuilder.Entity("MangaFlex.Core.Data.FriendsChat.Models.FriendsChat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("ChatId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FriendId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FriendId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("FriendsChats");
+                });
+
             modelBuilder.Entity("MangaFlex.Core.Data.LastWatches.Models.LastWatch", b =>
                 {
                     b.Property<int>("Id")
@@ -64,6 +92,40 @@ namespace MangaFlex.Api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserLastWatches");
+                });
+
+            modelBuilder.Entity("MangaFlex.Core.Data.Message.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FriendsChatId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MessageContent")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FriendsChatId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("MangaFlex.Core.Data.RefreshToken.Model.RefreshToken", b =>
@@ -324,11 +386,45 @@ namespace MangaFlex.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("MangaFlex.Core.Data.FriendsChat.Models.FriendsChat", b =>
+                {
+                    b.HasOne("MangaFlex.Core.Data.Users.Models.User", "Friend")
+                        .WithMany()
+                        .HasForeignKey("FriendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Friend");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MangaFlex.Core.Data.LastWatches.Models.LastWatch", b =>
                 {
                     b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MangaFlex.Core.Data.Message.Models.Message", b =>
+                {
+                    b.HasOne("MangaFlex.Core.Data.FriendsChat.Models.FriendsChat", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("FriendsChatId");
+
+                    b.HasOne("MangaFlex.Core.Data.Users.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -391,6 +487,11 @@ namespace MangaFlex.Api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MangaFlex.Core.Data.FriendsChat.Models.FriendsChat", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

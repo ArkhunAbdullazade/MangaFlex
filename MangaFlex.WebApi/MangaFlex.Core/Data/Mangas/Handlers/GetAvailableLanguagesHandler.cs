@@ -6,7 +6,7 @@ using MangaFlex.Core.Data.Mangas.Services;
 
 namespace MangaFlex.Core.Data.Users.Commands;
 
-public class GetAvailableLanguagesHandler : IRequestHandler<GetAvailableLanguagesCommand, string[]?>
+public class GetAvailableLanguagesHandler : IRequestHandler<GetAvailableLanguagesCommand, AvailableLanguagesVM>
 {
     // private readonly HttpClient httpClient;
     private readonly IMangaService mangaService;
@@ -15,7 +15,7 @@ public class GetAvailableLanguagesHandler : IRequestHandler<GetAvailableLanguage
     {
         this.mangaService = mangaService;
     }
-    public async Task<string[]?> Handle(GetAvailableLanguagesCommand request, CancellationToken cancellationToken)
+    public async Task<AvailableLanguagesVM> Handle(GetAvailableLanguagesCommand request, CancellationToken cancellationToken)
     {
         // string[]? availableLanguages;
         // var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/AvailableLanguages?id={request.Id}");

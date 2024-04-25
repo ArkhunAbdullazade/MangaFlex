@@ -6,8 +6,10 @@
 @using System.Net.Http.Headers
 @inject NavigationManager navigationManager
 @inject ILocalStorageService localStorageService
+@inject IJSRuntime JSRuntime
 
 <h3>Available Languages</h3>
+
 
 @if (availableLanguages != null)
 {
@@ -18,7 +20,7 @@
         </div>
     }
 }
-else if(availableLanguages == null)
+else if (availableLanguages == null)
 {
     <div class="loading-container">
         <div class="loading-spinner"></div>
@@ -29,11 +31,17 @@ else
     <p>No available languages found.</p>
 }
 
+<script>
+        window.setCookie = function(name, value, path) {
+        document.cookie = name + "=" + value + "; path=" + path;
+    }
+</script>
+
 @code {
     [Parameter]
     public string MangaId { get; set; }
     public AvailableLanguagesVM availableLanguages { get; set; }
-    string mangaId = string.Empty;
+    string mangaId = string.Empty;  
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,11 +52,12 @@ else
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await HttpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 availableLanguages = await response.Content.ReadFromJsonAsync<AvailableLanguagesVM>();
             }
+
         }
         catch (Exception ex)
         {
@@ -61,17 +70,16 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get,
-            $"http://localhost:5262/api/Manga/SetLanguage?language={language}&mangaId={MangaId}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
-            localStorageService.GetItemAsStringAsync("accessToken"));
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/SetLanguage?language={language}&mangaId={MangaId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
-
+            var response = await HttpClient.SendAsync(request);            
             if (response.IsSuccessStatusCode)
             {
-                mangaId = await response.Content.ReadAsStringAsync();
-                navigationManager.NavigateTo($"/Manga/Read/{mangaId}/1");
+                var responseVM = await response.Content.ReadFromJsonAsync<SetLanguageVM>();
+
+                await JSRuntime.InvokeVoidAsync("setCookie", "Language", responseVM.Language, "/");
+                navigationManager.NavigateTo($"/Manga/Read/{responseVM.MangaId}/1");
             }
         }
         catch (Exception ex)
