@@ -18,5 +18,3 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddAuthorizationCore();
 await builder.Build().RunAsync();
-//for auto-generated page titles
-builder.RootComponents.Add<HeadOutlet>("head::after");

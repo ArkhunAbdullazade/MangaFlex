@@ -8,7 +8,7 @@
 @inject ILocalStorageService localStorageService
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Net.Http.Headers
-
+@using System.Net
 <PageTitle>About</PageTitle>
 
 
@@ -218,11 +218,11 @@
 
     .modal-content {
         background-color: #fefefe;
-        margin: 10% auto; 
+        margin: 10% auto;
         padding: 20px;
         border: 1px solid #888;
-        width: 80%; 
-        max-height: 80%; 
+        width: 80%;
+        max-height: 80%;
         overflow-y: auto;
         border-radius: 5px;
         position: relative;
@@ -307,65 +307,66 @@
 
 <div class="info">
     <div class="container">
-       
-            <div class="image-container">
-                @if (!string.IsNullOrEmpty(manga.Cover))
-                {
-                    <img src="@manga.Cover" alt="Cover Image" />
-                }
-            </div>
-            <div class="description">
-                <h2>@manga.Title</h2>
-                @if (!string.IsNullOrEmpty(manga.Description))
-                {
+
+        <div class="image-container">
+            @if (!string.IsNullOrEmpty(manga.Cover))
+            {
+                <img src="@manga.Cover" alt="Cover Image" />
+            }
+        </div>
+        <div class="description">
+            <h2>@manga.Title</h2>
+            @if (!string.IsNullOrEmpty(manga.Description))
+            {
                 <p>@manga.Description</p>
             }
-            else{
+            else
+            {
 
                 <div class="loading-container">
-                        <div class="loading-spinner"></div>
-                    </div>
+                    <div class="loading-spinner"></div>
+                </div>
             }
             @if (!string.IsNullOrEmpty(manga.OriginalLanguage))
-                {
-                    <p class="custom-button"><strong>Original Language:</strong> @manga.OriginalLanguage</p>
-                }
-                @if (manga.Year.HasValue)
-                {
-                    <p class="custom-button"><strong>Year:</strong> @manga.Year</p>
-                }
-                @if (!string.IsNullOrEmpty(manga.LastVolume))
-                {
-                    <p class="custom-button"><strong>Last Volume:</strong> @manga.LastVolume</p>
-                }
-                @if (!string.IsNullOrEmpty(manga.LastChapter))
-                {
-                    <p class="custom-button"><strong>Last Chapter:</strong> @manga.LastChapter</p>
-                }
-                @if (!string.IsNullOrEmpty(manga.State))
-                {
-                    <p class="custom-button">@manga.State</p>
-                }
-                @if (manga.CreatedAt.HasValue)
-                {
-                    <p class="custom-button"><strong>Created At:</strong> @manga.CreatedAt</p>
-                }
-                @if (manga.UpdatedAt.HasValue)
-                {
-                    <p class="custom-button"><strong>Updated At:</strong> @manga.UpdatedAt</p>
-                }
+            {
+                <p class="custom-button"><strong>Original Language:</strong> @manga.OriginalLanguage</p>
+            }
+            @if (manga.Year.HasValue)
+            {
+                <p class="custom-button"><strong>Year:</strong> @manga.Year</p>
+            }
+            @if (!string.IsNullOrEmpty(manga.LastVolume))
+            {
+                <p class="custom-button"><strong>Last Volume:</strong> @manga.LastVolume</p>
+            }
+            @if (!string.IsNullOrEmpty(manga.LastChapter))
+            {
+                <p class="custom-button"><strong>Last Chapter:</strong> @manga.LastChapter</p>
+            }
+            @if (!string.IsNullOrEmpty(manga.State))
+            {
+                <p class="custom-button">@manga.State</p>
+            }
+            @if (manga.CreatedAt.HasValue)
+            {
+                <p class="custom-button"><strong>Created At:</strong> @manga.CreatedAt</p>
+            }
+            @if (manga.UpdatedAt.HasValue)
+            {
+                <p class="custom-button"><strong>Updated At:</strong> @manga.UpdatedAt</p>
+            }
 
-                @if (manga.Tags != null && manga.Tags.Any())
-                {
-                    <h3>Genres:</h3>
-                    <ul>
-                        @foreach (var tag in manga.Tags)
-                        {
-                            <p class="custom-button">@tag</p>
-                        }
-                    </ul>
-                }
-                @* <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
+            @if (manga.Tags != null && manga.Tags.Any())
+            {
+                <h3>Genres:</h3>
+                <ul>
+                    @foreach (var tag in manga.Tags)
+                    {
+                        <p class="custom-button">@tag</p>
+                    }
+                </ul>
+            }
+            @* <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
             class="form-control" id="rating" name="score">
             <option disabled selected="@(mangaStatus is null || mangaStatus == "Delete")">None</option>
             <option value="Planning to Read" selected="@(mangaStatus == "Planning to Read")">Planning to Read
@@ -379,17 +380,17 @@
             <option value="Delete" style="color: red;">Delete</option>
             }
             </select> *@
-                <br>
-                <a class="readNow" role="button" onclick="openLanguageOptions('@manga.Id')">Read now</a>
-                <div id="mangaLanguageModal" class="modal">
-                    <div class="modal-content">
+            <br>
+            <a class="readNow" role="button" onclick="openLanguageOptions('@manga.Id')">Read now</a>
+            <div id="mangaLanguageModal" class="modal">
+                <div class="modal-content">
                     <span class="modal-close" onclick="closeModal()">&times;</span>
-                        <input type="hidden" id="mangaId" name="mangaId" />
-                        <AvailableLanguages MangaId="@Id" />
-                    </div>
+                    <input type="hidden" id="mangaId" name="mangaId" />
+                    <AvailableLanguages MangaId="@Id" />
                 </div>
-
             </div>
+
+        </div>
     </div>
 </div>
 <script>
@@ -460,12 +461,13 @@
 
     private async Task GetManga(string mangaId)
     {
+        var response = new HttpResponseMessage();
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/About?id={mangaId}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
-
-            var response = await httpClient.SendAsync(request);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
+            response = await httpClient.SendAsync(request);
 
 
             if (response.IsSuccessStatusCode)
@@ -476,8 +478,8 @@
             {
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
+            NavigationManager.NavigateTo("/Error/Unathorized");
             Console.WriteLine(ex.Message);
         }
     }
@@ -485,8 +487,10 @@
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Mangas/AvailableLanguages?id={mangaId}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            var request = new HttpRequestMessage(HttpMethod.Get,
+            $"http://localhost:5262/api/Mangas/AvailableLanguages?id={mangaId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
 
@@ -497,7 +501,10 @@
             }
             else
             {
-
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    NavigationManager.NavigateTo("/Error/Unathorized");
+                }
             }
         }
         catch (Exception ex)

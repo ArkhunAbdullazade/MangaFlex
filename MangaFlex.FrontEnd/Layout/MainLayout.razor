@@ -248,6 +248,7 @@
     private void Search()
     {
         NavigationManager.NavigateTo($"/Mangas?search={Uri.EscapeDataString(searchQuery)}");
+        NavigationManager.Refresh();
     }
 
     private void OnSearchInputKeyDown(KeyboardEventArgs e)
