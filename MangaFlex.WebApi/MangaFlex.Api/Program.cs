@@ -20,7 +20,10 @@ using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
 using MangaFlex.Infrastructure.Data.Users.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -151,6 +154,12 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddHttpClient<IMangaService, MangaService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IFriendsChatRepository, FriendsChatRepository>();
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
 
 builder.Services.AddCors(options =>
 {
@@ -162,6 +171,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+
 var app = builder.Build();
 
 app.UseSwagger();
@@ -170,15 +181,20 @@ app.UseSwaggerUI(options =>
 {
     options.InjectStylesheet("/swagger-ui/themes/3.x/custom.css");
 });
-
+app.UseResponseCompression();
+app.UseCors("AllowSpecificOrigin");
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<ChatHub>("/chathub");
+    endpoints.MapHub<ProfileHub>("/profilehub");
+    endpoints.MapControllers();
+});
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
 
-app.UseAuthorization();
-
-app.MapControllers();
-app.UseCors("AllowSpecificOrigin");
 app.Run();

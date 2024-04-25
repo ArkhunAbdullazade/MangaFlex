@@ -94,7 +94,7 @@ else
                             }
                             if (UserProfileView.IsFriends)
                             {
-                            <button class="btn btn-primary">Chat</button>
+                            <button class="btn btn-primary" @onclick="Chat">Chat</button>
                             }
                             if (UserProfileView?.IsSub == true)
                             {
@@ -141,9 +141,22 @@ else
     public GetUserProfileViewModel UserProfileView { get; set; }
     private string username = string.Empty;
     private string AvatarBase64;
+    private HubConnection hubConnection;
 
     protected override async Task OnInitializedAsync()
     {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5262/profilehub"))
+            .Build();
+
+        hubConnection.On<string>("ReceiveMessage", async (message) =>
+        {
+            await GetUserProfileViewModel();
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+
         var avatarImageBytes = await GetUserAvatar();
         AvatarBase64 = Convert.ToBase64String(avatarImageBytes);
         if(AvatarBase64 == null)
@@ -165,14 +178,22 @@ else
     }
 
 
+    private async Task Chat()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/CreateChat?friendid={Id}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+        var response = await httpClient.SendAsync(request);
+
+        NavigationManager.NavigateTo($"/User/Chat/{Id}");
+    }
+
     private async Task Subscribe()
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/Subscribe?id={Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
 
         var response = await httpClient.SendAsync(request);
-
-        await UpdateProfileAfterSubscribe();
     }
 
     private async Task UnSubscribe()
@@ -181,8 +202,6 @@ else
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
 
         var response = await httpClient.SendAsync(request);
-
-        await UpdateProfileAfterSubscribe();
     }
 
     private async Task VisitManga(string mangaId)

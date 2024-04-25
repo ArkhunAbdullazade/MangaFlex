@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 public interface IFriendsChatRepository
 {
+
+    public Task CreateChat(string userid, string friendid);
     public Task<IEnumerable<Message>> GetMessagesInChat(string userid, string friendid);
     public Task<int> GetChatId(string userid, string friendid);
 

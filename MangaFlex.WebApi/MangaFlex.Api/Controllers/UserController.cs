@@ -19,6 +19,7 @@ using MangaFlex.Api.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using System.Net.WebSockets;
 using System.Text;
+using MangaFlex.Core.Data.Message.Models;
 
 [Authorize]
 [ApiController]
@@ -27,12 +28,15 @@ public class UserController : Controller
 {
     private readonly ISender sender;
     private readonly UserManager<User> userManager;
+    private readonly IHubContext<ChatHub> hubContext;
+    private readonly IHubContext<ProfileHub> hubContextProfile;
 
-
-    public UserController(ISender sender, UserManager<User> userManager)
+    public UserController(ISender sender, UserManager<User> userManager, IHubContext<ChatHub> hubContext, IHubContext<ProfileHub> profilehub)
     {
         this.sender = sender;
         this.userManager = userManager;
+        this.hubContext = hubContext;
+        this.hubContextProfile = profilehub;
     }
 
     [HttpPut]
@@ -51,8 +55,18 @@ public class UserController : Controller
     }
 
     [HttpPost]
+    public async Task<IActionResult> CreateChat(string friendid)
+    {
+        var command = new CreateChatCommand(userManager.GetUserId(User!),friendid);
+        await sender.Send(command); 
+        return Ok();
+    }
+
+    [HttpPost]
     public async Task<IActionResult> PostMessage(string message,string friendid)
     {
+        Console.WriteLine(212121);
+        Console.WriteLine(212121);
         var getchatfirstid = new GetChatIdCommand(userManager.GetUserId(User!), friendid);
         var result = await sender.Send(getchatfirstid);
 
@@ -64,7 +78,7 @@ public class UserController : Controller
 
         await sender.Send(postmessage);
         await sender.Send(postmessagetosecondchat);
-
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", "DataChanged");
         return Ok();
     }
 
@@ -169,6 +183,14 @@ public class UserController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> SearchUser(string search)
+    {
+        var command = new GetUsersCommand();
+        var result = await sender.Send(command);
+        return Ok(result.Where(x => x.UserName.Contains(search)));
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetDefaultAvatar()
     {
         byte[] imageBytes;
@@ -209,6 +231,7 @@ public class UserController : Controller
     {
         var command = new SubscribeCommand(userManager.GetUserId(User)!, id);
         await sender.Send(command);
+        await hubContextProfile.Clients.All.SendAsync("ReceiveMessage", "DataChanged");
         return Ok();
     }
 
@@ -217,6 +240,7 @@ public class UserController : Controller
     {
         var command = new RemoveFriendCommand(userManager.GetUserId(User!), id);
         await sender.Send(command);
+        await hubContextProfile.Clients.All.SendAsync("ReceiveMessage", "DataChanged");
         return Ok();
     }
 

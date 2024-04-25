@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using MangaFlex.Core.Data.Message.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MangaFlex.Api.Hubs;
 
-public class ProfileHub : Hub
+public class ChatHub : Hub
 {
-    public async Task SendMessage()
+    public async Task SendMessage(string message)
     {
-        await Clients.All.SendAsync("ReceiveMessage", "Data Change", "Data of page have been change");
+        await Clients.All.SendAsync("ReceiveMessage", message);
     }
 }

@@ -1,4 +1,20 @@
-@page "/User/Chat"
+@page "/User/Chat/{FriendId}"
+@using MangaFlexFront.Data.Message.Models
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using Blazored.LocalStorage
+@using MangaFlexFront.Data.Mangas.Models;
+@using MangaFlexFront.Data.SignalR
+@using MangaFlexFront.Data.Users.ViewModels
+@using MangaFlexFront.Data.ViewModels
+@using Microsoft.AspNetCore.Authorization
+@inject ILocalStorageService localStorageService
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider provider;
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.SignalR.Client
+@inject ChatService chatService
+
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -92,6 +108,13 @@
         flex-direction: column;
     }
 
+    .avatar {
+        width: 50px; /* Укажите нужные размеры */
+        height: 50px;
+        border-radius: 50%; /* Для круглых аватарок */
+        margin-right: 10px; /* Подстройте отступы по вашему желанию */
+    }
+
     .chat-box {
         flex: 1;
         overflow-y: auto;
@@ -144,19 +167,221 @@
     .message-input button:hover {
         background-color: #0056b3;
     }
+
+    .friend-info {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .friend-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
 </style>
-<div class="chat-container">
-    <div class="chat-box">
-        <div class="message received">
-            <p>Hello! How can I help you?</p>
-        </div>
-        <div class="message sent">
-            <p>Hi there! I'm just browsing.</p>
-        </div>
-        <!-- Add more messages here -->
+
+@if (messages is null)
+{
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
     </div>
-    <div class="message-input">
-        <input type="text" placeholder="Type your message...">
-        <button>Send</button>
+}
+else
+{
+    
+
+    <div class="chat-container">
+        <div class="friend-info">
+            <img src="data:image/png;base64,@FriendAvatarBase64" class="friend-avatar" alt="Friend's Avatar" />
+            <p>@friendInfo.User.UserName</p>
+        </div>
+        <div class="chat-box">
+            @foreach(var item in messages)
+            {
+                @if(item.User.UserName == username)
+                {
+                    <div class="message sent">
+                        @item.MessageContent
+                        @item.SentAt.ToShortTimeString()
+                        <img src="data:image/png;base64,@UserAvatarBase64" class="avatar" alt="Your Avatar" />
+                    </div>
+                }
+                else
+                {
+                    <div class="message received">
+                        <img src="data:image/png;base64,@FriendAvatarBase64" class="avatar" alt="Friend's Avatar" />
+                        @item.SentAt.ToShortTimeString()
+                        @item.MessageContent
+                    </div>
+                }
+            }
+        </div>
+        <div class="message-input">
+            <InputText type="text" @bind-Value="Message" placeholder="Type your message..."/>
+            <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>
+            <p>@(!IsNullOrWhiteSpace)</p>
+        </div>
     </div>
-</div>
+}
+
+
+
+@code{
+    [Parameter]
+    public string FriendId { get; set; }
+    public string Message{ get; set; }
+    private string username = string.Empty;
+    public IEnumerable<Message> messages;
+    private string UserAvatarBase64;
+    private string FriendAvatarBase64;
+    private GetUserProfileViewModel friendInfo { get; set; }
+    private HubConnection hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5262/chathub"))
+            .Build();
+
+        hubConnection.On<string>("ReceiveMessage", async (message) =>
+        {
+            await InitMessage();
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+
+        var result = await provider.GetAuthenticationStateAsync();
+        if (result.User.Identity.IsAuthenticated == true)
+        {
+            username = result.User.Identity.Name;
+        }
+        await InitMessage();
+        await GetFriendInfo();
+        var UseravatarImageBytes = await GetUserAvatar();
+        var FriendavatarImageBytes = await GetFriendAvatar();
+        FriendAvatarBase64 = Convert.ToBase64String(FriendavatarImageBytes);
+        UserAvatarBase64 = Convert.ToBase64String(UseravatarImageBytes);
+    }
+
+    private async Task GetFriendInfo()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/ProfileById?id={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                friendInfo = await response.Content.ReadFromJsonAsync<GetUserProfileViewModel>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching friend information: {ex.Message}");
+        }
+    }
+
+    private async Task<byte[]> GetUserAvatar()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetUserAvatar");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return await GetDefaultAvatar();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
+        return null;
+    }
+
+    private async Task<byte[]> GetDefaultAvatar()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetDefaultAvatar");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading default avatar: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task<byte[]> GetFriendAvatar()
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetUserAvatarById?id={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return await GetDefaultAvatar();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
+        return null;
+    }
+
+    private async Task InitMessage()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/Chat?id={FriendId}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+        var response = await httpClient.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            messages = await response.Content.ReadFromJsonAsync<IEnumerable<Message>>();
+        }
+    }
+
+    public bool IsNullOrWhiteSpace => Message == string.Empty;
+
+    private async Task PostMessage()
+    {
+        if(string.IsNullOrWhiteSpace(Message) == false)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/PostMessage?message={Message}&friendid={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await httpClient.SendAsync(request);
+            Message = string.Empty;
+        }
+    }
+}

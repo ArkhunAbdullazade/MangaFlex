@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @using Blazored.LocalStorage
+@using MangaFlexFront.Data.Mangas.ViewModels
+@using MangaFlexFront.Data.Users.Models
 @using MangaFlexFront.Providers;
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
@@ -245,11 +247,15 @@
 @code {
     private string username = string.Empty;
     private string searchQuery;
+    private MangasViewModel mangas = new MangasViewModel();
+    private IEnumerable<User> users;
+
     private void Search()
     {
         NavigationManager.NavigateTo($"/Mangas?search={Uri.EscapeDataString(searchQuery)}");
         NavigationManager.Refresh();
     }
+
 
     private void OnSearchInputKeyDown(KeyboardEventArgs e)
     {
