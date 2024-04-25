@@ -1,4 +1,4 @@
-@page "/Manga/Read/{mangaId}/{chapter}"  
+@page "/Manga/Read/{mangaId}/{chapter}"
 @using Blazored.LocalStorage
 @using MangaFlexFront.Data.Mangas.ViewModels
 @using System.Text.Json
@@ -9,261 +9,735 @@
 @inject ILocalStorageService localStorageService
 @inject IJSRuntime JSRuntime
 
+<style>
+  .prev-btn,
+  .next-btn {
+    background-color: transparent;
+    border: none;
+    color: #333;
+    font-size: 100px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
 
+  .material-symbols-rounded:hover {
+    color: rgb(0, 0, 0);
+    transform: translateY(-50%) scale(1.1);
+  }
 
-<style >
-    .prev-btn,
-    .next-btn {
-        background-color: transparent;
-        border: none;
-        color: #333; /* Цвет текста кнопок */
-        font-size: 100px; /* Размер шрифта */
-        cursor: pointer;
-        transition: color 0.3s ease; /* Плавное изменение цвета при наведении */
+  .prev-btn:hover,
+  .next-btn:hover {
+    color: #666;
+  }
+
+  .manga-page {
+    width: 750px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .noData {
+    color: red;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+  }
+
+  .prev-arrow {
+    left: 30vh;
+    opacity: 0.8;
+  }
+
+  .next-arrow {
+    right: 40vh;
+    opacity: 0.8;
+  }
+
+  .material-symbols-rounded {
+    font-variation-settings: "FILL" 0, "wght" 200, "GRAD" 0, "opsz" NaN;
+    font-size: 20vh !important;
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+    transform: translateY(-50%);
+    text-align: center;
+    transition: color 0.3s, background-color 0.3s, opacity 0.3s, transform 0.3s;
+  }
+
+  .material-symbols-rounded:hover {
+    color: rgb(0, 0, 0);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .material-symbols-rounded::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30vh;
+    height: 30vh;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .material-symbols-rounded.clicked::after {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  .wheel-and-hamster {
+    --dur: 1s;
+    position: relative;
+    width: 12em;
+    height: 12em;
+    font-size: 14px;
+  }
+
+  .wheel,
+  .hamster,
+  .hamster div,
+  .spoke {
+    position: absolute;
+  }
+
+  .wheel,
+  .spoke {
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .wheel {
+    background: radial-gradient(100% 100% at center,
+        hsla(0, 0%, 60%, 0) 47.8%,
+        hsl(0, 0%, 60%) 48%);
+    z-index: 2;
+  }
+
+  .hamster {
+    animation: hamster var(--dur) ease-in-out infinite;
+    top: 50%;
+    left: calc(50% - 3.5em);
+    width: 7em;
+    height: 3.75em;
+    transform: rotate(4deg) translate(-0.8em, 1.85em);
+    transform-origin: 50% 0;
+    z-index: 1;
+  }
+
+  .hamster__head {
+    animation: hamsterHead var(--dur) ease-in-out infinite;
+    background: hsl(30, 90%, 55%);
+    border-radius: 70% 30% 0 100% / 40% 25% 25% 60%;
+    box-shadow: 0 -0.25em 0 hsl(30, 90%, 80%) inset,
+      0.75em -1.55em 0 hsl(30, 90%, 90%) inset;
+    top: 0;
+    left: -2em;
+    width: 2.75em;
+    height: 2.5em;
+    transform-origin: 100% 50%;
+  }
+
+  .hamster__ear {
+    animation: hamsterEar var(--dur) ease-in-out infinite;
+    background: hsl(0, 90%, 85%);
+    border-radius: 50%;
+    box-shadow: -0.25em 0 hsl(30, 90%, 55%) inset;
+    top: -0.25em;
+    right: -0.25em;
+    width: 0.75em;
+    height: 0.75em;
+    transform-origin: 50% 75%;
+  }
+
+  .hamster__eye {
+    animation: hamsterEye var(--dur) linear infinite;
+    background-color: hsl(0, 0%, 0%);
+    border-radius: 50%;
+    top: 0.375em;
+    left: 1.25em;
+    width: 0.5em;
+    height: 0.5em;
+  }
+
+  .hamster__nose {
+    background: hsl(0, 90%, 75%);
+    border-radius: 35% 65% 85% 15% / 70% 50% 50% 30%;
+    top: 0.75em;
+    left: 0;
+    width: 0.2em;
+    height: 0.25em;
+  }
+
+  .hamster__body {
+    animation: hamsterBody var(--dur) ease-in-out infinite;
+    background: hsl(30, 90%, 90%);
+    border-radius: 50% 30% 50% 30% / 15% 60% 40% 40%;
+    box-shadow: 0.1em 0.75em 0 hsl(30, 90%, 55%) inset,
+      0.15em -0.5em 0 hsl(30, 90%, 80%) inset;
+    top: 0.25em;
+    left: 2em;
+    width: 4.5em;
+    height: 3em;
+    transform-origin: 17% 50%;
+    transform-style: preserve-3d;
+  }
+
+  .hamster__limb--fr,
+  .hamster__limb--fl {
+    clip-path: polygon(0 0, 100% 0, 70% 80%, 60% 100%, 0% 100%, 40% 80%);
+    top: 2em;
+    left: 0.5em;
+    width: 1em;
+    height: 1.5em;
+    transform-origin: 50% 0;
+  }
+
+  .hamster__limb--fr {
+    animation: hamsterFRLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30, 90%, 80%) 80%, hsl(0, 90%, 75%) 80%);
+    transform: rotate(15deg) translateZ(-1px);
+  }
+
+  .hamster__limb--fl {
+    animation: hamsterFLLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30, 90%, 90%) 80%, hsl(0, 90%, 85%) 80%);
+    transform: rotate(15deg);
+  }
+
+  .hamster__limb--br,
+  .hamster__limb--bl {
+    border-radius: 0.75em 0.75em 0 0;
+    clip-path: polygon(0 0,
+        100% 0,
+        100% 30%,
+        70% 90%,
+        70% 100%,
+        30% 100%,
+        40% 90%,
+        0% 30%);
+    top: 1em;
+    left: 2.8em;
+    width: 1.5em;
+    height: 2.5em;
+    transform-origin: 50% 30%;
+  }
+
+  .hamster__limb--br {
+    animation: hamsterBRLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30, 90%, 80%) 90%, hsl(0, 90%, 75%) 90%);
+    transform: rotate(-25deg) translateZ(-1px);
+  }
+
+  .hamster__limb--bl {
+    animation: hamsterBLLimb var(--dur) linear infinite;
+    background: linear-gradient(hsl(30, 90%, 90%) 90%, hsl(0, 90%, 85%) 90%);
+    transform: rotate(-25deg);
+  }
+
+  .hamster__tail {
+    animation: hamsterTail var(--dur) linear infinite;
+    background: hsl(0, 90%, 85%);
+    border-radius: 0.25em 50% 50% 0.25em;
+    box-shadow: 0 -0.2em 0 hsl(0, 90%, 75%) inset;
+    top: 1.5em;
+    right: -0.5em;
+    width: 1em;
+    height: 0.5em;
+    transform: rotate(30deg) translateZ(-1px);
+    transform-origin: 0.25em 0.25em;
+  }
+
+  .spoke {
+    animation: spoke var(--dur) linear infinite;
+    background: radial-gradient(100% 100% at center,
+        hsl(0, 0%, 60%) 4.8%,
+        hsla(0, 0%, 60%, 0) 5%),
+      linear-gradient(hsla(0, 0%, 55%, 0) 46.9%,
+        hsl(0, 0%, 65%) 47% 52.9%,
+        hsla(0, 0%, 65%, 0) 53%) 50% 50% / 99% 99% no-repeat;
+  }
+
+  @@keyframes hamster {
+
+    from,
+    to {
+      transform: rotate(4deg) translate(-0.8em, 1.85em);
     }
 
-        .prev-btn:hover,
-        .next-btn:hover {
-            color: #666; /* Изменение цвета текста при наведении */
-        }
+    50% {
+      transform: rotate(0) translate(-0.8em, 1.85em);
+    }
+  }
 
-    
+  @@keyframes hamsterHead {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(0);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(8deg);
+    }
+  }
+
+  @@keyframes hamsterEye {
+
+    from,
+    90%,
+    to {
+      transform: scaleY(1);
+    }
+
+    95% {
+      transform: scaleY(0);
+    }
+  }
+
+  @@keyframes hamsterEar {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(0);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(12deg);
+    }
+  }
+
+  @@keyframes hamsterBody {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(0);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(-2deg);
+    }
+  }
+
+  @@keyframes hamsterFRLimb {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(50deg) translateZ(-1px);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(-30deg) translateZ(-1px);
+    }
+  }
+
+  @@keyframes hamsterFLLimb {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(-30deg);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(50deg);
+    }
+  }
+
+  @@keyframes hamsterBRLimb {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(-60deg) translateZ(-1px);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(20deg) translateZ(-1px);
+    }
+  }
+
+  @@keyframes hamsterBLLimb {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(20deg);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(-60deg);
+    }
+  }
+
+  @@keyframes hamsterTail {
+
+    from,
+    25%,
+    50%,
+    75%,
+    to {
+      transform: rotate(30deg) translateZ(-1px);
+    }
+
+    12.5%,
+    37.5%,
+    62.5%,
+    87.5% {
+      transform: rotate(10deg) translateZ(-1px);
+    }
+  }
+
+  @@keyframes spoke {
+    from {
+      transform: rotate(0);
+    }
+
+    to {
+      transform: rotate(-1turn);
+    }
+  }
+
+  .wheel-and-hamster {
+    --dur: 1s;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12em;
+    height: 12em;
+    font-size: 14px;
+  }
+
+  .chapter {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+    color: black;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    padding: 0.375rem 0.75rem;
+
+  }
+
+  .current-chapter {
+    text-decoration: underline overline #FF3028 !important;
+  }
+
+  .chapter:hover {
+    color: rgb(110, 174, 223);
+  }
+
+  .chapterTitle {
+    display: none;
+  }
+
+  .chapter:hover .chapterTitle {
+    display: inline;
+  }
+
+  .chapter .chapterTitle {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .chapter:hover .chapterTitle {
+    visibility: visible;
+  }
 </style>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 
 @if (mangaChapter.Pages == null || !mangaChapter.Pages.Any())
 {
-    <div class="loading-container">
-        <div class="loading-spinner"></div>
+  <div class="loading-container">
+    <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
+      <div class="wheel"></div>
+      <div class="hamster">
+        <div class="hamster__body">
+          <div class="hamster__head">
+            <div class="hamster__ear"></div>
+            <div class="hamster__eye"></div>
+            <div class="hamster__nose"></div>
+          </div>
+          <div class="hamster__limb hamster__limb--fr"></div>
+          <div class="hamster__limb hamster__limb--fl"></div>
+          <div class="hamster__limb hamster__limb--br"></div>
+          <div class="hamster__limb hamster__limb--bl"></div>
+          <div class="hamster__tail"></div>
+        </div>
+      </div>
+      <div class="spoke"></div>
     </div>
+  </div>
 }
 else
 {
-    <div tabindex="0" @onkeydown="HandleKeyDown" style="border:none">
-        <div class="container">
-            <nav>
-                <ul class="pagination justify-content-center mt-2">
-                    <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
-                        <a class="page-link" @onclick="PrevChapter" tabindex="-1">
-                            &laquo; Prev
-                            Chapter
-                        </a>
-                    </li>
-                    <li class="page-item disabled">
-                        <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
-                            @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
-            {
+  <div tabindex="0" @onkeydown="HandleKeyDown" style="border:none">
+    <div class="container">
+      <nav>
+        <ul class="pagination justify-content-center mt-2">
+          <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
+            <a class="page-link" @onclick="PrevChapter" tabindex="-1">
+              &laquo; Prev
+              Chapter
+            </a>
+          </li>
+          <li class="page-item disabled">
+            <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
+              @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
+              {
                 <span class="chapterTitle">@mangaChapter.ChapterTitle</span>
-            }
-                        </div>
-                        <select id="chapterSelector" class="form-select" @onchange="ChangeChapter">
-                            <option value="@mangaChapter.Chapter">Chapter @mangaChapter.Chapter</option>
-                            @for (int i = 1; i <= mangaChapter.TotalChapters; i++)
-                            {
-                                if (i != mangaChapter.Chapter)
-                                {
-                                    <option value="@i">Chapter @i</option>
-                                }
-                            }
-                        </select>
-                    </li>
-                    <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
-                        <a class="page-link" @onclick="NextChapter">Next Chapter &raquo;</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-
-                    <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster"
-                        id="loading">
-                        <div class="wheel"></div>
-                        <div class="hamster">
-                            <div class="hamster__body">
-                                <div class="hamster__head">
-                                    <div class="hamster__ear"></div>
-                                    <div class="hamster__eye"></div>
-                                    <div class="hamster__nose"></div>
-                                </div>
-                                <div class="hamster__limb hamster__limb--fr"></div>
-                                <div class="hamster__limb hamster__limb--fl"></div>
-                                <div class="hamster__limb hamster__limb--br"></div>
-                                <div class="hamster__limb hamster__limb--bl"></div>
-                                <div class="hamster__tail"></div>
-                            </div>
-                        </div>
-                        <div class="spoke"></div>
-                    </div>
-
-                    <div class="col-md-4 align-items-center justify-content-center">
-                        <img class="manga-page" id="mangaPage" src="@mangaChapter.Pages.ElementAt(currentPage)" alt="Manga Page">
-                    </div>
-                    <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%);">
-                        <button class="prev-btn" @onclick="PrefMangaChapter">&#8249;</button>
-                    </div>
-
-                    <div style="position: fixed; right: 10px; bottom: 50%; transform: translateY(50%);">
-                        <button class="next-btn" @onclick="NextMangaChapter">&#8250;</button>
-                    </div>
-                </div>
+              }
             </div>
+            <select id="chapterSelector" class="form-select" @onchange="ChangeChapter">
+              <option value="@mangaChapter.Chapter">Chapter @mangaChapter.Chapter</option>
+              @for (int i = 1; i <= mangaChapter.TotalChapters; i++)
+              {
+                if (i != mangaChapter.Chapter)
+                {
+                  <option value="@i">Chapter @i</option>
+                }
+              }
+            </select>
+          </li>
+          <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
+            <a class="page-link" @onclick="NextChapter">Next Chapter &raquo;</a>
+          </li>
+        </ul>
+      </nav>
 
-            <nav>
-                <ul class="pagination justify-content-center mt-2">
-                    <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
-                        <a class="page-link" @onclick="PrevChapter" tabindex="-1">
-                            &laquo; Prev
-                            Chapter</a>
-                    </li>
-                    <li class="page-item disabled">
-                        <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
-                            @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
-            {
-                <span class="chapterTitle">@mangaChapter.ChapterTitle</span>
-            }
-                        </div>
-                    </li>
-                    <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
-                        <a class="page-link" @onclick="NextChapter">Next Chapter &raquo;</a>
-                    </li>
-                </ul>
-            </nav>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+
+          <div class="col-md-4 align-items-center justify-content-center">
+            <img class="manga-page" id="mangaPage" src="@mangaChapter.Pages.ElementAt(currentPage)" alt="Manga Page">
+          </div>
+          <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%);">
+            <button class="prev-btn" @onclick="PrefMangaChapter">&#8249;</button>
+          </div>
+
+          <div style="position: fixed; right: 10px; bottom: 50%; transform: translateY(50%);">
+            <button class="next-btn" @onclick="NextMangaChapter">&#8250;</button>
+          </div>
         </div>
+      </div>
+
+      <nav>
+        <ul class="pagination justify-content-center mt-2">
+          <li class="page-item @(mangaChapter.Chapter == 1 ? "disabled" : "")">
+            <a class="page-link" @onclick="PrevChapter" tabindex="-1">
+              &laquo; Prev
+              Chapter</a>
+          </li>
+          <li class="page-item disabled">
+            <div class="chapter">Vol @mangaChapter.Volume. Chapter @mangaChapter.Chapter
+              @if (!string.IsNullOrEmpty(mangaChapter.ChapterTitle))
+              {
+                <span class="chapterTitle">@mangaChapter.ChapterTitle</span>
+              }
+            </div>
+          </li>
+          <li class="page-item @(mangaChapter.Chapter == mangaChapter.TotalChapters ? "disabled" : "")">
+            <a class="page-link" @onclick="NextChapter">Next Chapter &raquo;</a>
+          </li>
+        </ul>
+      </nav>
     </div>
+  </div>
 }
 
 <script>
-    window.getCookies = function () {
-        var nameEQ = "Language" + "=";
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i];
-            while (cookie.charAt(0) == ' ') cookie = cookie.substring(1, cookie.length);
-            if (cookie.indexOf(nameEQ) == 0) return cookie.substring(nameEQ.length, cookie.length);
-        }
-        return null;
+  window.getCookies = function () {
+    var nameEQ = "Language" + "=";
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+      var cookie = cookies[i];
+      while (cookie.charAt(0) == ' ') cookie = cookie.substring(1, cookie.length);
+      if (cookie.indexOf(nameEQ) == 0) return cookie.substring(nameEQ.length, cookie.length);
     }
+    return null;
+  }
 </script>
 
 
-@code{
-    MangaChapterViewModel mangaChapter = new MangaChapterViewModel();
-    [Parameter]
-    public string mangaId { get; set; }
-    [Parameter]
-    public string chapter { get; set; }
-    public int currentPage { get; set; } = 0;
+@code {
+  MangaChapterViewModel mangaChapter = new MangaChapterViewModel();
+  [Parameter]
+  public string mangaId { get; set; }
+  [Parameter]
+  public string chapter { get; set; }
+  public int currentPage { get; set; } = 0;
 
-    protected override async Task OnInitializedAsync()
+  protected override async Task OnInitializedAsync()
+  {
+    await GetMangaChapter(mangaId, chapter);
+  }
+
+  private async Task HandleKeyDown(KeyboardEventArgs args)
+  {
+    if (args.Key == "ArrowLeft")
     {
-        await GetMangaChapter(mangaId,chapter);
+      await PrefMangaChapter();
     }
-
-    private async Task HandleKeyDown(KeyboardEventArgs args)
+    else if (args.Key == "ArrowRight")
     {
-        if (args.Key == "ArrowLeft") 
-        {
-            await PrefMangaChapter();
-        }
-        else if (args.Key == "ArrowRight") 
-        {
-            await NextMangaChapter();
-        }
+      await NextMangaChapter();
     }
+  }
 
 
-    private async Task NextChapter()
-    {    
-        NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{mangaChapter.Chapter + 1}");
-        NavigationManager.Refresh();
-    }
+  private async Task NextChapter()
+  {
+    NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{mangaChapter.Chapter + 1}");
+    NavigationManager.Refresh();
+  }
 
-    private async Task PrevChapter()
+  private async Task PrevChapter()
+  {
+    NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{mangaChapter.Chapter - 1}");
+    NavigationManager.Refresh();
+  }
+
+  private async Task ChangeChapter(ChangeEventArgs e)
+  {
+    var selectedChapter = e.Value.ToString();
+    NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{selectedChapter}");
+    NavigationManager.Refresh();
+  }
+
+  private async Task NextMangaChapter()
+  {
+    Console.WriteLine(currentPage + 1 > mangaChapter.Pages.Count());
+    if (currentPage + 1 >= mangaChapter.Pages.Count())
     {
-        NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{mangaChapter.Chapter - 1}");
-        NavigationManager.Refresh();
+      int tochapter = int.Parse(chapter) + 1 > mangaChapter.TotalChapters ? mangaChapter.TotalChapters : int.Parse(chapter) +
+      1;
+      if (tochapter == mangaChapter.TotalChapters)
+      {
+        return;
+      }
+      NavigationManager.NavigateTo($"/Manga/Read/{mangaId}/{tochapter}");
+      NavigationManager.Refresh();
     }
-
-    private async Task ChangeChapter(ChangeEventArgs e)
+    else
     {
-        var selectedChapter = e.Value.ToString();
-        NavigationManager.NavigateTo($"/Manga/Read/{mangaChapter.MangaId}/{selectedChapter}");
-        NavigationManager.Refresh();
+      currentPage++;
     }
+  }
 
-    private async Task NextMangaChapter()
+
+
+  private async Task PrefMangaChapter()
+  {
+    Console.WriteLine(currentPage + 1 > mangaChapter.Pages.Count());
+    if (currentPage - 1 < 0)
     {
-        Console.WriteLine(currentPage + 1 > mangaChapter.Pages.Count());
-        if(currentPage+1 >= mangaChapter.Pages.Count())
-        {
-            int tochapter = int.Parse(chapter) + 1 > mangaChapter.TotalChapters ? mangaChapter.TotalChapters : int.Parse(chapter) + 1;
-            if (tochapter == mangaChapter.TotalChapters)
-            {
-                return;
-            }
-            NavigationManager.NavigateTo($"/Manga/Read/{mangaId}/{tochapter}");
-            NavigationManager.Refresh();
-        }
-        else
-        {
-            currentPage++;
-        }
+      int tochapter = int.Parse(chapter) - 1 < 1 ? 1 : int.Parse(chapter) - 1;
+      if (tochapter == 1)
+      {
+        return;
+      }
+      NavigationManager.NavigateTo($"/Manga/Read/{mangaId}/{tochapter}");
+      NavigationManager.Refresh();
     }
-
-
-
-    private async Task PrefMangaChapter()
+    else
     {
-        Console.WriteLine(currentPage + 1 > mangaChapter.Pages.Count());
-        if (currentPage - 1 < 0)
-        {
-            int tochapter = int.Parse(chapter) - 1 < 1 ? 1 : int.Parse(chapter) - 1;
-            if(tochapter == 1)
-            {
-                return;
-            }
-            NavigationManager.NavigateTo($"/Manga/Read/{mangaId}/{tochapter}");
-            NavigationManager.Refresh();
-        }
-        else
-        {
-            currentPage--;
-        }
+      currentPage--;
     }
+  }
 
-    private async Task<string> GetLanguageAsync()
+  private async Task<string> GetLanguageAsync()
+  {
+    return await JSRuntime.InvokeAsync<string>("getCookies");
+  }
+
+  private async Task GetMangaChapter(string mangaId = "", string chapter = "1")
+  {
+    try
     {
-        return await JSRuntime.InvokeAsync<string>("getCookies");
-    }
+      var request = new HttpRequestMessage(HttpMethod.Get,
+      $"http://localhost:5262/api/Manga/Read?id={mangaId}&chapter={int.Parse(chapter)}");
+      request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+      localStorageService.GetItemAsStringAsync("accessToken"));
+      request.Headers.Add("Language", await GetLanguageAsync());
 
-    private async Task GetMangaChapter(string mangaId = "", string chapter = "1")
+      var response = await httpClient.SendAsync(request);
+
+      if (response.IsSuccessStatusCode)
+      {
+        mangaChapter = await response.Content.ReadFromJsonAsync<MangaChapterViewModel>();
+      }
+      else
+      {
+
+      }
+    }
+    catch (Exception ex)
     {
-        try
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/Read?id={mangaId}&chapter={int.Parse(chapter)}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
-            request.Headers.Add("Language",await GetLanguageAsync());
-
-            var response = await httpClient.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                mangaChapter = await response.Content.ReadFromJsonAsync<MangaChapterViewModel>();
-            }
-            else
-            {
-                
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+      Console.WriteLine(ex.Message);
     }
+  }
 }

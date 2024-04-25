@@ -56,7 +56,6 @@
         margin: 5px;
         text-align: center;
     }
-
 </style>
 
 
@@ -64,6 +63,15 @@
 @code {
     private string searchQuery;
     MangasViewModel mangas = new MangasViewModel { Mangas = new List<Manga>() };
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadMangas(1, GetSearchQueryFromUri());
+    }
+    private string GetSearchQueryFromUri()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        return QueryHelpers.ParseQuery(uri.Query).TryGetValue("search", out var search) ? search : "";
+    }
     protected override async Task OnInitializedAsync()
     {
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -75,7 +83,7 @@
         await LoadMangas(1, searchQuery);
     }
 
-    private async Task LoadMangas(int page, string search = "")
+    private async Task LoadMangas(int page, string search)
     {
         try
         {
