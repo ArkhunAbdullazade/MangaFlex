@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<ItemGroup>
-		<ProjectReference Include="..\MangaFlex.Infrastructure\MangaFlex.Infrastructure.csproj" />
+	  <ProjectReference Include="..\MangaFlex.WebApi\MangaFlex.Infrastructure\MangaFlex.Infrastructure.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup>

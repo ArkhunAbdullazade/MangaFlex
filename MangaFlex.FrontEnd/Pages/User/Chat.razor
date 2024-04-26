@@ -217,7 +217,7 @@ else
             <p>@friendInfo.User.UserName</p>
         </div>
         <div class="chat-box">
-            @foreach(var item in messages)
+            @foreach(var item in messages.Reverse())
             {
                 @if(item.User.UserName == username)
                 {
@@ -240,7 +240,7 @@ else
         <div class="message-input">
             <InputText type="text" @bind-Value="Message" placeholder="Type your message..."/>
             <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>
-            <p>@(!IsNullOrWhiteSpace)</p>
+            @* <p>@(!IsNullOrWhiteSpace)</p> *@
         </div>
     </div>
 }
