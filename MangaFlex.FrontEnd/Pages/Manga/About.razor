@@ -469,20 +469,22 @@
             localStorageService.GetItemAsStringAsync("accessToken"));
             response = await httpClient.SendAsync(request);
 
-
             if (response.IsSuccessStatusCode)
             {
                 manga = await response.Content.ReadFromJsonAsync<Manga>();
             }
-            else
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
+                NavigationManager.NavigateTo("/Error/Unathorized");
             }
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             NavigationManager.NavigateTo("/Error/Unathorized");
             Console.WriteLine(ex.Message);
         }
     }
+
     private async Task LoadAvailableLanguages(string mangaId)
     {
         try

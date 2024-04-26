@@ -39,11 +39,11 @@
     }
 
     .list,
-    .list > div {
+    .list>div {
         flex-direction: column;
         border: 2px solid dimgray;
         border-radius: 15px;
-}
+    }
 
     .list {
         display: flexbox;
@@ -51,7 +51,8 @@
         padding-bottom: 25px;
         width: 916px;
     }
-    .list > div {
+
+    .list>div {
         flex-direction: column;
         display: inline-flex;
         width: 160px;
@@ -60,16 +61,34 @@
         margin-bottom: 26px;
 
     }
-    .list > div > div{
+
+    .list>div>div {
         margin: 5px;
         text-align: center;
     }
 </style>
 
-@if(UserProfileView is null)
+@if (UserProfileView is null)
 {
     <div class="loading-container">
-        <div class="loading-spinner"></div>
+        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
+            <div class="wheel"></div>
+            <div class="hamster">
+                <div class="hamster__body">
+                    <div class="hamster__head">
+                        <div class="hamster__ear"></div>
+                        <div class="hamster__eye"></div>
+                        <div class="hamster__nose"></div>
+                    </div>
+                    <div class="hamster__limb hamster__limb--fr"></div>
+                    <div class="hamster__limb hamster__limb--fl"></div>
+                    <div class="hamster__limb hamster__limb--br"></div>
+                    <div class="hamster__limb hamster__limb--bl"></div>
+                    <div class="hamster__tail"></div>
+                </div>
+            </div>
+            <div class="spoke"></div>
+        </div>
     </div>
 }
 else
@@ -79,7 +98,7 @@ else
             <div class="card col-md-3 text-dark align-center text-center justify-content-center">
                 <div>
                     <img src="data:image/jpeg;base64,@AvatarBase64" class="img-account-profile mb-2" alt="User Avatar"
-                         style="height:250px; width:250px;">
+                        style="height:250px; width:250px;">
                     <div class="card-body">
                         <h5 class="card-title">@UserProfileView.User.UserName</h5>
                         @if (username == UserProfileView.User?.UserName)
@@ -94,7 +113,7 @@ else
                             }
                             if (UserProfileView.IsFriends)
                             {
-                            <button class="btn btn-primary" @onclick="Chat">Chat</button>
+                                <button class="btn btn-primary" @onclick="Chat">Chat</button>
                             }
                             if (UserProfileView?.IsSub == true)
                             {
@@ -119,7 +138,8 @@ else
                         {
                             <div @onclick="() => VisitManga(manga.Id)">
                                 <div class="img-div">
-                                    <img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")" alt="manga cover" />
+                                    <img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")"
+                                        alt="manga cover" />
                                 </div>
                                 <div>
                                     <span class="title"><b>@(manga.Title ?? "Unknown")</b></span>
@@ -135,9 +155,9 @@ else
 
 
 
-@code{
+@code {
     [Parameter]
-    public string Id { get;set; }
+    public string Id { get; set; }
     public GetUserProfileViewModel UserProfileView { get; set; }
     private string username = string.Empty;
     private string AvatarBase64;
@@ -146,8 +166,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5262/profilehub"))
-            .Build();
+        .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5262/profilehub"))
+        .Build();
 
         hubConnection.On<string>("ReceiveMessage", async (message) =>
         {
@@ -159,7 +179,7 @@ else
 
         var avatarImageBytes = await GetUserAvatar();
         AvatarBase64 = Convert.ToBase64String(avatarImageBytes);
-        if(AvatarBase64 == null)
+        if (AvatarBase64 == null)
         {
             AvatarBase64 = "default.png";
         }
@@ -173,7 +193,6 @@ else
             }
         }
 
-
         await GetUserProfileViewModel();
     }
 
@@ -181,7 +200,8 @@ else
     private async Task Chat()
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/CreateChat?friendid={Id}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
 
         var response = await httpClient.SendAsync(request);
 
@@ -191,7 +211,8 @@ else
     private async Task Subscribe()
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/Subscribe?id={Id}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
 
         var response = await httpClient.SendAsync(request);
     }
@@ -199,7 +220,8 @@ else
     private async Task UnSubscribe()
     {
         var request = new HttpRequestMessage(HttpMethod.Delete, $"http://localhost:5262/api/User/Unsubscribe?id={Id}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
 
         var response = await httpClient.SendAsync(request);
     }
@@ -214,7 +236,8 @@ else
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetUserAvatarById?id={Id}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
 
@@ -222,9 +245,13 @@ else
             {
                 return await response.Content.ReadAsByteArrayAsync();
             }
-            else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 return await GetDefaultAvatar();
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/Error/NotFound");
             }
         }
         catch (Exception ex)
@@ -246,7 +273,8 @@ else
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/ProfileById?id={Id}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
 
@@ -254,8 +282,12 @@ else
             {
                 UserProfileView = await response.Content.ReadFromJsonAsync<GetUserProfileViewModel>();
             }
+            else
+            {
+                NavigationManager.NavigateTo("/Error/NotFound");
+            }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
         }
@@ -266,7 +298,8 @@ else
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetDefaultAvatar");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
 

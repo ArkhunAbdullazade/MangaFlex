@@ -36,11 +36,11 @@
     }
 
     .list,
-    .list > div {
+    .list>div {
         flex-direction: column;
         border: 2px solid dimgray;
         border-radius: 15px;
-}
+    }
 
     .list {
         display: flexbox;
@@ -48,7 +48,8 @@
         padding-bottom: 25px;
         width: 916px;
     }
-    .list > div {
+
+    .list>div {
         flex-direction: column;
         display: inline-flex;
         width: 160px;
@@ -57,17 +58,35 @@
         margin-bottom: 26px;
 
     }
-    .list > div > div{
+
+    .list>div>div {
         margin: 5px;
         text-align: center;
     }
 </style>
 
-@if(UserProfileView is null)
+@if (UserProfileView is null)
 {
-    <div class="loading-container">
-        <div class="loading-spinner"></div>
+  <div class="loading-container">
+    <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
+      <div class="wheel"></div>
+      <div class="hamster">
+        <div class="hamster__body">
+          <div class="hamster__head">
+            <div class="hamster__ear"></div>
+            <div class="hamster__eye"></div>
+            <div class="hamster__nose"></div>
+          </div>
+          <div class="hamster__limb hamster__limb--fr"></div>
+          <div class="hamster__limb hamster__limb--fl"></div>
+          <div class="hamster__limb hamster__limb--br"></div>
+          <div class="hamster__limb hamster__limb--bl"></div>
+          <div class="hamster__tail"></div>
+        </div>
+      </div>
+      <div class="spoke"></div>
     </div>
+  </div>
 }
 else
 {
@@ -76,7 +95,7 @@ else
             <div class="card col-md-3 text-dark align-center text-center justify-content-center">
                 <div>
                     <img src="data:image/jpeg;base64,@AvatarBase64" class="img-account-profile mb-2" alt="User Avatar"
-                         style="height:250px; width:250px;">
+                        style="height:250px; width:250px;">
                     <div class="card-body">
                         <h5 class="card-title">@username</h5>
                         <h4 class="card-title">@UserProfileView?.User?.Email</h4>
@@ -98,7 +117,8 @@ else
                         {
                             <div @onclick="() => VisitManga(manga.Id)">
                                 <div class="img-div">
-                                    <img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")" alt="manga cover" />
+                                    <img src="@(manga.Cover ?? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Black.png/220px-Black.png")"
+                                        alt="manga cover" />
                                 </div>
                                 <div>
                                     <span class="title"><b>@(manga.Title ?? "Unknown")</b></span>
@@ -107,15 +127,39 @@ else
                         }
                     </div>
                 }
+                <!-- User Profile ID and Copy to Clipboard Button -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <p><b>Your ID:</b> @UserProfileView.User.Id</p>
+                    </div>
+                    <div class="col-md-6">
+                        <button onclick="copyToClipboard('@UserProfileView.User.Id')" class="btn btn-primary">Copy to
+                            Clipboard</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 }
 
+<script>
+    function copyToClipboard(text) {
+        var textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "absolute";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        alert("Copied to clipboard: " + text);
+    }
+</script>
 
 
-@code{
-    [Parameter]   
+@code {
+    [Parameter]
     public GetUserProfileViewModel UserProfileView { get; set; }
     private string username = string.Empty;
     private string AvatarBase64;
@@ -124,7 +168,7 @@ else
     {
         var avatarImageBytes = await GetUserAvatar();
         AvatarBase64 = Convert.ToBase64String(avatarImageBytes);
-        if(AvatarBase64 == null)
+        if (AvatarBase64 == null)
         {
             AvatarBase64 = "default.png";
         }
@@ -150,7 +194,8 @@ else
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetUserAvatar");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
 
@@ -158,7 +203,7 @@ else
             {
                 return await response.Content.ReadAsByteArrayAsync();
             }
-            else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 return await GetDefaultAvatar();
             }
@@ -176,7 +221,8 @@ else
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/Profile");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
 
@@ -185,7 +231,7 @@ else
                 UserProfileView = await response.Content.ReadFromJsonAsync<GetUserProfileViewModel>();
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
         }
@@ -196,7 +242,8 @@ else
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetDefaultAvatar");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
 

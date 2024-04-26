@@ -15,11 +15,41 @@
 @if (followers is null)
 {
     <div class="loading-container">
-        <div class="loading-spinner"></div>
+        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
+            <div class="wheel"></div>
+            <div class="hamster">
+                <div class="hamster__body">
+                    <div class="hamster__head">
+                        <div class="hamster__ear"></div>
+                        <div class="hamster__eye"></div>
+                        <div class="hamster__nose"></div>
+                    </div>
+                    <div class="hamster__limb hamster__limb--fr"></div>
+                    <div class="hamster__limb hamster__limb--fl"></div>
+                    <div class="hamster__limb hamster__limb--br"></div>
+                    <div class="hamster__limb hamster__limb--bl"></div>
+                    <div class="hamster__tail"></div>
+                </div>
+            </div>
+            <div class="spoke"></div>
+        </div>
     </div>
 }
 else
 {
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Find Friend by ID</h2>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" @bind="friendId" placeholder="Enter Friend ID">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" @onclick="SearchFriend">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -60,9 +90,17 @@ else
 
 }
 
-@code{
+@code {
     private FollowersVM followers;
-
+    private string friendId;
+    private async Task
+    SearchFriend()
+    {
+        if (!string.IsNullOrEmpty(friendId))
+        {
+            NavigationManager.NavigateTo($"/User/ProfileById/{friendId}");
+        }
+    }
     protected override async Task OnInitializedAsync()
     {
         followers = await GetFollowersVMAsync();
@@ -73,18 +111,21 @@ else
         NavigationManager.NavigateTo($"/User/ProfileById/{userid}");
     }
 
-    private async Task<FollowersVM> GetFollowersVMAsync(){
+    private async Task<FollowersVM> GetFollowersVMAsync()
+    {
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/Followers");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
             var response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<FollowersVM>();
             }
-        }catch(Exception ex)
+        }
+        catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
         }
