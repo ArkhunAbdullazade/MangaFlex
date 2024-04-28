@@ -162,9 +162,11 @@ else
     private string username = string.Empty;
     private string AvatarBase64;
     private HubConnection hubConnection;
+    HttpClient mangaflexApi = new HttpClient();
 
     protected override async Task OnInitializedAsync()
     {
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         hubConnection = new HubConnectionBuilder()
         .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5262/profilehub"))
         .Build();
@@ -199,31 +201,31 @@ else
 
     private async Task Chat()
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/CreateChat?friendid={Id}");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"api/User/CreateChat?friendid={Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
         localStorageService.GetItemAsStringAsync("accessToken"));
 
-        var response = await httpClient.SendAsync(request);
+        var response = await mangaflexApi.SendAsync(request);
 
         NavigationManager.NavigateTo($"/User/Chat/{Id}");
     }
 
     private async Task Subscribe()
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/Subscribe?id={Id}");
+        var request = new HttpRequestMessage(HttpMethod.Post, $"api/User/Subscribe?id={Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
         localStorageService.GetItemAsStringAsync("accessToken"));
 
-        var response = await httpClient.SendAsync(request);
+        var response = await mangaflexApi.SendAsync(request);
     }
 
     private async Task UnSubscribe()
     {
-        var request = new HttpRequestMessage(HttpMethod.Delete, $"http://localhost:5262/api/User/Unsubscribe?id={Id}");
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"api/User/Unsubscribe?id={Id}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
         localStorageService.GetItemAsStringAsync("accessToken"));
 
-        var response = await httpClient.SendAsync(request);
+        var response = await mangaflexApi.SendAsync(request);
     }
 
     private async Task VisitManga(string mangaId)
@@ -235,11 +237,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetUserAvatarById?id={Id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetUserAvatarById?id={Id}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -272,11 +274,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/ProfileById?id={Id}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/ProfileById?id={Id}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -297,11 +299,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetDefaultAvatar");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetDefaultAvatar");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             return await response.Content.ReadAsByteArrayAsync();
         }

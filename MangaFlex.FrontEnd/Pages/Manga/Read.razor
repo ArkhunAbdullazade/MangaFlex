@@ -630,9 +630,11 @@ else
   [Parameter]
   public string chapter { get; set; }
   public int currentPage { get; set; } = 0;
+  HttpClient mangaflexApi = new HttpClient();
 
   protected override async Task OnInitializedAsync()
   {
+      mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
     await GetMangaChapter(mangaId, chapter);
   }
 
@@ -719,12 +721,12 @@ else
     try
     {
       var request = new HttpRequestMessage(HttpMethod.Get,
-      $"http://localhost:5262/api/Manga/Read?id={mangaId}&chapter={int.Parse(chapter)}");
+      $"api/Manga/Read?id={mangaId}&chapter={int.Parse(chapter)}");
       request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
       localStorageService.GetItemAsStringAsync("accessToken"));
       request.Headers.Add("Language", await GetLanguageAsync());
 
-      var response = await httpClient.SendAsync(request);
+      var response = await mangaflexApi.SendAsync(request);
 
       if (response.IsSuccessStatusCode)
       {

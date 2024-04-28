@@ -37,19 +37,19 @@
 }
 else
 {
-<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h2>Find Friend by ID</h2>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" @bind="friendId" placeholder="Enter Friend ID">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" @onclick="SearchFriend">Search</button>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Find Friend by ID</h2>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" @bind="friendId" placeholder="Enter Friend ID">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" @onclick="SearchFriend">Search</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
@@ -94,6 +94,7 @@ else
     private FollowersVM followers;
     private string friendId;
     private async Task
+    HttpClient mangaflexApi = new HttpClient();
     SearchFriend()
     {
         if (!string.IsNullOrEmpty(friendId))
@@ -103,6 +104,7 @@ else
     }
     protected override async Task OnInitializedAsync()
     {
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         followers = await GetFollowersVMAsync();
     }
 
@@ -115,11 +117,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/Followers");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/Followers");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<FollowersVM>();

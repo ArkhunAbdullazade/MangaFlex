@@ -453,48 +453,61 @@
     public string Id { get; set; }
     AvailableLanguagesVM availableLanguages = new AvailableLanguagesVM();
     MangaFlexFront.Data.Mangas.Models.Manga manga = new MangaFlexFront.Data.Mangas.Models.Manga();
+    HttpClient mangaflexApi = new HttpClient();
 
     protected override async Task OnInitializedAsync()
     {
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
+
         await GetManga(Id);
     }
 
     private async Task GetManga(string mangaId)
     {
-        var response = new HttpResponseMessage();
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/Manga/About?id={mangaId}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/Manga/About?id={mangaId}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
-            response = await httpClient.SendAsync(request);
+
+            var response = await mangaflexApi.SendAsync(request);
+            response.EnsureSuccessStatusCode();
 
             if (response.IsSuccessStatusCode)
             {
                 manga = await response.Content.ReadFromJsonAsync<Manga>();
             }
-            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+        }
+        catch (HttpRequestException ex)
+        {
+            if (ex.StatusCode == HttpStatusCode.Unauthorized)
             {
                 NavigationManager.NavigateTo("/Error/Unathorized");
+            }
+            else
+            {
+                //HTTP errors
+                @* NavigationManager.NavigateTo("/Error/OtherError"); *@
             }
         }
         catch (Exception ex)
         {
-            NavigationManager.NavigateTo("/Error/Unathorized");
-            Console.WriteLine(ex.Message);
+            // other errors
+            @* NavigationManager.NavigateTo("/Error/GeneralError"); *@
         }
     }
+
 
     private async Task LoadAvailableLanguages(string mangaId)
     {
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-            $"http://localhost:5262/api/Mangas/AvailableLanguages?id={mangaId}");
+            $"api/Mangas/AvailableLanguages?id={mangaId}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {

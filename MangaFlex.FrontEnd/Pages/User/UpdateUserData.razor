@@ -35,17 +35,19 @@
 </EditForm>
 
 
-@code{
+@code {
+    MangaFlexFront.Data.Mangas.Models.Manga manga = new MangaFlexFront.Data.Mangas.Models.Manga();
     private UpdateUserDataDto Dto = new UpdateUserDataDto()
         {
             OldPassword = string.Empty,
             Password = string.Empty
         };
     private List<ValidationResult> validationErrors = new List<ValidationResult>();
-
+    HttpClient mangaflexApi = new HttpClient();
 
     protected async override Task OnInitializedAsync()
     {
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         var result = await provider.GetAuthenticationStateAsync();
         if (result.User.Identity.IsAuthenticated == true)
         {
@@ -61,19 +63,23 @@
             var json = JsonSerializer.Serialize(Dto);
 
             var request = new HttpRequestMessage(HttpMethod.Put,
-               $"http://localhost:5262/api/User/UpdateUserData");
+            $"api/User/UpdateUserData");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
 
-            var response = await Http.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
                 var jwt = await this.localStorageService.GetItemAsStringAsync("accessToken");
                 var refreshtoken = await this.localStorageService.GetItemAsStringAsync("refreshToken");
-                var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshtoken });
+                var updateTokenResponse = await mangaflexApi.PutAsJsonAsync("api/Identity/UpdateToken", new
+                {
+                    AccessToken = jwt,
+                    RefreshToken = refreshtoken
+                });
                 var tokenResponse = await updateTokenResponse.Content.ReadFromJsonAsync<TokenVM>();
                 var accessToken = tokenResponse!.accessToken;
                 var refreshTokenupdate = tokenResponse!.refreshToken;
@@ -88,7 +94,7 @@
                 validationErrors.Add(new ValidationResult(error, new[] { "Update data error" }));
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             validationErrors.Add(new ValidationResult(ex.Message, new[] { "Update data" }));
         }

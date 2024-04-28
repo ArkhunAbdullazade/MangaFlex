@@ -115,9 +115,11 @@ else
 
 @code {
     public IEnumerable<Manga> LastWathces { get; set; }
+    HttpClient mangaflexApi = new HttpClient();
 
     protected override async Task OnInitializedAsync()
     {
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         await GetLastWatches();
     }
 
@@ -129,7 +131,7 @@ else
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {

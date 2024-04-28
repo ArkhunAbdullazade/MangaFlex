@@ -59,17 +59,19 @@ else
     public string MangaId { get; set; }
     public AvailableLanguagesVM availableLanguages { get; set; }
     string mangaId = string.Empty;
+    HttpClient mangaflexApi = new HttpClient();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
+            mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
             var request = new HttpRequestMessage(HttpMethod.Get,
-            $"http://localhost:5262/api/Manga/AvailableLanguages?id={MangaId}");
+            $"api/Manga/AvailableLanguages?id={MangaId}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await HttpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 availableLanguages = await response.Content.ReadFromJsonAsync<AvailableLanguagesVM>();
@@ -88,11 +90,11 @@ else
         try
         {
             var request = new HttpRequestMessage(HttpMethod.Get,
-            $"http://localhost:5262/api/Manga/SetLanguage?language={language}&mangaId={MangaId}");
+            $"/api/Manga/SetLanguage?language={language}&mangaId={MangaId}");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
             localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await HttpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {
                 var responseVM = await response.Content.ReadFromJsonAsync<SetLanguageVM>();

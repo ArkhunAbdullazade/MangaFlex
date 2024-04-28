@@ -266,7 +266,7 @@
                         </g>
                     </g>
                 </svg>
-                <InputText @bind-Value="loginDto.Login"  placeholder="Enter Username" id="Login" class="form-control" />
+                <InputText @bind-Value="loginDto.Login" placeholder="Enter Username" id="Login" class="form-control" />
                 <ValidationMessage For="@(() => loginDto.Login)" />
             </div>
             <div class="flex-column">
@@ -281,7 +281,8 @@
                         d="m304 224c-8.832031 0-16-7.167969-16-16v-80c0-52.929688-43.070312-96-96-96s-96 43.070312-96 96v80c0 8.832031-7.167969 16-16 16s-16-7.167969-16-16v-80c0-70.59375 57.40625-128 128-128s128 57.40625 128 128v80c0 8.832031-7.167969 16-16 16zm0 0">
                     </path>
                 </svg>
-                <InputText @bind-Value="loginDto.Password" id="Password"  placeholder="Enter Password" class="form-control" type="password" />
+                <InputText @bind-Value="loginDto.Password" id="Password" placeholder="Enter Password"
+                    class="form-control" type="password" />
                 <ValidationMessage For="@(() => loginDto.Password)" />
             </div>
 
@@ -289,7 +290,7 @@
             </div>
             <button type="submit" class="button-submit">Sign Up</button>
             <p style="font-size:17px;" class="p">Don't have an account? <a href="/User/Registration"
-            style="text-decoration: none;" class="span">Register</a></p>
+                    style="text-decoration: none;" class="span">Register</a></p>
         </EditForm>
     </div>
 </div>
@@ -301,19 +302,19 @@
 @code {
     private LoginDto loginDto = new LoginDto();
     private List<ValidationResult> validationErrors = new List<ValidationResult>();
-
+    HttpClient mangaflexApi = new HttpClient();
     private async Task LoginSubmit()
     {
-        var httpClient = new HttpClient();
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         try
         {
             validationErrors.Clear();
-            var response = await httpClient.PostAsJsonAsync("http://localhost:5262/api/Identity/Login", loginDto);
-            if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            var response = await mangaflexApi.PostAsJsonAsync("api/Identity/Login", loginDto);
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 var error = await response.Content.ReadAsStringAsync();
 
-                validationErrors.Add(new ValidationResult(error,new[] {"Login error"}));
+                validationErrors.Add(new ValidationResult(error, new[] { "Login error" }));
             }
 
             if (response.IsSuccessStatusCode)

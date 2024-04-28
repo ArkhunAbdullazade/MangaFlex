@@ -109,10 +109,13 @@
     }
 
     .avatar {
-        width: 50px; /* ������� ������ ������� */
+        width: 50px;
+        /* ������� ������ ������� */
         height: 50px;
-        border-radius: 50%; /* ��� ������� �������� */
-        margin-right: 10px; /* ���������� ������� �� ������ ������� */
+        border-radius: 50%;
+        /* ��� ������� �������� */
+        margin-right: 10px;
+        /* ���������� ������� �� ������ ������� */
     }
 
     .chat-box {
@@ -186,30 +189,30 @@
 
 @if (messages is null)
 {
- <div class="loading-container">
-    <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
-      <div class="wheel"></div>
-      <div class="hamster">
-        <div class="hamster__body">
-          <div class="hamster__head">
-            <div class="hamster__ear"></div>
-            <div class="hamster__eye"></div>
-            <div class="hamster__nose"></div>
-          </div>
-          <div class="hamster__limb hamster__limb--fr"></div>
-          <div class="hamster__limb hamster__limb--fl"></div>
-          <div class="hamster__limb hamster__limb--br"></div>
-          <div class="hamster__limb hamster__limb--bl"></div>
-          <div class="hamster__tail"></div>
+    <div class="loading-container">
+        <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
+            <div class="wheel"></div>
+            <div class="hamster">
+                <div class="hamster__body">
+                    <div class="hamster__head">
+                        <div class="hamster__ear"></div>
+                        <div class="hamster__eye"></div>
+                        <div class="hamster__nose"></div>
+                    </div>
+                    <div class="hamster__limb hamster__limb--fr"></div>
+                    <div class="hamster__limb hamster__limb--fl"></div>
+                    <div class="hamster__limb hamster__limb--br"></div>
+                    <div class="hamster__limb hamster__limb--bl"></div>
+                    <div class="hamster__tail"></div>
+                </div>
+            </div>
+            <div class="spoke"></div>
         </div>
-      </div>
-      <div class="spoke"></div>
     </div>
-  </div>
 }
 else
 {
-    
+
 
     <div class="chat-container">
         <div class="friend-info">
@@ -217,9 +220,9 @@ else
             <p>@friendInfo.User.UserName</p>
         </div>
         <div class="chat-box">
-            @foreach(var item in messages.Reverse())
+            @foreach (var item in messages.Reverse())
             {
-                @if(item.User.UserName == username)
+                @if (item.User.UserName == username)
                 {
                     <div class="message sent">
                         @item.MessageContent
@@ -238,7 +241,7 @@ else
             }
         </div>
         <div class="message-input">
-            <InputText type="text" @bind-Value="Message" placeholder="Type your message..."/>
+            <InputText type="text" @bind-Value="Message" placeholder="Type your message..." />
             <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>
             @* <p>@(!IsNullOrWhiteSpace)</p> *@
         </div>
@@ -247,22 +250,23 @@ else
 
 
 
-@code{
+@code {
     [Parameter]
     public string FriendId { get; set; }
-    public string Message{ get; set; }
+    public string Message { get; set; }
     private string username = string.Empty;
     public IEnumerable<Message> messages;
     private string UserAvatarBase64;
     private string FriendAvatarBase64;
     private GetUserProfileViewModel friendInfo { get; set; }
     private HubConnection hubConnection;
-
+    HttpClient mangaflexApi = new HttpClient();
     protected override async Task OnInitializedAsync()
     {
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5262/chathub"))
-            .Build();
+        .WithUrl(NavigationManager.ToAbsoluteUri("chathub"))
+        .Build();
 
         hubConnection.On<string>("ReceiveMessage", async (message) =>
         {
@@ -289,10 +293,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/ProfileById?id={FriendId}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/ProfileById?id={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -309,10 +314,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetUserAvatar");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetUserAvatar");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -335,10 +341,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetDefaultAvatar");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetDefaultAvatar");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             return await response.Content.ReadAsByteArrayAsync();
         }
@@ -353,10 +360,11 @@ else
     {
         try
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/GetUserAvatarById?id={FriendId}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetUserAvatarById?id={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -377,10 +385,11 @@ else
 
     private async Task InitMessage()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"http://localhost:5262/api/User/Chat?id={FriendId}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/Chat?id={FriendId}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
 
-        var response = await httpClient.SendAsync(request);
+        var response = await mangaflexApi.SendAsync(request);
 
         if (response.IsSuccessStatusCode)
         {
@@ -392,12 +401,13 @@ else
 
     private async Task PostMessage()
     {
-        if(string.IsNullOrWhiteSpace(Message) == false)
+        if (string.IsNullOrWhiteSpace(Message) == false)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:5262/api/User/PostMessage?message={Message}&friendid={FriendId}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await localStorageService.GetItemAsStringAsync("accessToken"));
+            var request = new HttpRequestMessage(HttpMethod.Post, $"api/User/PostMessage?message={Message}&friendid={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
 
-            var response = await httpClient.SendAsync(request);
+            var response = await mangaflexApi.SendAsync(request);
             Message = string.Empty;
         }
     }

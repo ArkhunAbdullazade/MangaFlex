@@ -58,6 +58,7 @@ public class IdentityController : ControllerBase
     }
 
     [HttpPut]
+    [AllowAnonymous]
     public async Task<IActionResult> UpdateTokenAsync(UpdateTokenDto  updateTokenDto)
     {
         var result = new TokenVM();

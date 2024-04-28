@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.WebUtilities;
 @using MangaFlexFront.Data.Mangas.ViewModels;
 @using MangaFlexFront.Data.Mangas.Models;
+@inject IHttpClientFactory httpClientFactory
 <PageTitle>Mangas</PageTitle>
 
 <style>
@@ -62,9 +63,11 @@
 
 @code {
     private string searchQuery;
+    HttpClient mangaflexApi = new HttpClient();
     MangasViewModel mangas = new MangasViewModel { Mangas = new List<Manga>() };
     protected override async Task OnParametersSetAsync()
     {
+        mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         await LoadMangas(1, GetSearchQueryFromUri());
     }
     private string GetSearchQueryFromUri()
@@ -87,7 +90,8 @@
     {
         try
         {
-            var response = await httpClient.GetAsync($"http://localhost:5262/api/Mangas?page={page}&search={search}");
+            mangas = null;
+            var response = await mangaflexApi.GetAsync($"api/Mangas?page={page}&search={search}");
 
             if (response.IsSuccessStatusCode)
             {
