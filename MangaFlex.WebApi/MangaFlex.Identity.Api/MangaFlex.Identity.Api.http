@@ -1,0 +1,6 @@
+@MangaFlex.Identity.Api_HostAddress = http://localhost:5113
+
+GET {{MangaFlex.Identity.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
