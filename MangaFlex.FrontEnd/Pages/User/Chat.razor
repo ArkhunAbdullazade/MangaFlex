@@ -1,4 +1,5 @@
-@page "/User/Chat/{FriendId}"
+@page "/User/Chat"
+@using MangaFlex.Core.Data.FriendShip.Models
 @using MangaFlexFront.Data.Message.Models
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -99,7 +100,7 @@
     }
 
     .chat-container {
-        width: 100%;
+        width: 85%;
         height: 90vh;
         border: 1px solid #ccc;
         border-radius: 10px;
@@ -110,12 +111,9 @@
 
     .avatar {
         width: 50px;
-        /* ������� ������ ������� */
         height: 50px;
         border-radius: 50%;
-        /* ��� ������� �������� */
         margin-right: 10px;
-        /* ���������� ������� �� ������ ������� */
     }
 
     .chat-box {
@@ -185,9 +183,248 @@
         border-radius: 50%;
         margin-right: 10px;
     }
+
+    .chat-container {
+        height: 90vh;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .message {
+        padding: 5px 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: table;
+    }
+
+    .received {
+        background-color: #f0f0f0;
+        align-self: flex-start;
+    }
+
+    .sent {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-start;
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .friend-info {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+        justify-content: flex-start;
+    }
+
+    .discussions {
+        width: 35%;
+        height: auto;
+        box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.20);
+        background-color: #87a3ec;
+        display: inline-block;
+    }
+
+    .discussions .discussion {
+        width: 100%;
+        height: 90px;
+        background-color: #FAFAFA;
+        border-bottom: solid 1px #E0E0E0;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .discussions .search {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar {
+        height: 40px;
+        background-color: #FFF;
+        width: 70%;
+        padding: 0 20px;
+        border-radius: 50px;
+        border: 1px solid #EEEEEE;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .discussions .search .searchbar input {
+        margin-left: 15px;
+        height: 38px;
+        width: 100%;
+        border: none;
+        font-family: 'Montserrat', sans-serif;
+        ;
+    }
+
+    .discussions .search .searchbar *::-webkit-input-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar input *:-moz-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar input *::-moz-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar input *:-ms-input-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .message-active {
+        width: 98.5%;
+        height: 90px;
+        background-color: #FFF;
+        border-bottom: solid 1px #E0E0E0;
+    }
+
+    .discussions .discussion .photo {
+        margin-left: 20px;
+        display: block;
+        width: 45px;
+        height: 45px;
+        background: #E6E7ED;
+        -moz-border-radius: 50px;
+        -webkit-border-radius: 50px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .online {
+        position: relative;
+        top: 30px;
+        left: 35px;
+        width: 13px;
+        height: 13px;
+        background-color: #8BC34A;
+        border-radius: 13px;
+        border: 3px solid #FAFAFA;
+    }
+
+    .desc-contact {
+        width: 50%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .discussions .discussion .name {
+        margin: 0 0 0 20px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 11pt;
+        color: #515151;
+    }
+
+    .discussions .discussion .message {
+        margin: 6px 0 0 20px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 9pt;
+        color: #515151;
+    }
+
+    .timer {
+        margin-left: 15%;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 11px;
+        padding: 3px 8px;
+        color: #BBB;
+        background-color: #FFF;
+        border: 1px solid #E5E5E5;
+        border-radius: 15px;
+    }
+    .discussions {
+    width: 35%;
+    height: calc(100vh - 20px); 
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.20);
+    background-color: #255969;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; 
+}
+
+.discussions .discussion {
+    width: 100%;
+    min-height: 90px; 
+    background-color: #FAFAFA;
+    border-bottom: solid 1px #E0E0E0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.discussions .search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #E0E0E0;
+    padding: 10px; 
+    background-color: #255969; 
+}
+
+.discussions .search .searchbar {
+    height: 40px;
+    background-color: #FFF;
+    width: 70%;
+    padding: 0 20px;
+    border-radius: 50px;
+    border: 1px solid #EEEEEE;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.discussions .search .searchbar input {
+    margin-left: 15px;
+    height: 38px;
+    width: 100%;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.discussions .search .searchbar input::placeholder {
+    color: #E0E0E0;
+}
+
+.discussions .message-active {
+    width: 100%;
+    min-height: 90px; /* Changed to min-height */
+    background-color: #FFF;
+    border-bottom: solid 1px #E0E0E0;
+}
+
 </style>
 
-@if (messages is null)
+
+
+@if (Chats == null)
 {
     <div class="loading-container">
         <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
@@ -213,37 +450,55 @@
 else
 {
 
+    <div style="display: flex; justify-content: flex-end;">
+        <section class="discussions">
 
-    <div class="chat-container">
-        <div class="friend-info">
-            <img src="data:image/png;base64,@FriendAvatarBase64" class="friend-avatar" alt="Friend's Avatar" />
-            <p>@friendInfo.User.UserName</p>
-        </div>
-        <div class="chat-box">
-            @foreach (var item in messages)
+            @foreach(var item in Chats)
             {
-                @if (item.User.UserName == username)
-                {
-                    <div class="message sent">
-                        @item.MessageContent
-                        @item.SentAt.ToShortTimeString()
-                        <img src="data:image/png;base64,@UserAvatarBase64" class="avatar" alt="Your Avatar" />
+                <div class="discussion" onclick=@(async () => LoadChatWithFriend(item.FriendId))>
+                    <div class="desc-contact">
+                        <p class="name">@item.Friend.UserName</p>
                     </div>
-                }
-                else
-                {
-                    <div class="message received">
-                        <img src="data:image/png;base64,@FriendAvatarBase64" class="avatar" alt="Friend's Avatar" />
-                        @item.SentAt.ToShortTimeString()
-                        @item.MessageContent
-                    </div>
-                }
+                </div>
             }
-        </div>
-        <div class="message-input">
-            <InputText type="text" @bind-Value="Message" placeholder="Type your message..." />
-            <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>
-            @* <p>@(!IsNullOrWhiteSpace)</p> *@
+        </section>
+        <div class="chat-container">
+            <div class="friend-info">
+                @if (friendInfo is not null)
+                {
+                    <img src="data:image/png;base64,@FriendAvatarBase64" class="friend-avatar" alt="Friend's Avatar" />
+                
+                    <p>@friendInfo.User.UserName</p>
+                }
+            </div>
+            <div class="chat-box">
+                @if(messages is not null)
+                {
+                    @foreach (var item in messages.Reverse())
+                    {
+                        @if (item.User.UserName == username)
+                        {
+                            <div class="message sent">
+                                @item.MessageContent
+                                @item.SentAt.ToShortTimeString()
+                                <img src="data:image/png;base64,@UserAvatarBase64" class="avatar" alt="Your Avatar" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="message received">
+                                <img src="data:image/png;base64,@FriendAvatarBase64" class="avatar" alt="Friend's Avatar" />
+                                @item.SentAt.ToShortTimeString()
+                                @item.MessageContent
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div class="message-input">
+                <InputText type="text" @bind-Value="Message" placeholder="Type your message..." />
+                <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>                
+            </div>
         </div>
     </div>
 }
@@ -260,6 +515,7 @@ else
     private string FriendAvatarBase64;
     private GetUserProfileViewModel friendInfo { get; set; }
     private HubConnection hubConnection;
+    private IEnumerable<FriendsChat> Chats;
     HttpClient mangaflexApi = new HttpClient();
     protected override async Task OnInitializedAsync()
     {
@@ -274,19 +530,37 @@ else
             StateHasChanged();
         });
 
+        var useravatar = await GetUserAvatar();
+        UserAvatarBase64 = Convert.ToBase64String(useravatar);
         await hubConnection.StartAsync();
+        await InitChats();
 
         var result = await provider.GetAuthenticationStateAsync();
         if (result.User.Identity.IsAuthenticated == true)
         {
             username = result.User.Identity.Name;
         }
+    }
+
+    private async Task LoadChatWithFriend(string friendId)
+    {
+        FriendId = friendId;
+        await GetFriendInfo(); 
         await InitMessage();
-        await GetFriendInfo();
-        var UseravatarImageBytes = await GetUserAvatar();
-        var FriendavatarImageBytes = await GetFriendAvatar();
-        FriendAvatarBase64 = Convert.ToBase64String(FriendavatarImageBytes);
-        UserAvatarBase64 = Convert.ToBase64String(UseravatarImageBytes);
+        var avatarfriend = await GetFriendAvatar(friendId);
+        FriendAvatarBase64 = Convert.ToBase64String(avatarfriend);
+        StateHasChanged();
+    }
+
+    private async Task InitChats()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetChats");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
+
+        var response = await mangaflexApi.SendAsync(request);
+        Chats = await response.Content.ReadFromJsonAsync<IEnumerable<FriendsChat>>();
+
     }
 
     private async Task GetFriendInfo()
@@ -308,6 +582,7 @@ else
         {
             Console.WriteLine($"Error fetching friend information: {ex.Message}");
         }
+        StateHasChanged();
     }
 
     private async Task<byte[]> GetUserAvatar()
@@ -356,6 +631,33 @@ else
         }
     }
 
+    private async Task<byte[]> GetFriendAvatar(string id)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetUserAvatarById?id={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await mangaflexApi.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return await GetDefaultAvatar();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
+        return null;
+    }
+
     private async Task<byte[]> GetFriendAvatar()
     {
         try
@@ -395,6 +697,7 @@ else
         {
             messages = await response.Content.ReadFromJsonAsync<IEnumerable<Message>>();
         }
+        StateHasChanged();
     }
 
     public bool IsNullOrWhiteSpace => Message == string.Empty;

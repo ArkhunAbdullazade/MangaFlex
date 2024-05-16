@@ -154,15 +154,13 @@
     },
 
     {
-      "UpstreamPathTemplate": "/api/User/chathub",
+      "UpstreamPathTemplate": "/api/User/GetChats",
       "UpstreamHttpMethod": [
-        "GET",
-        "POST"
+        "GET"
       ],
-      "UseWebSockets": true,
 
-      "DownstreamPathTemplate": "/api/User/chathub",
-      "DownstreamScheme": "ws",
+      "DownstreamPathTemplate": "/api/User/GetChats",
+      "DownstreamScheme": "http",
 
       "DownstreamHostAndPorts": [
         {
@@ -172,19 +170,6 @@
       ]
     },
 
-    {
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
-      "UpstreamPathTemplate": "/profilehub/{catchAll}",
-      "DownstreamPathTemplate": "/profilehub/{catchAll}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": "5204"
-        }
-      ],
-      "UseWebSockets": true
-    },
 
     {
       "UpstreamPathTemplate": "/api/User/POSTMessage",
