@@ -2,8 +2,10 @@
 @using MangaFlexFront.Data.Dtos
 @using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
 @inject NavigationManager navigationManager
 @inject ILocalStorageService localStorageService
+
 <style>
     .form {
         gap: 10px;
@@ -310,6 +312,7 @@
 
 @code {
     private RegistrationDto registrationDto = new RegistrationDto();
+    private List<ValidationResult> validationErrors = new List<ValidationResult>();
     HttpClient mangaflexApi = new HttpClient();
 
     private async Task RegistrationSubmit()
@@ -319,11 +322,15 @@
             mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
             var response = await mangaflexApi.PostAsJsonAsync("api/Identity/Registration", registrationDto);
 
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+
+                validationErrors.Add(new ValidationResult(error, new[] { "Login error" }));
+            }
+
             if (response.IsSuccessStatusCode)
             {
-                @* var tokenResponse = await response.Content.ReadAsStringAsync();
-await localStorageService.SetItemAsStringAsync("jwt", tokenResponse); *@
-                // await authenticationStateProvider.GetAuthenticationStateAsync();
                 navigationManager.NavigateTo("/User/Login");
             }
             else

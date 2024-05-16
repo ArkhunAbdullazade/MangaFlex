@@ -151,7 +151,7 @@
                 var token = localStorage.getItem('accessToken');
 
                 $.ajax({
-                url: 'http://localhost:5262/api/User/ChangeAvatar',
+                url: 'http://localhost:5000/api/User/ChangeAvatar',
                 type: 'PUT',
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -160,7 +160,11 @@
                 processData: false,
                 contentType: false,
                 });
-                location.reload();
+                $('#canvas').hide();
+                $('#avatar').val('');
+                $('#avatar').show();
+                $('#submitButton').hide();
+                $('#cancelButton').hide();
         }
 
             function dataURLtoBlob(dataUrl) {

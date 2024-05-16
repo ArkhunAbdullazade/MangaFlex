@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaFlex.Staff.Api", "Mang
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaFlex.User.Api", "MangaFlex.User.Api\MangaFlex.User.Api.csproj", "{FFFE30D6-877A-460E-8996-694FF9D2B7E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaFlex.GateWay", "MangaFlex.GateWay\MangaFlex.GateWay.csproj", "{CCCFDF61-E066-44E9-903F-62D2EF0FC6E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{FFFE30D6-877A-460E-8996-694FF9D2B7E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFFE30D6-877A-460E-8996-694FF9D2B7E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFFE30D6-877A-460E-8996-694FF9D2B7E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCFDF61-E066-44E9-903F-62D2EF0FC6E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCFDF61-E066-44E9-903F-62D2EF0FC6E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCFDF61-E066-44E9-903F-62D2EF0FC6E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCFDF61-E066-44E9-903F-62D2EF0FC6E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

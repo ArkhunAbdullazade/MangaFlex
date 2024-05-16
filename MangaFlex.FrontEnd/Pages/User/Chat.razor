@@ -220,7 +220,7 @@ else
             <p>@friendInfo.User.UserName</p>
         </div>
         <div class="chat-box">
-            @foreach (var item in messages.Reverse())
+            @foreach (var item in messages)
             {
                 @if (item.User.UserName == username)
                 {
@@ -265,7 +265,7 @@ else
     {
         mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         hubConnection = new HubConnectionBuilder()
-        .WithUrl(NavigationManager.ToAbsoluteUri("chathub"))
+        .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5204/chathub"))
         .Build();
 
         hubConnection.On<string>("ReceiveMessage", async (message) =>

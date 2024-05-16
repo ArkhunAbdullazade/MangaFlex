@@ -47,7 +47,7 @@ public class FriendsChatRepository : IFriendsChatRepository
 
     public async Task<IEnumerable<Message>> GetMessagesInChat(string userid, string friendid)
     {
-        var chat = await mangaFlexDbContext.FriendsChats.FirstOrDefaultAsync(x => x.UserId == userid);
+        var chat = await mangaFlexDbContext.FriendsChats.FirstOrDefaultAsync(x => x.UserId == userid && x.FriendId == friendid);
         var messages =  mangaFlexDbContext.Messages.Where(x => x.ChatId == chat.Id).Include(x => x.User).ToList();
 
         return messages;

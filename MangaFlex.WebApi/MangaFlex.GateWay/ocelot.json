@@ -1,0 +1,597 @@
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/Admin/Ban",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/Admin/Ban",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5181"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Admin/UnBan",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/Admin/UnBan",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5181"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Admin/SetModerator",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/Admin/SetModerator",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5181"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Admin/RemoveModerator",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/Admin/RemoveModerator",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5181"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Identity/Login",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+
+      "DownstreamPathTemplate": "/api/Identity/Login",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5113"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Identity/Registration",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+
+      "DownstreamPathTemplate": "/api/Identity/Registration",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5113"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Identity/UpdateToken",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/Identity/UpdateToken",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5113"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/UpdateUserData",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/UpdateUserData",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/CreateChat",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/CreateChat",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/chathub",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UseWebSockets": true,
+
+      "DownstreamPathTemplate": "/api/User/chathub",
+      "DownstreamScheme": "ws",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "UpstreamPathTemplate": "/profilehub/{catchAll}",
+      "DownstreamPathTemplate": "/profilehub/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ],
+      "UseWebSockets": true
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/POSTMessage",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/POSTMessage",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/Chat",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/Chat",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/Profile",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/Profile",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/LastWatches",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/LastWatches",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/ChangeAvatar",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/ChangeAvatar",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/GETUserAvatar",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/GETUserAvatar",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/GETUserAvatarById",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/GETUserAvatarById",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/SearchUser",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/SearchUser",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/GETDefaultAvatar",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/GETDefaultAvatar",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/GETUsers",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/GETUsers",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/ProfileById",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/ProfileById",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/Subscribe",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/Subscribe",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/Unsubscribe",
+      "UpstreamHttpMethod": [
+        "DELETE"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/Unsubscribe",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/User/Followers",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/User/Followers",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5204"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Mangas",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/Mangas",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/AvailableLanguages",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/AvailableLanguages",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/About",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/About",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/IsMangaLogged",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/IsMangaLogged",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/UserMangaStatus",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/UserMangaStatus",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/AddUserManga",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/AddUserManga",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/UpdateUserManga",
+      "UpstreamHttpMethod": [
+        "PUT"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/UpdateUserManga",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/DELETEUserManga",
+      "UpstreamHttpMethod": [
+        "DELETE"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/DELETEUserManga",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/SetLanguage",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/SetLanguage",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/Manga/Read",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+
+      "DownstreamPathTemplate": "/api/Manga/Read",
+      "DownstreamScheme": "http",
+
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5196"
+        }
+      ]
+    }
+  ]
+}

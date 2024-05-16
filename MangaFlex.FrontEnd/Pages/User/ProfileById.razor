@@ -168,7 +168,7 @@ else
     {
         mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
         hubConnection = new HubConnectionBuilder()
-        .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5262/profilehub"))
+        .WithUrl(NavigationManager.ToAbsoluteUri("http://localhost:5204/profilehub"))
         .Build();
 
         hubConnection.On<string>("ReceiveMessage", async (message) =>

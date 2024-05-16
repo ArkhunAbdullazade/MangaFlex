@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -171,8 +172,21 @@ builder.Services.AddCors(options =>
 });
 
 
-
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<MangaFlexDbContext>();
+    await dbContext.Database.MigrateAsync();
+    await dbContext.Database.EnsureCreatedAsync();
+
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    await roleManager.CreateAsync(new IdentityRole("User"));
+    await roleManager.CreateAsync(new IdentityRole("Admin"));
+    await roleManager.CreateAsync(new IdentityRole("Banned"));
+    await roleManager.CreateAsync(new IdentityRole("Moderator"));
+}
 
 app.UseSwagger();
 
@@ -186,7 +200,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-
+app.MapControllers();
 app.UseHttpsRedirection();
 
 
