@@ -163,7 +163,7 @@ else
     public GetUserProfileViewModel UserProfileView { get; set; }
     private string username = string.Empty;
     private string AvatarBase64;
- HttpClient mangaflexApi = new HttpClient();
+    HttpClient mangaflexApi = new HttpClient();
     protected override async Task OnInitializedAsync()
     {
          mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");

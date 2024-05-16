@@ -54,7 +54,7 @@ namespace MangaFlexFront.Providers
                     {
                         var httpClient = new HttpClient();
 
-                        var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5262/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshToken });
+                        var updateTokenResponse = await httpClient.PutAsJsonAsync("http://localhost:5000/api/Identity/UpdateToken", new { AccessToken = jwt, RefreshToken = refreshToken });
 
                         Console.WriteLine(updateTokenResponse.IsSuccessStatusCode);
                         if (updateTokenResponse.IsSuccessStatusCode && updateTokenResponse.StatusCode == System.Net.HttpStatusCode.OK)

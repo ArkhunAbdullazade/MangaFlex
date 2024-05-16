@@ -126,15 +126,20 @@ public class UserController : Controller
         var userName = User?.Identity?.Name;
         var fileName = $"{userName}{Path.GetExtension(avatar.FileName)}";
 
-        var destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+        var destinationFolder = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
         var destinationPath = Path.Combine(destinationFolder, fileName);
+
+        Console.WriteLine(destinationFolder);
+
+        if (!Directory.Exists(destinationFolder))
+        {
+            Directory.CreateDirectory(destinationFolder);
+        }
 
         if (System.IO.File.Exists(destinationPath))
         {
             System.IO.File.Delete(destinationPath);
         }
-
-        Directory.CreateDirectory(destinationFolder);
 
         using (var stream = new FileStream(destinationPath, FileMode.Create))
         {
@@ -152,7 +157,7 @@ public class UserController : Controller
     public async Task<IActionResult> GetUserAvatar()
     {
         byte[] imageBytes;
-        var relativePath = Path.Combine("wwwroot", "uploads", User.Identity.Name + ".png");
+        var relativePath = Path.Combine("uploads", User.Identity.Name + ".png");
         try
         {
             imageBytes = System.IO.File.ReadAllBytes(relativePath);
@@ -170,7 +175,8 @@ public class UserController : Controller
         var result = await sender.Send(user);
 
         byte[] imageBytes;
-        var relativePath = Path.Combine("wwwroot", "uploads", result.User.UserName + ".png");
+        var relativePath = Path.Combine("uploads", result.User.UserName + ".png");
+        Console.WriteLine(relativePath);
         try
         {
             imageBytes = System.IO.File.ReadAllBytes(relativePath);
@@ -194,7 +200,7 @@ public class UserController : Controller
     public async Task<IActionResult> GetDefaultAvatar()
     {
         byte[] imageBytes;
-        var relativePath = Path.Combine("wwwroot", "uploads", "default.png");
+        var relativePath = Path.Combine("uploads", "default.png"); 
         try
         {
             imageBytes = System.IO.File.ReadAllBytes(relativePath);

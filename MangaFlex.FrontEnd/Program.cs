@@ -20,7 +20,7 @@ builder.Services.AddScoped<ChatService>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, DefaultAuthorizationPolicyProvider>();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddHttpClient("mangaflexApi", async (serviceProvider, client) => {
-    client.BaseAddress = new Uri("http://localhost:5262/");
+    client.BaseAddress = new Uri("http://localhost:5000/");
 });
 builder.Services.AddAuthorizationCore();
 await builder.Build().RunAsync();
