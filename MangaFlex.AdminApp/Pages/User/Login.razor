@@ -1,7 +1,12 @@
-@page "/Login"
-@using MangaFlex.AdminApp.Data;
-@using MangaFlex.AdminApp.Data.Dtos;
+@page "/User/Login"
+@using Blazored.LocalStorage
+@using MangaFlexFront.Data.Dtos
+@using MangaFlexFront.Data.ViewModels
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using System.ComponentModel.DataAnnotations
 @inject NavigationManager navigationManager
+@inject ILocalStorageService localStorageService
 @inject AuthenticationStateProvider authenticationStateProvider
 <style>
     .form {
@@ -223,7 +228,6 @@
         <h5 class="text-center" style="font-size: 10vh; white-space: nowrap;">Welcome <span
                 style="color: #78A2B3;">back</span>!</h5>
 
-        <p>Discover manga, manhua and manhwa, track your progress, have fun, read manga.</p>
         <EditForm Model="@loginDto" OnValidSubmit="LoginSubmit">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -319,8 +323,17 @@
                 var refreshToken = tokenResponse!.refreshToken;
                 await localStorageService.SetItemAsStringAsync("accessToken", accessToken);
                 await localStorageService.SetItemAsStringAsync("refreshToken", refreshToken.ToString());
-                await authenticationStateProvider.GetAuthenticationStateAsync();
-                navigationManager.NavigateTo("/");
+                var result = await authenticationStateProvider.GetAuthenticationStateAsync();
+                if(result.User.IsInRole("User"))
+                {
+                    validationErrors.Add(new ValidationResult("You are not a moderator or admin.", new[] { "Login error" }));
+                    await localStorageService.SetItemAsStringAsync("accessToken", "");
+                    await localStorageService.SetItemAsStringAsync("refreshToken","");
+                }
+                else
+                {
+                    navigationManager.NavigateTo("/");
+                }
             }
             else
             {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MangaFlex.AdminApp.Data.Dtos;
+namespace MangaFlexFront.Data.Dtos;
 
 public class LoginDto
 {

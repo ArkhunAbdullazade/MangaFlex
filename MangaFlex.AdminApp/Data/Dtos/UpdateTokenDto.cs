@@ -1,4 +1,4 @@
-﻿namespace MangaFlex.AdminApp.Data.Dtos;
+﻿namespace MangaFlex.Api.Dtos;
 
 public class UpdateTokenDto
 {

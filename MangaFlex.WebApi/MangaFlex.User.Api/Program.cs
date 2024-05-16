@@ -14,6 +14,7 @@ using MangaFlex.Infrastructure.Data.FriendShip.Repository;
 using MangaFlex.Infrastructure.Data.Hubs;
 using MangaFlex.Infrastructure.Data.LastWatches.Repository;
 using MangaFlex.Infrastructure.Data.Mangas.Services;
+using MangaFlex.Infrastructure.Data.Mangas.Settings;
 using MangaFlex.Infrastructure.Data.Message.Repository;
 using MangaFlex.Infrastructure.Data.RefreshToken;
 using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
@@ -160,6 +161,10 @@ builder.Services.AddResponseCompression(opts =>
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
         new[] { "application/octet-stream" });
 });
+
+builder.Services.Configure<MangaDbSettings>(
+    builder.Configuration.GetSection("MangaDatabase"));
+
 
 builder.Services.AddCors(options =>
 {

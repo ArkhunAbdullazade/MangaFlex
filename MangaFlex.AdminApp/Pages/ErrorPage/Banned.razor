@@ -1,0 +1,77 @@
+@page "/User/Banned"
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .video-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(50%);
+    }
+
+    .centered {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+    }
+
+    .logout-container {
+        position: fixed;
+        bottom: 20px; 
+        right: 20px; 
+        display: flex;
+        align-items: center;
+    }
+
+    .logout-button {
+        background-color: #FF0000;
+        color: #FFFFFF;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .logout-text {
+        color: white;
+        margin-right: 10px;
+    }
+
+    header, footer {
+        display: none;
+    }
+</style>
+
+<div class="video-container">
+    <video autoplay loop>
+        <source src="/banned.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+
+<div class="logout-container">
+    <p class="logout-text">You were banned.. but still enjoy</p>
+    <div class="logout-button" onclick="logout()">Logout</div>
+</div>
+
+<script>
+    function logout() {
+        window.location.href = "/User/LogOut";
+    }
+</script>

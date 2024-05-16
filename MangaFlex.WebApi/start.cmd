@@ -13,9 +13,6 @@ cd ..
 cd .\MangaFlex.User.Api
 start cmd /k dotnet watch run
 cd ..
-cd ..\MangaDex.WebApi
-start cmd /k dotnet watch run
-cd ..
 cd .\MangaFlex.FrontEnd
 start cmd /k dotnet watch run
 

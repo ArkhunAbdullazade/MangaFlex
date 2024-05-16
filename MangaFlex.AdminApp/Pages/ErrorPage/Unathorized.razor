@@ -1,0 +1,143 @@
+@page "/Error/Unathorized"
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+  rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    font-size: 2vmin;
+    background-color: gainsboro;
+    
+  }
+
+  no-face {
+    display: block;
+    width: 16em;
+    height: 40em;
+    background-image: linear-gradient(to bottom, black 17em, rgba(0, 0, 0, 0));
+    border-radius: 50% 50% 0 0/50% 50% 0 0;
+    position: relative;
+  }
+
+  mask {
+    display: block;
+    width: 10em;
+    height: 15em;
+    position: absolute;
+    left: 3em;
+    top: 0em;
+    -webkit-animation: mask 5s ease-in-out infinite alternate;
+    animation: mask 5s ease-in-out infinite alternate;
+    background-image: linear-gradient(to right, rebeccapurple 30%, white 30%, white 70%, rebeccapurple 70%);
+    border-radius: 50% 50% 45% 45%/30% 30% 70% 70%;
+    box-shadow: 0 0 0 0.5em black, 0 0 0 1.4em white inset;
+  }
+
+  eye {
+    display: block;
+    width: 2em;
+    height: 1.5em;
+    position: absolute;
+    left: 4em;
+    top: 5.2em;
+    border-radius: 50%;
+    box-shadow: -2.8em 0 0 0 black, -2.8em 0 0 0.5em white, -2.75em 1.2em 0 -0.3em rebeccapurple, -2.8em 0.9em 0 0.5em white, 2.8em 0 0 0 black, 2.8em 0 0 0.5em white, 2.75em 1.2em 0 -0.3em rebeccapurple, 2.8em 0.9em 0 0.5em white;
+  }
+
+  mouth {
+    display: block;
+    width: 3em;
+    height: 1em;
+    position: absolute;
+    left: 3.5em;
+    top: 12em;
+    background-color: black;
+    border-radius: 50%;
+    box-shadow: 0 0.9em 0 -0.4em rebeccapurple;
+  }
+
+  @@-webkit-keyframes mask {
+    0% {
+      transform: translate3d(-1em, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(1em, 0, 0);
+    }
+  }
+
+  @@keyframes mask {
+    0% {
+      transform: translate3d(-1em, 0, 0);
+    }
+
+    100% {
+      transform: translate3d(1em, 0, 0);
+    }
+  }
+
+  .no-face {
+    display: flex;
+    justify-content: center;
+   max-height: 75vh;
+  }
+
+
+  .poppins-regular {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .poppins-bold {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  .poppins-black {
+    font-family: "Poppins", sans-serif;
+    font-weight: 900;
+    font-style: normal;
+  }
+
+  .unath-div {
+    text-align: center;
+  }
+
+  .text-unauth {
+    color: rgb(0, 0, 0);
+    font-size: 6vh;
+    margin-bottom: -1rem;
+  }
+
+  .return-nonauth {
+    text-decoration: none;
+    color: rgb(73, 72, 72);
+    font-size: 3vh;
+  }
+  
+   .return-nonauth:hover {
+    color: rgb(48, 45, 45);
+  }
+
+</style>
+<div class="no-face">
+  <no-face>
+    <mask>
+      <eye></eye>
+      <mouth></mouth>
+    </mask>
+  </no-face>
+</div>
+<div class="unath-div">
+  <p class="text-unauth poppins-bold">UNATHORIZED</p>
+  <a href="/" class="return-nonauth poppins-regular">return to home</a>
+</div>
