@@ -17,4 +17,5 @@ public class Manga
     public DateTime? UpdatedAt { get; set; }
     public string? LatestUploadedChapter { get; set; }
     public string? Cover { get; set; }
+    public IList<MangaChapter>? Chapters { get; set; }
 }

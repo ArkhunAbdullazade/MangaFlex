@@ -11,9 +11,10 @@ using MangaFlex.Core.Data.LastWatches.Command;
 using MangaFlex.Core.Data.UserMangas.Commands;
 using MangaFlex.Core.Data.UserMangas.Models;
 using MangaFlex.Api.Dtos;
-using MangaFlex.Core.Data.Mangas.Models;
 
 namespace MangaFlex.Api.Controllers;
+
+using MangaFlex.Core.Data.Mangas.Models;
 
 [ApiController]
 [Route("api/[controller]/[action]")]

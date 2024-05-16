@@ -18,6 +18,7 @@ using MangaFlex.Infrastructure.Data.Message.Repository;
 using MangaFlex.Infrastructure.Data.RefreshToken;
 using MangaFlex.Infrastructure.Data.UserMangas.Repositories;
 using MangaFlex.Infrastructure.Data.Users.Repository;
+using MangaFlex.Manga.Api.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -170,7 +171,8 @@ builder.Services.AddCors(options =>
     });
 });
 
-
+builder.Services.Configure<MangaDbSettings>(
+    builder.Configuration.GetSection("MangaDatabase"));
 
 var app = builder.Build();
 
