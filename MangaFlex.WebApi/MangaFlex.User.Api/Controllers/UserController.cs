@@ -189,6 +189,15 @@ public class UserController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetChatsAsync()
+    {
+        var command = new GetChatsCommand(userManager.GetUserId(User!));
+        var result = await sender.Send(command);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> SearchUser(string search)
     {
         var command = new GetUsersCommand();
