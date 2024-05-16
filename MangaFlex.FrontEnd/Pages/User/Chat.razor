@@ -1,4 +1,5 @@
-@page "/User/Chat/{FriendId}"
+@page "/User/Chat"
+@using MangaFlex.Core.Data.FriendShip.Models
 @using MangaFlexFront.Data.Message.Models
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -421,7 +422,9 @@
 
 </style>
 
-@if (messages is null)
+
+
+@if (Chats == null)
 {
     <div class="loading-container">
         <div aria-label="Orange and tan hamster running in a metal wheel" role="img" class="wheel-and-hamster" id="loading">
@@ -449,105 +452,52 @@ else
 
     <div style="display: flex; justify-content: flex-end;">
         <section class="discussions">
-            <div class="discussion search">
-                <div class="searchbar">
-                    <i class="fa fa-search" aria-hidden="true"></i>
-                    <input type="text" placeholder="Search...">
-                </div>
-            </div>
-            <div class="discussion message-active">
-                <div class="photo"
-                    style="background-image: url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);">
-                </div>
-                <div class="desc-contact">
-                    <p class="name">Megan Leib</p>
-                </div>
-               
-            </div>
 
-            <div class="discussion">
-                <div class="photo"
-                    style="background-image: url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg);">
+            @foreach(var item in Chats)
+            {
+                <div class="discussion" onclick=@(async () => LoadChatWithFriend(item.FriendId))>
+                    <div class="desc-contact">
+                        <p class="name">@item.Friend.UserName</p>
+                    </div>
                 </div>
-                <div class="desc-contact">
-                    <p class="name">Dave Corlew</p>
-                </div>
-            </div>
-
-            <div class="discussion">
-                <div class="photo"
-                    style="background-image: url(https://images.unsplash.com/photo-1497551060073-4c5ab6435f12?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80);">
-                </div>
-                <div class="desc-contact">
-                    <p class="name">Jerome Seiber</p>
-                </div>
-            </div>
-
-            <div class="discussion">
-                <div class="photo" style="background-image: url(https://card.thomasdaubenton.com/img/photo.jpg);">
-                </div>
-                <div class="desc-contact">
-                    <p class="name">Thomas Dbtn</p>
-                </div>
-            </div>
-
-            <div class="discussion">
-                <div class="photo"
-                    style="background-image: url(https://images.unsplash.com/photo-1553514029-1318c9127859?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80);">
-                </div>
-                <div class="desc-contact">
-                    <p class="name">Elsie Amador</p>
-                </div>
-            </div>
-
-            <div class="discussion">
-                <div class="photo"
-                    style="background-image: url(https://images.unsplash.com/photo-1541747157478-3222166cf342?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=967&q=80);">
-                </div>
-                <div class="desc-contact">
-                    <p class="name">Billy Southard</p>
-                </div>
-            </div>
-
-            <div class="discussion">
-                <div class="photo"
-                    style="background-image: url(https://images.unsplash.com/photo-1435348773030-a1d74f568bc2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80);">
-                </div>
-                <div class="desc-contact">
-                    <p class="name">Paul Walker</p>
-                </div>
-            </div>
+            }
         </section>
         <div class="chat-container">
             <div class="friend-info">
-                <img src="data:image/png;base64,@FriendAvatarBase64" class="friend-avatar" alt="Friend's Avatar" />
-                <p>@friendInfo.User.UserName</p>
+                @if (friendInfo is not null)
+                {
+                    <img src="data:image/png;base64,@FriendAvatarBase64" class="friend-avatar" alt="Friend's Avatar" />
+                
+                    <p>@friendInfo.User.UserName</p>
+                }
             </div>
             <div class="chat-box">
-                @foreach (var item in messages.Reverse())
+                @if(messages is not null)
                 {
-                    @if (item.User.UserName == username)
+                    @foreach (var item in messages.Reverse())
                     {
-                        <div class="message sent">
-                            @item.MessageContent
-                            @item.SentAt.ToShortTimeString()
-                            <img src="data:image/png;base64,@UserAvatarBase64" class="avatar" alt="Your Avatar" />
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="message received">
-                            <img src="data:image/png;base64,@FriendAvatarBase64" class="avatar" alt="Friend's Avatar" />
-                            @item.SentAt.ToShortTimeString()
-                            @item.MessageContent
-                        </div>
+                        @if (item.User.UserName == username)
+                        {
+                            <div class="message sent">
+                                @item.MessageContent
+                                @item.SentAt.ToShortTimeString()
+                                <img src="data:image/png;base64,@UserAvatarBase64" class="avatar" alt="Your Avatar" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="message received">
+                                <img src="data:image/png;base64,@FriendAvatarBase64" class="avatar" alt="Friend's Avatar" />
+                                @item.SentAt.ToShortTimeString()
+                                @item.MessageContent
+                            </div>
+                        }
                     }
                 }
             </div>
             <div class="message-input">
                 <InputText type="text" @bind-Value="Message" placeholder="Type your message..." />
-                <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>
-                @* <p>@(!IsNullOrWhiteSpace)</p> *@
+                <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>                
             </div>
         </div>
     </div>
@@ -565,6 +515,7 @@ else
     private string FriendAvatarBase64;
     private GetUserProfileViewModel friendInfo { get; set; }
     private HubConnection hubConnection;
+    private IEnumerable<FriendsChat> Chats;
     HttpClient mangaflexApi = new HttpClient();
     protected override async Task OnInitializedAsync()
     {
@@ -579,19 +530,37 @@ else
             StateHasChanged();
         });
 
+        var useravatar = await GetUserAvatar();
+        UserAvatarBase64 = Convert.ToBase64String(useravatar);
         await hubConnection.StartAsync();
+        await InitChats();
 
         var result = await provider.GetAuthenticationStateAsync();
         if (result.User.Identity.IsAuthenticated == true)
         {
             username = result.User.Identity.Name;
         }
+    }
+
+    private async Task LoadChatWithFriend(string friendId)
+    {
+        FriendId = friendId;
+        await GetFriendInfo(); 
         await InitMessage();
-        await GetFriendInfo();
-        var UseravatarImageBytes = await GetUserAvatar();
-        var FriendavatarImageBytes = await GetFriendAvatar();
-        FriendAvatarBase64 = Convert.ToBase64String(FriendavatarImageBytes);
-        UserAvatarBase64 = Convert.ToBase64String(UseravatarImageBytes);
+        var avatarfriend = await GetFriendAvatar(friendId);
+        FriendAvatarBase64 = Convert.ToBase64String(avatarfriend);
+        StateHasChanged();
+    }
+
+    private async Task InitChats()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetChats");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
+
+        var response = await mangaflexApi.SendAsync(request);
+        Chats = await response.Content.ReadFromJsonAsync<IEnumerable<FriendsChat>>();
+
     }
 
     private async Task GetFriendInfo()
@@ -613,6 +582,7 @@ else
         {
             Console.WriteLine($"Error fetching friend information: {ex.Message}");
         }
+        StateHasChanged();
     }
 
     private async Task<byte[]> GetUserAvatar()
@@ -661,6 +631,33 @@ else
         }
     }
 
+    private async Task<byte[]> GetFriendAvatar(string id)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/GetUserAvatarById?id={FriendId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+            localStorageService.GetItemAsStringAsync("accessToken"));
+
+            var response = await mangaflexApi.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                return await GetDefaultAvatar();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
+        return null;
+    }
+
     private async Task<byte[]> GetFriendAvatar()
     {
         try
@@ -700,6 +697,7 @@ else
         {
             messages = await response.Content.ReadFromJsonAsync<IEnumerable<Message>>();
         }
+        StateHasChanged();
     }
 
     public bool IsNullOrWhiteSpace => Message == string.Empty;
