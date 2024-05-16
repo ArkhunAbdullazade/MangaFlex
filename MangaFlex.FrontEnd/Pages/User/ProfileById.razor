@@ -243,13 +243,13 @@ else
 
             var response = await mangaflexApi.SendAsync(request);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsByteArrayAsync();
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 return await GetDefaultAvatar();
+            }
+            else if (response.Content != null)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
             }
             else
             {
