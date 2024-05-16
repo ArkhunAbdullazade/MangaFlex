@@ -1,10 +1,4 @@
 @page "/adminPanel"
-@inject UserManager<ApplicationUser> UserManager
-
-@{
-    ViewData["Title"] = "Admin Panel";
-    var username = string.Empty;
-}
 
 <style>
     .text-primary {
@@ -23,7 +17,7 @@
 else
 {
     <div class="d-flex flex-wrap">
-        @foreach (var user in users)
+        @* @foreach (var user in users)
         {
             if (currentUser.UserName == user.UserName || user.UserName.Contains("admin"))
             {
@@ -64,17 +58,15 @@ else
                     </div>
                 </div>
             </div>
-        }
+        } *@
     </div>
 }
 
 @code {
     IEnumerable<ShowAllUsersVM> users;
-    ApplicationUser currentUser;
 
     protected override async Task OnInitializedAsync()
     {
-        currentUser = await UserManager.GetUserAsync(User);
     }
 
     async Task BanUser(string userId)
