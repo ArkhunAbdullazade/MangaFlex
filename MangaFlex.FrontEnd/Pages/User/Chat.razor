@@ -99,7 +99,7 @@
     }
 
     .chat-container {
-        width: 100%;
+        width: 85%;
         height: 90vh;
         border: 1px solid #ccc;
         border-radius: 10px;
@@ -110,12 +110,9 @@
 
     .avatar {
         width: 50px;
-        /* ������� ������ ������� */
         height: 50px;
         border-radius: 50%;
-        /* ��� ������� �������� */
         margin-right: 10px;
-        /* ���������� ������� �� ������ ������� */
     }
 
     .chat-box {
@@ -185,6 +182,243 @@
         border-radius: 50%;
         margin-right: 10px;
     }
+
+    .chat-container {
+        height: 90vh;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+    }
+
+    .chat-box {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    .message {
+        padding: 5px 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        display: table;
+    }
+
+    .received {
+        background-color: #f0f0f0;
+        align-self: flex-start;
+    }
+
+    .sent {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-start;
+    }
+
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .friend-info {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-bottom: 1px solid #ccc;
+        justify-content: flex-start;
+    }
+
+    .discussions {
+        width: 35%;
+        height: auto;
+        box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.20);
+        background-color: #87a3ec;
+        display: inline-block;
+    }
+
+    .discussions .discussion {
+        width: 100%;
+        height: 90px;
+        background-color: #FAFAFA;
+        border-bottom: solid 1px #E0E0E0;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .discussions .search {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar {
+        height: 40px;
+        background-color: #FFF;
+        width: 70%;
+        padding: 0 20px;
+        border-radius: 50px;
+        border: 1px solid #EEEEEE;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .discussions .search .searchbar input {
+        margin-left: 15px;
+        height: 38px;
+        width: 100%;
+        border: none;
+        font-family: 'Montserrat', sans-serif;
+        ;
+    }
+
+    .discussions .search .searchbar *::-webkit-input-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar input *:-moz-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar input *::-moz-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .search .searchbar input *:-ms-input-placeholder {
+        color: #E0E0E0;
+    }
+
+    .discussions .message-active {
+        width: 98.5%;
+        height: 90px;
+        background-color: #FFF;
+        border-bottom: solid 1px #E0E0E0;
+    }
+
+    .discussions .discussion .photo {
+        margin-left: 20px;
+        display: block;
+        width: 45px;
+        height: 45px;
+        background: #E6E7ED;
+        -moz-border-radius: 50px;
+        -webkit-border-radius: 50px;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    .online {
+        position: relative;
+        top: 30px;
+        left: 35px;
+        width: 13px;
+        height: 13px;
+        background-color: #8BC34A;
+        border-radius: 13px;
+        border: 3px solid #FAFAFA;
+    }
+
+    .desc-contact {
+        width: 50%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .discussions .discussion .name {
+        margin: 0 0 0 20px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 11pt;
+        color: #515151;
+    }
+
+    .discussions .discussion .message {
+        margin: 6px 0 0 20px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 9pt;
+        color: #515151;
+    }
+
+    .timer {
+        margin-left: 15%;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 11px;
+        padding: 3px 8px;
+        color: #BBB;
+        background-color: #FFF;
+        border: 1px solid #E5E5E5;
+        border-radius: 15px;
+    }
+    .discussions {
+    width: 35%;
+    height: calc(100vh - 20px); 
+    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.20);
+    background-color: #255969;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; 
+}
+
+.discussions .discussion {
+    width: 100%;
+    min-height: 90px; 
+    background-color: #FAFAFA;
+    border-bottom: solid 1px #E0E0E0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.discussions .search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #E0E0E0;
+    padding: 10px; 
+    background-color: #255969; 
+}
+
+.discussions .search .searchbar {
+    height: 40px;
+    background-color: #FFF;
+    width: 70%;
+    padding: 0 20px;
+    border-radius: 50px;
+    border: 1px solid #EEEEEE;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.discussions .search .searchbar input {
+    margin-left: 15px;
+    height: 38px;
+    width: 100%;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.discussions .search .searchbar input::placeholder {
+    color: #E0E0E0;
+}
+
+.discussions .message-active {
+    width: 100%;
+    min-height: 90px; /* Changed to min-height */
+    background-color: #FFF;
+    border-bottom: solid 1px #E0E0E0;
+}
+
 </style>
 
 @if (messages is null)
@@ -213,37 +447,108 @@
 else
 {
 
+    <div style="display: flex; justify-content: flex-end;">
+        <section class="discussions">
+            <div class="discussion search">
+                <div class="searchbar">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+            </div>
+            <div class="discussion message-active">
+                <div class="photo"
+                    style="background-image: url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);">
+                </div>
+                <div class="desc-contact">
+                    <p class="name">Megan Leib</p>
+                </div>
+               
+            </div>
 
-    <div class="chat-container">
-        <div class="friend-info">
-            <img src="data:image/png;base64,@FriendAvatarBase64" class="friend-avatar" alt="Friend's Avatar" />
-            <p>@friendInfo.User.UserName</p>
-        </div>
-        <div class="chat-box">
-            @foreach (var item in messages)
-            {
-                @if (item.User.UserName == username)
+            <div class="discussion">
+                <div class="photo"
+                    style="background-image: url(https://i.pinimg.com/originals/a9/26/52/a926525d966c9479c18d3b4f8e64b434.jpg);">
+                </div>
+                <div class="desc-contact">
+                    <p class="name">Dave Corlew</p>
+                </div>
+            </div>
+
+            <div class="discussion">
+                <div class="photo"
+                    style="background-image: url(https://images.unsplash.com/photo-1497551060073-4c5ab6435f12?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=667&q=80);">
+                </div>
+                <div class="desc-contact">
+                    <p class="name">Jerome Seiber</p>
+                </div>
+            </div>
+
+            <div class="discussion">
+                <div class="photo" style="background-image: url(https://card.thomasdaubenton.com/img/photo.jpg);">
+                </div>
+                <div class="desc-contact">
+                    <p class="name">Thomas Dbtn</p>
+                </div>
+            </div>
+
+            <div class="discussion">
+                <div class="photo"
+                    style="background-image: url(https://images.unsplash.com/photo-1553514029-1318c9127859?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80);">
+                </div>
+                <div class="desc-contact">
+                    <p class="name">Elsie Amador</p>
+                </div>
+            </div>
+
+            <div class="discussion">
+                <div class="photo"
+                    style="background-image: url(https://images.unsplash.com/photo-1541747157478-3222166cf342?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=967&q=80);">
+                </div>
+                <div class="desc-contact">
+                    <p class="name">Billy Southard</p>
+                </div>
+            </div>
+
+            <div class="discussion">
+                <div class="photo"
+                    style="background-image: url(https://images.unsplash.com/photo-1435348773030-a1d74f568bc2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80);">
+                </div>
+                <div class="desc-contact">
+                    <p class="name">Paul Walker</p>
+                </div>
+            </div>
+        </section>
+        <div class="chat-container">
+            <div class="friend-info">
+                <img src="data:image/png;base64,@FriendAvatarBase64" class="friend-avatar" alt="Friend's Avatar" />
+                <p>@friendInfo.User.UserName</p>
+            </div>
+            <div class="chat-box">
+                @foreach (var item in messages.Reverse())
                 {
-                    <div class="message sent">
-                        @item.MessageContent
-                        @item.SentAt.ToShortTimeString()
-                        <img src="data:image/png;base64,@UserAvatarBase64" class="avatar" alt="Your Avatar" />
-                    </div>
+                    @if (item.User.UserName == username)
+                    {
+                        <div class="message sent">
+                            @item.MessageContent
+                            @item.SentAt.ToShortTimeString()
+                            <img src="data:image/png;base64,@UserAvatarBase64" class="avatar" alt="Your Avatar" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="message received">
+                            <img src="data:image/png;base64,@FriendAvatarBase64" class="avatar" alt="Friend's Avatar" />
+                            @item.SentAt.ToShortTimeString()
+                            @item.MessageContent
+                        </div>
+                    }
                 }
-                else
-                {
-                    <div class="message received">
-                        <img src="data:image/png;base64,@FriendAvatarBase64" class="avatar" alt="Friend's Avatar" />
-                        @item.SentAt.ToShortTimeString()
-                        @item.MessageContent
-                    </div>
-                }
-            }
-        </div>
-        <div class="message-input">
-            <InputText type="text" @bind-Value="Message" placeholder="Type your message..." />
-            <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>
-            @* <p>@(!IsNullOrWhiteSpace)</p> *@
+            </div>
+            <div class="message-input">
+                <InputText type="text" @bind-Value="Message" placeholder="Type your message..." />
+                <button disable="@(!IsNullOrWhiteSpace)" @onclick="PostMessage">Send</button>
+                @* <p>@(!IsNullOrWhiteSpace)</p> *@
+            </div>
         </div>
     </div>
 }
