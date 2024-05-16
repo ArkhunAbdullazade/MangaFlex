@@ -5,25 +5,38 @@ namespace MangaFlex.Infrastructure.Data.Mangas.Services;
 
 using MangaFlex.Core.Data.Mangas.Models;
 using MangaFlex.Core.Data.Mangas.ViewModels;
+using MangaFlex.Infrastructure.Data.Mangas.Settings;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System.Net.Http;
 using System.Net.Http.Json;
 
 public class MangaService : IMangaService
 {
-    private readonly HttpClient httpClient;
+    private readonly IMongoCollection<Manga> mangasCollection;
 
-    public MangaService(HttpClient httpClient)
+    public MangaService(IOptions<MangaDbSettings> mangaDbSettings)
     {
-        this.httpClient = httpClient;
+        var mongoClient = new MongoClient(mangaDbSettings.Value.ConnectionString);
+
+        var mongoDatabase = mongoClient.GetDatabase(mangaDbSettings.Value.DatabaseName);
+
+        mangasCollection = mongoDatabase.GetCollection<Manga>(mangaDbSettings.Value.MangasCollectionName);
     }
 
     public async Task<MangasViewModel> FindMangasAsync(string? query = null, int page = 1)
     {
         MangasViewModel mangasVM;
-        var response = await httpClient.GetAsync($"http://localhost:5267/api/Mangas?page={page}&search={query}");
-        if (response.IsSuccessStatusCode)
+        var mangasFound = mangasCollection.Find(m => query == null || m.Title.Contains(query));
+        var mangas = mangasFound.Skip((page-1) * 20).ToEnumerable();
+        if (mangas.Count() > 0)
         {
-            mangasVM = await response.Content.ReadFromJsonAsync<MangasViewModel>() ?? new MangasViewModel { Mangas = new List<Manga>() };
+            mangasVM = new MangasViewModel {
+                Mangas = mangas,
+                Page = page,
+                Search = query,
+                TotalPages = mangasFound.ToEnumerable().Count() / 20 + ((mangasFound.ToEnumerable().Count() % 20) > 0 ? 1 : 0),
+            };
         }
         else 
         {
@@ -34,40 +47,28 @@ public class MangaService : IMangaService
 
     public async Task<AvailableLanguagesVM> GetAvailableLanguages(string id)
     {
-        var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/AvailableLanguages?id={id}");
-        var availableLanguages = await response.Content.ReadFromJsonAsync<AvailableLanguagesVM>();
-        return availableLanguages!;
+        // var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/AvailableLanguages?id={id}");
+        // var availableLanguages = await response.Content.ReadFromJsonAsync<AvailableLanguagesVM>();
+        // return availableLanguages!;
+        throw new NotImplementedException();
     }
 
     public async Task<Manga> GetByIdAsync(string id)
     {
-        var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/About?id={id}");
-        Manga? manga = await response.Content.ReadFromJsonAsync<Manga>();
+        var manga = mangasCollection.Find(Builders<Manga>.Filter.Eq("Id", id)).ToEnumerable().FirstOrDefault();
         return manga!;
     }
     public async Task<MangaChapterViewModel> ReadAsync(string mangaId, int chapter = 1, string language = "en")
     {
-        var response = await httpClient.GetAsync($"http://localhost:5267/api/Manga/Read?id={mangaId}&chapter={chapter}&language={language}");
-        MangaChapterViewModel? manga = await response.Content.ReadFromJsonAsync<MangaChapterViewModel>();
-        return manga!;
+        var manga = mangasCollection.Find(Builders<Manga>.Filter.Eq("Id", mangaId)).ToEnumerable().FirstOrDefault();
+        var mangaChapter = manga.Chapters?[chapter-1];
+        MangaChapterViewModel? mangaChapterViewModel = new MangaChapterViewModel {
+            MangaId = mangaId,
+            Pages = mangaChapter?.Pages,
+            ChapterTitle = mangaChapter?.ChapterTitle,
+            Chapter = chapter,
+            TotalChapters = manga.Chapters.Count,
+        };
+        return mangaChapterViewModel!;
     }
-
-    private Manga Convert(MangaDexSharp.Manga mangaToConvert, string? coverFileName) => new Manga
-    {
-        Id = mangaToConvert.Id,
-        Title = mangaToConvert.Attributes?.Title.FirstOrDefault().Value,
-        Description = mangaToConvert.Attributes?.Description.FirstOrDefault().Value,
-        AvailableLanguages = mangaToConvert.Attributes?.AvailableTranslatedLanguages,
-        IsLocked = mangaToConvert.Attributes?.IsLocked ?? false,
-        OriginalLanguage = mangaToConvert.Attributes?.OriginalLanguage,
-        LastVolume = mangaToConvert.Attributes?.LastVolume,
-        LastChapter = mangaToConvert.Attributes?.LastChapter,
-        Year = mangaToConvert.Attributes?.Year,
-        Tags = mangaToConvert.Attributes?.Tags.Select(mg => mg.Attributes!.Name.FirstOrDefault().Value),
-        State = mangaToConvert.Attributes?.State,
-        CreatedAt = mangaToConvert.Attributes?.CreatedAt,
-        UpdatedAt = mangaToConvert.Attributes?.UpdatedAt,
-        LatestUploadedChapter = mangaToConvert.Attributes?.LatestUploadedChapter,
-        Cover = $"https://uploads.mangadex.org/covers/{mangaToConvert.Id}/{coverFileName}",
-    };
 }
