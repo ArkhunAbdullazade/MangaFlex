@@ -29,7 +29,7 @@ public class MangaService : IMangaService
     {
         MangasViewModel mangasVM;
         var mangasFound = mangasCollection.Find(m => query == null || m.Title.Contains(query));
-        var mangas = mangasFound.Skip((page-1) * 20).ToEnumerable();
+        var mangas = mangasFound.Skip((page-1) * 20).ToEnumerable().Take(20);
         if (mangas.Count() > 0)
         {
             mangasVM = new MangasViewModel {
