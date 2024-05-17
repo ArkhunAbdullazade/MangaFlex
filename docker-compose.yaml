@@ -13,7 +13,66 @@ services:
       - mongovolume:/data/db
       - mongovolume:/data/confidb
     restart: always
-
+  userapi:
+    image: userapi
+    container_name: userapi
+    expose:
+      - "8080"
+    ports:
+      - "5204:8080"
+    build:
+      context: .
+      dockerfile: MangaFlex.User.Api.dockerfile
+    depends_on:
+      - mongo
+    networks:
+      - bridgenetwork
+    restart: always
+  mangaapi:
+    image: mangaapi
+    container_name: mangaapi
+    expose:
+      - "8080"
+    ports:
+      - "5196:8080"
+    build:
+      context: .
+      dockerfile: MangaFlex.Manga.Api.dockerfile
+    depends_on:
+      - mongo
+    networks:
+      - bridgenetwork
+    restart: always
+  staffapi:
+    image: staffapi
+    container_name: staffapi
+    expose:
+      - "8080"
+    ports:
+      - "5181:8080"
+    build:
+      context: .
+      dockerfile: MangaFlex.Staff.Api.dockerfile
+    depends_on:
+      - mongo
+    networks:
+      - bridgenetwork
+    restart: always
+  gateway:
+    image: gateway
+    container_name: gateway
+    expose:
+      - "8080"
+    ports:
+      - "5000:8080"
+    build:
+      context: .
+      dockerfile: MangaFlex.GateWay.dockerfile
+    depends_on:
+      - mongo
+    networks:
+      - bridgenetwork
+    restart: always
   frontend:
     image: frontend
     container_name: frontend
@@ -25,13 +84,14 @@ services:
       context: .
       dockerfile: MangaFlex.FrontEnd.dockerfile
     depends_on:
-      - mongo
+      - gateway
     networks:
       - bridgenetwork
     restart: always
 
 networks:
   bridgenetwork:
+    driver: bridge
 
 volumes:
   mongovolume:
