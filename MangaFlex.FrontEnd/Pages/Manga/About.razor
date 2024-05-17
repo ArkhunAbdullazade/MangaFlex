@@ -368,17 +368,17 @@
             }
             <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
             class="form-control" name="score">
-            <option disabled selected="@(mangaStatus is null || mangaStatus == "Delete")">None</option>
-            <option value="Planning to Read" selected="@(mangaStatus == "Planning to Read")">Planning to Read
-            </option>
-            <option value="Reading" selected="@(mangaStatus == "Reading")">Reading</option>
-            <option value="Completed" selected="@(mangaStatus == "Completed")">Completed</option>
-            <option value="On-Hold" selected="@(mangaStatus == "On-Hold")">On-Hold</option>
-            <option value="Dropped" selected="@(mangaStatus == "Dropped")">Dropped</option>
-            @if (mangaStatus is not null)
-            {
-            <option value="Delete" style="color: red;">Delete</option>
-            }
+                <option disabled selected="@(mangaStatus is null || mangaStatus == "Delete")">None</option>
+                <option value="Planning to Read" selected="@(mangaStatus == "Planning to Read")">Planning to Read
+                </option>
+                <option value="Reading" selected="@(mangaStatus == "Reading")">Reading</option>
+                <option value="Completed" selected="@(mangaStatus == "Completed")">Completed</option>
+                <option value="On-Hold" selected="@(mangaStatus == "On-Hold")">On-Hold</option>
+                <option value="Dropped" selected="@(mangaStatus == "Dropped")">Dropped</option>
+                @if (mangaStatus is not null)
+                {
+                <option value="Delete" style="color: red;">Delete</option>
+                }
             </select>
             <br>
             <a class="readNow" role="button" onclick="openLanguageOptions('@manga.Id')">Read now</a>
@@ -413,7 +413,7 @@
             Status: selectedValue,
         };
         if (selectedValue === "Delete") {
-            await fetch('/Manga/DeleteUserManga?id=' + mangaId, {
+            await fetch('http://localhost:5000/api/User/DeleteUserManga?id=' + mangaId, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -423,7 +423,7 @@
             })
         }
         else if (isLogged) {
-            await fetch('/Manga/UpdateUserManga', {
+            await fetch('http://localhost:5000/api/User/UpdateUserManga', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -434,7 +434,7 @@
             })
         }
         else {
-            await fetch('/Manga/AddUserManga', {
+            await fetch('http://localhost:5000/api/User/AddUserManga', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -461,6 +461,11 @@
 
         await GetManga(Id);
     }
+
+    @* private async Task LogManga()
+    {
+        
+    } *@
 
     private async Task GetManga(string mangaId)
     {

@@ -466,7 +466,7 @@
         "GET"
       ],
 
-      "DownstreamPathTemplate": "/api/Manga/IsMangaLogged",
+      "DownstreamPathTemplate": "/api/User/IsMangaLogged",
       "DownstreamScheme": "http",
 
       "DownstreamHostAndPorts": [
@@ -478,12 +478,12 @@
     },
 
     {
-      "UpstreamPathTemplate": "/api/Manga/UserMangaStatus",
+      "UpstreamPathTemplate": "/api/User/UserMangaStatus",
       "UpstreamHttpMethod": [
         "GET"
       ],
 
-      "DownstreamPathTemplate": "/api/Manga/UserMangaStatus",
+      "DownstreamPathTemplate": "/api/User/UserMangaStatus",
       "DownstreamScheme": "http",
 
       "DownstreamHostAndPorts": [
@@ -495,12 +495,12 @@
     },
 
     {
-      "UpstreamPathTemplate": "/api/Manga/AddUserManga",
+      "UpstreamPathTemplate": "/api/User/AddUserManga",
       "UpstreamHttpMethod": [
         "POST"
       ],
 
-      "DownstreamPathTemplate": "/api/Manga/AddUserManga",
+      "DownstreamPathTemplate": "/api/User/AddUserManga",
       "DownstreamScheme": "http",
 
       "DownstreamHostAndPorts": [
@@ -512,12 +512,12 @@
     },
 
     {
-      "UpstreamPathTemplate": "/api/Manga/UpdateUserManga",
+      "UpstreamPathTemplate": "/api/User/UpdateUserManga",
       "UpstreamHttpMethod": [
         "PUT"
       ],
 
-      "DownstreamPathTemplate": "/api/Manga/UpdateUserManga",
+      "DownstreamPathTemplate": "/api/User/UpdateUserManga",
       "DownstreamScheme": "http",
 
       "DownstreamHostAndPorts": [
@@ -529,12 +529,12 @@
     },
 
     {
-      "UpstreamPathTemplate": "/api/Manga/DELETEUserManga",
+      "UpstreamPathTemplate": "/api/User/DELETEUserManga",
       "UpstreamHttpMethod": [
         "DELETE"
       ],
 
-      "DownstreamPathTemplate": "/api/Manga/DELETEUserManga",
+      "DownstreamPathTemplate": "/api/User/DELETEUserManga",
       "DownstreamScheme": "http",
 
       "DownstreamHostAndPorts": [
