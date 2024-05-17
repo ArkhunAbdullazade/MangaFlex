@@ -34,11 +34,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 var jwtOptionsSection = builder.Configuration
     .GetSection("JwtOptions");
-
 var jwtOptions = jwtOptionsSection.Get<JwtOptions>() ?? throw new Exception("Couldn't create jwt options object");
-
 builder.Services.Configure<JwtOptions>(jwtOptionsSection);
 builder.Services.AddSingleton(jwtOptions);
+
+var mangaDbSettingsSection = builder.Configuration
+    .GetSection("MangaDatabase");
+var mangaDbSettings = mangaDbSettingsSection.Get<MangaDbSettings>() ?? throw new Exception("Couldn't create mangaDb settings object");
+builder.Services.Configure<MangaDbSettings>(mangaDbSettingsSection);
+builder.Services.AddSingleton(mangaDbSettings);
 
 builder.Services.AddControllers();
 
@@ -152,7 +156,7 @@ builder.Services.AddScoped<IFriendShipRepository, FriendShipRepository>();
 builder.Services.AddScoped<ILastWatchesRepository, LastWatchesRepository>();
 builder.Services.AddScoped<IUserMangaRepository, UserMangaRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-builder.Services.AddHttpClient<IMangaService, MangaService>();
+builder.Services.AddScoped<IMangaService, MangaService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IFriendsChatRepository, FriendsChatRepository>();
 builder.Services.AddResponseCompression(opts =>
@@ -170,9 +174,6 @@ builder.Services.AddCors(options =>
                .AllowAnyMethod();
     });
 });
-
-builder.Services.Configure<MangaDbSettings>(
-    builder.Configuration.GetSection("MangaDatabase"));
 
 var app = builder.Build();
 

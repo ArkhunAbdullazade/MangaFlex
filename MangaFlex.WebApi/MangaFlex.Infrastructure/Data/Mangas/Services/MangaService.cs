@@ -17,6 +17,7 @@ public class MangaService : IMangaService
 
     public MangaService(IOptions<MangaDbSettings> mangaDbSettings)
     {
+        System.Console.WriteLine(mangaDbSettings.Value.ConnectionString);
         var mongoClient = new MongoClient(mangaDbSettings.Value.ConnectionString);
 
         var mongoDatabase = mongoClient.GetDatabase(mangaDbSettings.Value.DatabaseName);

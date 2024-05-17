@@ -34,11 +34,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 var jwtOptionsSection = builder.Configuration
     .GetSection("JwtOptions");
-
 var jwtOptions = jwtOptionsSection.Get<JwtOptions>() ?? throw new Exception("Couldn't create jwt options object");
-
 builder.Services.Configure<JwtOptions>(jwtOptionsSection);
 builder.Services.AddSingleton(jwtOptions);
+
+var mangaDbSettingsSection = builder.Configuration
+    .GetSection("MangaDatabase");
+var mangaDbSettings = mangaDbSettingsSection.Get<MangaDbSettings>() ?? throw new Exception("Couldn't create mangaDb settings object");
+builder.Services.Configure<MangaDbSettings>(mangaDbSettingsSection);
+builder.Services.AddSingleton(mangaDbSettings);
 
 builder.Services.AddControllers();
 
