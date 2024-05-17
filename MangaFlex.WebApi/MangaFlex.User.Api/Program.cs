@@ -156,7 +156,7 @@ builder.Services.AddScoped<IFriendShipRepository, FriendShipRepository>();
 builder.Services.AddScoped<ILastWatchesRepository, LastWatchesRepository>();
 builder.Services.AddScoped<IUserMangaRepository, UserMangaRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
-builder.Services.AddHttpClient<IMangaService, MangaService>();
+builder.Services.AddScoped<IMangaService, MangaService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IFriendsChatRepository, FriendsChatRepository>();
 builder.Services.AddSignalR();

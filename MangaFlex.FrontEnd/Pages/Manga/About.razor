@@ -368,14 +368,14 @@
             }
             <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
             class="form-control" name="score">
-                <option disabled selected="@(mangaStatus is null || mangaStatus == "Delete")">None</option>
+                <option disabled selected="@(string.IsNullOrWhiteSpace(mangaStatus) || mangaStatus == "Delete")">None</option>
                 <option value="Planning to Read" selected="@(mangaStatus == "Planning to Read")">Planning to Read
                 </option>
                 <option value="Reading" selected="@(mangaStatus == "Reading")">Reading</option>
                 <option value="Completed" selected="@(mangaStatus == "Completed")">Completed</option>
                 <option value="On-Hold" selected="@(mangaStatus == "On-Hold")">On-Hold</option>
                 <option value="Dropped" selected="@(mangaStatus == "Dropped")">Dropped</option>
-                @if (mangaStatus is not null)
+                @if (string.IsNullOrWhiteSpace(mangaStatus) == false)
                 {
                 <option value="Delete" style="color: red;">Delete</option>
                 }
@@ -407,6 +407,7 @@
     async function logManga(mangaId, isLogged) {
         var selectElement = document.getElementById("status");
         var selectedValue = selectElement.value;
+        var token = localStorage.getItem('accessToken');
 
         let jsonData = {
             MangaId: mangaId,
@@ -416,17 +417,20 @@
             await fetch('http://localhost:5000/api/User/DeleteUserManga?id=' + mangaId, {
                 method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
                 }
             }).then(data => {
                 location.reload();
             })
         }
         else if (isLogged) {
+            console.log(JSON.stringify(jsonData))
             await fetch('http://localhost:5000/api/User/UpdateUserManga', {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
                 },
                 body: JSON.stringify(jsonData)
             }).then(data => {
@@ -437,7 +441,8 @@
             await fetch('http://localhost:5000/api/User/AddUserManga', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
                 },
                 body: JSON.stringify(jsonData)
             }).then(data => {
@@ -451,6 +456,8 @@
 @code {
     [Parameter]
     public string Id { get; set; }
+    public string mangaStatus = string.Empty;
+    public bool isMangaLogged = true;
     AvailableLanguagesVM availableLanguages = new AvailableLanguagesVM();
     MangaFlexFront.Data.Mangas.Models.Manga manga = new MangaFlexFront.Data.Mangas.Models.Manga();
     HttpClient mangaflexApi = new HttpClient();
@@ -459,13 +466,31 @@
     {
         mangaflexApi = httpClientFactory.CreateClient("mangaflexApi");
 
+        await LogManga();
         await GetManga(Id);
     }
 
-    @* private async Task LogManga()
+    private async Task LogManga()
     {
-        
-    } *@
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/User/UserMangaStatus?id={Id}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
+
+        var response = await mangaflexApi.SendAsync(request);
+
+        mangaStatus = await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine(mangaStatus);
+
+        var requestsecond = new HttpRequestMessage(HttpMethod.Get, $"api/User/IsMangaLogged?id={Id}");
+        requestsecond.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
+        localStorageService.GetItemAsStringAsync("accessToken"));
+
+        var responsesecond = await mangaflexApi.SendAsync(requestsecond);
+
+        var temp = await responsesecond.Content.ReadAsStringAsync();
+        isMangaLogged = bool.Parse(temp);
+    } 
 
     private async Task GetManga(string mangaId)
     {
@@ -499,37 +524,6 @@
         {
             // other errors
             @* NavigationManager.NavigateTo("/Error/GeneralError"); *@
-        }
-    }
-
-
-    private async Task LoadAvailableLanguages(string mangaId)
-    {
-        try
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get,
-            $"api/Mangas/AvailableLanguages?id={mangaId}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await
-            localStorageService.GetItemAsStringAsync("accessToken"));
-
-            var response = await mangaflexApi.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadAsStringAsync();
-
-            }
-            else
-            {
-                if (response.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    NavigationManager.NavigateTo("/Error/Unathorized");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
         }
     }
 

@@ -452,7 +452,10 @@ else
 
     <div style="display: flex; justify-content: flex-end;">
         <section class="discussions">
-
+            @if(Chats.Any() == false)
+            {
+                <p>No chats yet..</p>
+            }
             @foreach(var item in Chats)
             {
                 <div class="discussion" onclick=@(async () => LoadChatWithFriend(item.FriendId))>

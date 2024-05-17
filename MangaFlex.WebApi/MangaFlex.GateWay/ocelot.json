@@ -461,7 +461,7 @@
     },
 
     {
-      "UpstreamPathTemplate": "/api/Manga/IsMangaLogged",
+      "UpstreamPathTemplate": "/api/User/IsMangaLogged",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -472,7 +472,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5196"
+          "Port": "5204"
         }
       ]
     },
@@ -489,7 +489,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5196"
+          "Port": "5204"
         }
       ]
     },
@@ -506,7 +506,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5196"
+          "Port": "5204"
         }
       ]
     },
@@ -523,7 +523,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5196"
+          "Port": "5204"
         }
       ]
     },
@@ -540,7 +540,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5196"
+          "Port": "5204"
         }
       ]
     },

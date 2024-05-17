@@ -24,6 +24,7 @@ using MangaFlex.Core.Data.Mangas.Models;
 using MangaFlex.Core.Data.Mangas.Services;
 using MangaFlex.Core.Data.UserMangas.Commands;
 using MangaFlex.Core.Data.UserMangas.Models;
+using Microsoft.AspNetCore.Http.Extensions;
 
 [Authorize]
 [ApiController]
@@ -306,7 +307,7 @@ public class UserController : Controller
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> AddUserManga([FromBody] UserMangaDto userMangaDto)
+    public async Task<IActionResult> AddUserManga(UserMangaDto userMangaDto)
     {
         var newUserManga = new UserManga {
             UserId = this.userManager.GetUserId(User!),
@@ -323,7 +324,7 @@ public class UserController : Controller
         {
             return BadRequest("There is No Such Manga To Add");
         }
-        return CreatedAtAction("About", new { id = userMangaDto.MangaId }, newUserManga);
+        return Created(HttpContext.Request.GetDisplayUrl(),null);
     }
 
     [HttpPut]
