@@ -366,8 +366,8 @@
                     }
                 </ul>
             }
-            @* <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
-            class="form-control" id="rating" name="score">
+            <select id="status" onchange="logManga('@manga.Id', @isMangaLogged.ToString()?.ToLower())"
+            class="form-control" name="score">
             <option disabled selected="@(mangaStatus is null || mangaStatus == "Delete")">None</option>
             <option value="Planning to Read" selected="@(mangaStatus == "Planning to Read")">Planning to Read
             </option>
@@ -379,7 +379,7 @@
             {
             <option value="Delete" style="color: red;">Delete</option>
             }
-            </select> *@
+            </select>
             <br>
             <a class="readNow" role="button" onclick="openLanguageOptions('@manga.Id')">Read now</a>
             <div id="mangaLanguageModal" class="modal">

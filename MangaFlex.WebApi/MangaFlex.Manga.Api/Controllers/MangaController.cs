@@ -21,14 +21,14 @@ using MangaFlex.Core.Data.Mangas.Models;
 public class MangaController : Controller
 {
     private readonly ISender sender;
-    private readonly IMangaService mangaService;
-    private readonly UserManager<User> userManager;
+    // private readonly IMangaService mangaService;
+    // private readonly UserManager<User> userManager;
 
-    public MangaController(ISender sender, IMangaService mangaService, UserManager<User> userManager)
+    public MangaController(ISender sender)
     {
         this.sender = sender;
-        this.userManager = userManager;
-        this.mangaService = mangaService;
+        // this.userManager = userManager;
+        // this.mangaService = mangaService;
     }
 
     /// <summary>
@@ -113,92 +113,6 @@ public class MangaController : Controller
         }
 
         return Ok(manga);
-    }
-
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> IsMangaLogged(string id)
-    {
-        Manga manga;
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-        manga = await mangaService.GetByIdAsync(id);
-        var isMangaReadByUserCommand = new IsMangaReadByUserCommand(userId, manga.Id);
-        var result = await sender.Send(isMangaReadByUserCommand);
-        return Ok(result);
-    }
-
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> UserMangaStatus(string id)
-    {
-        Manga manga;
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-        manga = await mangaService.GetByIdAsync(id);
-        var UserMangaCommand = new GetByUserAndMangaIdCommand(userId, manga.Id);
-        var result = (await sender.Send(UserMangaCommand))?.Status;
-        return Ok(result);
-    }
-
-
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> AddUserManga([FromBody] UserMangaDto userMangaDto)
-    {
-        var newUserManga = new UserManga {
-            UserId = this.userManager.GetUserId(User!),
-            MangaId = userMangaDto.MangaId,
-            Status = userMangaDto.Status,
-        };
-        
-        try
-        {
-            var userMangaCommand = new AddUserMangaCommand(newUserManga);
-            await sender.Send(userMangaCommand);
-        }
-        catch (Exception)
-        {
-            return BadRequest("There is No Such Manga To Add");
-        }
-        return CreatedAtAction("About", new { id = userMangaDto.MangaId }, newUserManga);
-    }
-
-    [HttpPut]
-    [Authorize]
-    public async Task<IActionResult> UpdateUserManga([FromBody] UserMangaDto userMangaDto)
-    {
-        var newUserManga = new UserManga {
-            UserId = this.userManager.GetUserId(User!),
-            MangaId = userMangaDto.MangaId,
-            Status = userMangaDto.Status,
-        };
-        
-        try
-        {
-            var userMangaCommand = new UpdateUserMangaCommand(newUserManga);
-            await sender.Send(userMangaCommand);
-        }
-        catch (Exception)
-        {
-            return BadRequest("There is No Such Manga To Update");
-        }
-
-        return Ok(newUserManga.Id);
-    }
-
-    [HttpDelete]
-    [Authorize]
-    public async Task<IActionResult> DeleteUserManga(string id)
-    {
-        try
-        {
-            var userMangaCommand = new DeleteUserMangaCommand(this.userManager.GetUserId(User!), id);
-            await sender.Send(userMangaCommand);
-        }
-        catch (Exception)
-        {
-            return BadRequest("There is No Such Manga To Update");
-        }
-        return Ok(id);
     }
 
     [HttpGet]

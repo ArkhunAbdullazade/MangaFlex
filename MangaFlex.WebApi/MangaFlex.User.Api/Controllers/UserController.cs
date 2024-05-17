@@ -20,6 +20,10 @@ using MangaFlex.Core.Data.Message.Models;
 using MangaFlex.Infrastructure.Data.Hubs;
 using MangaFlex.Api.Dtos;
 using MnagaFlex.Api.ViewModels;
+using MangaFlex.Core.Data.Mangas.Models;
+using MangaFlex.Core.Data.Mangas.Services;
+using MangaFlex.Core.Data.UserMangas.Commands;
+using MangaFlex.Core.Data.UserMangas.Models;
 
 [Authorize]
 [ApiController]
@@ -30,11 +34,13 @@ public class UserController : Controller
     private readonly UserManager<User> userManager;
     private readonly IHubContext<ChatHub> hubContext;
     private readonly IHubContext<ProfileHub> hubContextProfile;
+    private readonly IMangaService mangaService;
 
-    public UserController(ISender sender, UserManager<User> userManager, IHubContext<ChatHub> hubContext, IHubContext<ProfileHub> profilehub)
+    public UserController(ISender sender, IMangaService mangaService, UserManager<User> userManager, IHubContext<ChatHub> hubContext, IHubContext<ProfileHub> profilehub)
     {
         this.sender = sender;
         this.userManager = userManager;
+        this.mangaService = mangaService;
         this.hubContext = hubContext;
         this.hubContextProfile = profilehub;
     }
@@ -271,6 +277,92 @@ public class UserController : Controller
             Followers = GetUserFollowersCommandResult,
             Subscriptions = GetUserSubscriptionsResult,
         });
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> IsMangaLogged(string id)
+    {
+        Manga manga;
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        manga = await mangaService.GetByIdAsync(id);
+        var isMangaReadByUserCommand = new IsMangaReadByUserCommand(userId, manga.Id);
+        var result = await sender.Send(isMangaReadByUserCommand);
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> UserMangaStatus(string id)
+    {
+        Manga manga;
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+        manga = await mangaService.GetByIdAsync(id);
+        var UserMangaCommand = new GetByUserAndMangaIdCommand(userId, manga.Id);
+        var result = (await sender.Send(UserMangaCommand))?.Status;
+        return Ok(result);
+    }
+
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> AddUserManga([FromBody] UserMangaDto userMangaDto)
+    {
+        var newUserManga = new UserManga {
+            UserId = this.userManager.GetUserId(User!),
+            MangaId = userMangaDto.MangaId,
+            Status = userMangaDto.Status,
+        };
+        
+        try
+        {
+            var userMangaCommand = new AddUserMangaCommand(newUserManga);
+            await sender.Send(userMangaCommand);
+        }
+        catch (Exception)
+        {
+            return BadRequest("There is No Such Manga To Add");
+        }
+        return CreatedAtAction("About", new { id = userMangaDto.MangaId }, newUserManga);
+    }
+
+    [HttpPut]
+    [Authorize]
+    public async Task<IActionResult> UpdateUserManga([FromBody] UserMangaDto userMangaDto)
+    {
+        var newUserManga = new UserManga {
+            UserId = this.userManager.GetUserId(User!),
+            MangaId = userMangaDto.MangaId,
+            Status = userMangaDto.Status,
+        };
+        
+        try
+        {
+            var userMangaCommand = new UpdateUserMangaCommand(newUserManga);
+            await sender.Send(userMangaCommand);
+        }
+        catch (Exception)
+        {
+            return BadRequest("There is No Such Manga To Update");
+        }
+
+        return Ok(newUserManga.Id);
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public async Task<IActionResult> DeleteUserManga(string id)
+    {
+        try
+        {
+            var userMangaCommand = new DeleteUserMangaCommand(this.userManager.GetUserId(User!), id);
+            await sender.Send(userMangaCommand);
+        }
+        catch (Exception)
+        {
+            return BadRequest("There is No Such Manga To Update");
+        }
+        return Ok(id);
     }
 
 }
